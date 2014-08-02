@@ -8,8 +8,8 @@ lxml XML toolkit, http://lxml.de/
 
 EXAMPLE
 
->>> from Fritz import fritz
->>> t = fritz.TSDRReq()
+>>> from Plumage import plumage
+>>> t = plumage.TSDRReq()
 >>> # Python trademark application, ser. no. 76/044,902
 >>> t.getTSDRInfo("s", "76044902") 
 >>> # Show application number and date, registration number and date...
@@ -24,12 +24,13 @@ EXAMPLE
 >>> # Show trademark text and owner...
 >>> t.tmdict["MarkVerbalElementText"]
 'PYTHON'
->>> t.tmdict["ApplicantName"]
-'PYTHON SOFTWARE FOUNDATION'
 >>> # Show current status of mark, and date of that status...
 >>> t.tmdict["MarkCurrentStatusExternalDescriptionText"]
 'A Sections 8 and 15 combined declaration has been accepted and acknowledged.'
 >>> t.tmdict["MarkCurrentStatusDate"]
 '2010-09-08-04:00'
+>>> applicant_info = t.TSDRMap["ApplicantList"][0]
+>>> applicant_info["ApplicantName"]
+'PYTHON SOFTWARE FOUNDATION'
 >>>
 '''

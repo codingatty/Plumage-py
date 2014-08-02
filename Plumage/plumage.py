@@ -1,5 +1,5 @@
 '''
-fritz -- fetch data from USPTO TSDR
+Plumage: Python module to obtain trademark status information from USPTO's TSDR system
 
 Copyright 2014 Terry Carroll
 carroll@tjc.com
@@ -58,7 +58,7 @@ class XSLTDescriptor(object):
 _TSDR_substitutions = {
     "$XSLTFILENAME$":"Not Set",                 # XSLT stylesheet file name
     "$XSLTLOCATION$":"Not Set",                 # XSLT stylesheet location (e.g., directory pathname)
-    "$IMPLEMENTATIONNAME$":"Fritz-py",          # implementation identifier
+    "$IMPLEMENTATIONNAME$":"Plumage-py",          # implementation identifier
     "$IMPLEMENTATIONVERSION$":__version__,      # implementation version no.
     "$IMPLEMENTATIONDATE$":__last_updated__,    # implementation date
     "$IMPLEMENTATIONAUTHOR$":__author__ ,       # implementation author 
@@ -316,7 +316,7 @@ class TSDRReq(object):
         name-value pairs.  If an XSLT template was supplied as an option,
         that template will be used; otherwise the method will determine the
         XML format and use the appropriate transform supplied as part of
-        Fritz.
+        Plumage.
 
         Either getTDSRDataFromPTO or getTDSRDataFromFile must be
         successfully invoked before using this method.
@@ -640,7 +640,7 @@ def _selftest():
     '''
     simplistic self-test using supplied test data
     '''
-    print "Fritz self-test beginning..."
+    print "Plumage self-test beginning..."
     counters = {"PASS": 0, "FAIL": 0}
     #with open("ST66-test.xsl") as f:
     #    stuff = f.read()
