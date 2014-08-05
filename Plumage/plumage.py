@@ -10,7 +10,7 @@ This program is licensed under Apache License, version 2.0 (January 2004),
 http://www.apache.org/licenses/LICENSE-2.0
 
 Anyone who makes use of, or who modifies, this code is encouraged
-(but not required) to notiy the author.
+(but not required) to notify the author.
 '''
 
 from lxml import etree
@@ -19,7 +19,6 @@ import zipfile
 import os.path
 import string
 import urllib2
-#import datetime
 import time
 
 __version__ = "V. 0.9.1"
@@ -210,7 +209,6 @@ class TSDRReq(object):
               None" (or omitted): use filename
 
         Sets:
-            #### confirm this #####
             self.XMLData
             self.ZipData (optional)
             self.ImageThumb (optional)
@@ -289,6 +287,8 @@ class TSDRReq(object):
         pto_url = pto_url_template % (tmtype, number)
         ##  with urllib2.urlopen(pto_url) as f:  ## This doesn't work; in Python 2.x,
         ##      filedata = f.read()              ## urlopen() does not support the "with" statement
+        ## I'm only leaving this comment here because twice I've forgotten that this won't work
+        ## in Python 2.7, and attempt the "with" statement before it bites me and I remember. 
         try:
             f = urllib2.urlopen(pto_url)
         except urllib2.HTTPError as e:
@@ -642,8 +642,6 @@ def _selftest():
     '''
     print "Plumage self-test beginning..."
     counters = {"PASS": 0, "FAIL": 0}
-    #with open("ST66-test.xsl") as f:
-    #    stuff = f.read()
     t = TSDRReq()
     CONTINUE_SELF_TEST = True
     try:
