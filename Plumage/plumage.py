@@ -661,28 +661,28 @@ def _selftest():
         _onetest(counters, "full image consistent with PNG format",
                  t.ImageFull[0:4], "\x89PNG")
         _onetest(counters, "CSV expected number of rows",
-                 len(t.CSVData.split("\n")), 286)  
+                 len(t.CSVData.split("\n")), 288)  
         _onetest(counters, "serial number as expected", t.TSDRMap["ApplicationNumber"], "76044902")
-        _onetest(counters, "raw application date as expected",
-                 t.TSDRMap["RawApplicationDate"], "2000-05-09-04:00")
-        _onetest(counters, "application date consistent with raw application date",
-                 t.TSDRMap["RawApplicationDate"][0:10],  t.TSDRMap["ApplicationDate"])  
-        _onetest(counters, "reg number as expected", t.TSDRMap["RegistrationNumber"], "2824281")
-        _onetest(counters, "raw reg date as expected",
-                 t.TSDRMap["RawRegistrationDate"], "2004-03-23-05:00")
-        _onetest(counters, "reg date consistent with raw reg date",
-                 t.TSDRMap["RawRegistrationDate"][0:10],  t.TSDRMap["RegistrationDate"])
+        _onetest(counters, "Application date as expected",
+                 t.TSDRMap["ApplicationDate"], "2000-05-09-04:00")
+        _onetest(counters, "Raw application date consistent with truncated application date",
+                 t.TSDRMap["ApplicationDate"][0:10],  t.TSDRMap["ApplicationDateTruncated"])  
+        _onetest(counters, "Registration number as expected", t.TSDRMap["RegistrationNumber"], "2824281")
+        _onetest(counters, "Registration date as expected",
+                 t.TSDRMap["RegistrationDate"], "2004-03-23-05:00")
+        _onetest(counters, "Raw reg date consistent with tuncated reg date",
+                 t.TSDRMap["RegistrationDate"][0:10],  t.TSDRMap["RegistrationDateTruncated"])
         _onetest(counters, "trademark text as expected",
                  t.TSDRMap["MarkVerbalElementText"], "PYTHON")
         _onetest(counters, "TM status as expected",
                  t.TSDRMap["MarkCurrentStatusExternalDescriptionText"],
                 "A Sections 8 and 15 combined declaration has been "\
                  "accepted and acknowledged.")
-        _onetest(counters, "raw status date as expected ",
-                 t.TSDRMap["RawMarkCurrentStatusDate"], "2010-09-08-04:00")
-        _onetest(counters, "status date consistent with raw status date",
-                 t.TSDRMap["RawMarkCurrentStatusDate"][0:10],
-                 t.TSDRMap["MarkCurrentStatusDate"])  
+        _onetest(counters, "Status date as expected ",
+                 t.TSDRMap["MarkCurrentStatusDate"], "2010-09-08-04:00")
+        _onetest(counters, "Raw status date consistent with truncated status date",
+                 t.TSDRMap["MarkCurrentStatusDate"][0:10],
+                 t.TSDRMap["MarkCurrentStatusDateTruncated"])  
 
         try:
             applicant_info = t.TSDRMap["ApplicantList"][0]    
