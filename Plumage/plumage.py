@@ -654,13 +654,13 @@ def _selftest():
         _onetest(counters, "Expected XML content",
                  t.XMLData[0:55],
                  r'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>')
-        _onetest(counters, "thumbnail image consistent with JPEG format",
+        _onetest(counters, "Thumbnail image consistent with JPEG format",
                  t.ImageThumb[6:10], "JFIF")
-        _onetest(counters, "full image consistent with PNG format",
+        _onetest(counters, "Full image consistent with PNG format",
                  t.ImageFull[0:4], "\x89PNG")
         _onetest(counters, "CSV expected number of rows",
                  len(t.CSVData.split("\n")), 288)  
-        _onetest(counters, "serial number as expected", t.TSDRMap["ApplicationNumber"], "76044902")
+        _onetest(counters, "Serial number as expected", t.TSDRMap["ApplicationNumber"], "76044902")
         _onetest(counters, "Application date as expected",
                  t.TSDRMap["ApplicationDate"], "2000-05-09-04:00")
         _onetest(counters, "Raw application date consistent with truncated application date",
@@ -668,11 +668,11 @@ def _selftest():
         _onetest(counters, "Registration number as expected", t.TSDRMap["RegistrationNumber"], "2824281")
         _onetest(counters, "Registration date as expected",
                  t.TSDRMap["RegistrationDate"], "2004-03-23-05:00")
-        _onetest(counters, "Raw reg date consistent with tuncated reg date",
+        _onetest(counters, "Raw registration date consistent with truncated registration date",
                  t.TSDRMap["RegistrationDate"][0:10],  t.TSDRMap["RegistrationDateTruncated"])
-        _onetest(counters, "trademark text as expected",
+        _onetest(counters, "Trademark text as expected",
                  t.TSDRMap["MarkVerbalElementText"], "PYTHON")
-        _onetest(counters, "TM status as expected",
+        _onetest(counters, "Trademark status as expected",
                  t.TSDRMap["MarkCurrentStatusExternalDescriptionText"],
                 "A Sections 8 and 15 combined declaration has been "\
                  "accepted and acknowledged.")
@@ -685,23 +685,23 @@ def _selftest():
         try:
             applicant_info = t.TSDRMap["ApplicantList"][0]    
             applicant_found = True
-            _onetest(counters, "TM owner as expected",
+            _onetest(counters, "Trademark owner as expected",
                  applicant_info["ApplicantName"], "PYTHON SOFTWARE FOUNDATION")
         except IndexError:
             applicant_found = False
-        _onetest(counters, "applicant found correctly", applicant_found, True)
+        _onetest(counters, "Applicant found correctly", applicant_found, True)
 
         try:
             assignment = t.TSDRMap["AssignmentList"][0]
             assignment_found = True
-            _onetest(counters, "assignor name as expected", assignment["AssignorEntityName"],
+            _onetest(counters, "Assignor name as expected", assignment["AssignorEntityName"],
                     "CORPORATION FOR NATIONAL RESEARCH INITIATIVES, INC.")
-            _onetest(counters, "assignment URL as expected", assignment["AssignmentDocumentURL"],
+            _onetest(counters, "Assignment URL as expected", assignment["AssignmentDocumentURL"],
                     "http://assignments.uspto.gov/assignments/"\
                      "assignment-tm-2849-0875.pdf")
         except IndexError:
             assignment_found = False
-        _onetest(counters, "assignment found correctly", assignment_found, True)
+        _onetest(counters, "Assignment found correctly", assignment_found, True)
 
     print "self-test ended; %s tests passed, %s tests failed" % \
           (counters["PASS"], counters["FAIL"])
@@ -712,10 +712,10 @@ def _onetest(counters, testname, actual_value, expected_value):
     '''
     if actual_value == expected_value:
         result="PASS"
-        print "PASS  Testname: %s" % (testname)
+        print "PASS  Test: %s" % (testname)
     else:
         result = "FAIL"
-        print "FAIL  Testname: %s\n  EXPECTED: >%s<\n       GOT: >%s<" % \
+        print "FAIL  Test: %s\n  EXPECTED: >%s<\n       GOT: >%s<" % \
               (testname, expected_value, actual_value)
 
     counters[result] += 1
