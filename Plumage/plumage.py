@@ -1,7 +1,7 @@
 '''
 Plumage: Python module to obtain trademark status information from USPTO's TSDR system
 
-Copyright 2014 Terry Carroll
+Copyright 2014-2015 Terry Carroll
 carroll@tjc.com
 
 License information:
@@ -308,10 +308,7 @@ class TSDRReq(object):
         ## I'm only leaving this comment here because twice I've forgotten that this won't work
         ## in Python 2.7, and attempt the "with" statement before it bites me and I remember. 
         try:
-            #f = urllib2.urlopen(pto_url)
-
-
-            ### PEP 476
+            ### PEP 476:
             ### use context paramenter if it is supported (TypeError if not)
             try:
                 f = urllib2.urlopen(pto_url, context=self.UNVERIFIED_CONTEXT)
