@@ -21,11 +21,19 @@ import string
 import urllib2
 import time
 
-__version__ = "V. 0.9.1"
-__last_updated__ = "2014-07-27"
+### PEP 476
+try:
+    import ssl
+    SSL_INSTALLED = True
+except:
+    SSL_INSTALLED = False
+### PEP 476
+
+__version__ = "V. 0.9.2"
+__last_updated__ = "2015-08-11"
 __author__ = "Terry Carroll"
 __URL__ = "https://github.com/codingatty"
-__copyright__ = "Copyright 2014 Terry Carroll"
+__copyright__ = "Copyright 2014-2015 Terry Carroll"
 __license__ = "Apache License, version 2.0 (January 2004)"
 __licenseURL__ = "http://www.apache.org/licenses/LICENSE-2.0"
 
@@ -86,6 +94,16 @@ class TSDRReq(object):
         Initialize TDSR request
         '''
         self.reset()
+
+        ### PEP 476
+        if SSL_INSTALLED:
+            try:
+                self.UNVERIFIED_CONTEXT = ssl._create_unverified_context()
+            except AttributeError:
+                self.UNVERIFIED_CONTEXT = None
+        else:
+            self.UNVERIFIED_CONTEXT = None
+        ### PEP 476
 
     def reset(self):
         '''
@@ -290,7 +308,15 @@ class TSDRReq(object):
         ## I'm only leaving this comment here because twice I've forgotten that this won't work
         ## in Python 2.7, and attempt the "with" statement before it bites me and I remember. 
         try:
-            f = urllib2.urlopen(pto_url)
+            #f = urllib2.urlopen(pto_url)
+
+
+            ### PEP 476
+            ### use context paramenter if it is supported (TypeError if not)
+            try:
+                f = urllib2.urlopen(pto_url, context=self.UNVERIFIED_CONTEXT)
+            except TypeError as e:
+                f = urllib2.urlopen(pto_url)
         except urllib2.HTTPError as e:
             if e.code == 404:
                 self.ErrorCode = "Fetch-404"
