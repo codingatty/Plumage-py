@@ -20,6 +20,7 @@ import os.path
 import string
 import urllib2
 import time
+import unittest
 
 ### PEP 476
 try:
@@ -355,6 +356,7 @@ class TSDRReq(object):
         
         # First, make sure there is XML data to process
         if not self.XMLDataIsValid:
+            self.CSVDataIsValid = False
             self.ErrorCode = "CSV-NoValidXML"
             self.ErrorMessage = "No valid XML data found"
             return
@@ -370,7 +372,17 @@ class TSDRReq(object):
             _TSDR_substitutions["$XSLTFILENAME$"] = "CALLER-PROVIDED XSLT"
             _TSDR_substitutions["$XSLTPATHNAME$"] = "CALLER-PROVIDED XSLT"
         else:
-            xml_format = self._determine_xml_format(parsed_xml)
+            # If XML format was specified in PTOFormat, use that; otherwise try to determine by looking
+            supported_xml_formats = ["ST66", "ST96"]
+            if self.PTOFormat in supported_xml_formats:
+                xml_format = self.PTOFormat
+            else:
+                xml_format = self._determine_xml_format(parsed_xml)
+                if xml_format not in supported_xml_formats:
+                    self.CSVDataIsValid = False
+                    self.ErrorCode = "CSV-UnsupportedXML"
+                    self.ErrorMessage = "Unsupported XML format found: %s" % xml_format
+                    return                    
             xslt_transform_info = _xslt_table[xml_format]
             transform = xslt_transform_info.transform
             _TSDR_substitutions["$XSLTFILENAME$"] = xslt_transform_info.filename
@@ -569,11 +581,15 @@ class TSDRReq(object):
         
         ST66_root_tag = \
             "{http://www.wipo.int/standards/XMLSchema/trademarks}Transaction"
-        ST96_root_tag = \
+        ## Former tag value for ST-96 1_D3; keeping it around as known but unsupported for diagnostic value 
+        ST96_1_D3_root_tag = \
             "{http://www.wipo.int/standards/XMLSchema/Trademark/1}Transaction"
+        ST96_root_tag = \
+            "{http://www.wipo.int/standards/XMLSchema/ST96/Trademark}TrademarkTransaction"
 
         tag_map = {
             ST66_root_tag : "ST66",
+            ST96_1_D3_root_tag : "ST96-1_D3",
             ST96_root_tag : "ST96"
             }
 
@@ -658,98 +674,43 @@ class TSDRReq(object):
         for variable in _TSDR_substitutions:
             s = s.replace(variable, _TSDR_substitutions[variable])
         return s
+
+class TestUM(unittest.TestCase):
+ 
+    def setUp(self):
+        pass
             
-def _selftest():
-    '''
-    simplistic self-test using supplied test data
-    '''
-    print "Plumage self-test beginning..."
-    counters = {"PASS": 0, "FAIL": 0}
-    t = TSDRReq()
-    CONTINUE_SELF_TEST = True
-    try:
+    def test_00_vanilla(self):
+        t = TSDRReq()
         t.getTSDRInfo("sn76044902.zip")
-    except IOError:
-        print "Could not open test file sn76044902.zip; self-test aborted."
-        CONTINUE_SELF_TEST = False
-    if CONTINUE_SELF_TEST:      
-        _onetest(counters, "XML expected size", len(t.XMLData), 30354)  
-        _onetest(counters, "Expected XML content",
-                 t.XMLData[0:55],
-                 r'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>')
-        _onetest(counters, "Thumbnail image consistent with JPEG format",
-                 t.ImageThumb[6:10], "JFIF")
-        _onetest(counters, "Full image consistent with PNG format",
-                 t.ImageFull[0:4], "\x89PNG")
-        _onetest(counters, "CSV expected number of rows",
-                 len(t.CSVData.split("\n")), 288)  
-        _onetest(counters, "Serial number as expected", t.TSDRMap["ApplicationNumber"], "76044902")
-        _onetest(counters, "Application date as expected",
-                 t.TSDRMap["ApplicationDate"], "2000-05-09-04:00")
-        _onetest(counters, "Raw application date consistent with truncated application date",
-                 t.TSDRMap["ApplicationDate"][0:10],  t.TSDRMap["ApplicationDateTruncated"])  
-        _onetest(counters, "Registration number as expected", t.TSDRMap["RegistrationNumber"], "2824281")
-        _onetest(counters, "Registration date as expected",
-                 t.TSDRMap["RegistrationDate"], "2004-03-23-05:00")
-        _onetest(counters, "Raw registration date consistent with truncated registration date",
-                 t.TSDRMap["RegistrationDate"][0:10],  t.TSDRMap["RegistrationDateTruncated"])
-        _onetest(counters, "Trademark text as expected",
-                 t.TSDRMap["MarkVerbalElementText"], "PYTHON")
-        _onetest(counters, "Trademark status as expected",
-                 t.TSDRMap["MarkCurrentStatusExternalDescriptionText"],
-                "A Sections 8 and 15 combined declaration has been "\
-                 "accepted and acknowledged.")
-        _onetest(counters, "Status date as expected ",
-                 t.TSDRMap["MarkCurrentStatusDate"], "2010-09-08-04:00")
-        _onetest(counters, "Raw status date consistent with truncated status date",
-                 t.TSDRMap["MarkCurrentStatusDate"][0:10],
-                 t.TSDRMap["MarkCurrentStatusDateTruncated"])  
-
-        try:
-            applicant_info = t.TSDRMap["ApplicantList"][0]    
-            applicant_found = True
-            _onetest(counters, "Trademark owner as expected",
-                 applicant_info["ApplicantName"], "PYTHON SOFTWARE FOUNDATION")
-        except IndexError:
-            applicant_found = False
-        _onetest(counters, "Applicant found correctly", applicant_found, True)
-
-        try:
-            assignment = t.TSDRMap["AssignmentList"][0]
-            assignment_found = True
-            _onetest(counters, "Assignor name as expected", assignment["AssignorEntityName"],
+        self.assertEqual(len(t.XMLData), 30354)
+        self.assertEqual(t.XMLData[0:55], r'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>')
+        self.assertEqual(t.ImageThumb[6:10], "JFIF")
+        self.assertEqual(t.ImageFull[0:4], "\x89PNG")
+        self.assertEqual(len(t.CSVData.split("\n")), 288)
+        self.assertEqual(t.TSDRMap["ApplicationNumber"], "76044902")
+        self.assertEqual(t.TSDRMap["ApplicationDate"], "2000-05-09-04:00")
+        self.assertEqual(t.TSDRMap["ApplicationDate"][0:10],  t.TSDRMap["ApplicationDateTruncated"])
+        self.assertEqual(t.TSDRMap["RegistrationNumber"], "2824281")
+        self.assertEqual(t.TSDRMap["RegistrationDate"], "2004-03-23-05:00")
+        self.assertEqual(t.TSDRMap["RegistrationDate"][0:10],  t.TSDRMap["RegistrationDateTruncated"])
+        self.assertEqual(t.TSDRMap["MarkVerbalElementText"], "PYTHON")
+        self.assertEqual(t.TSDRMap["MarkCurrentStatusExternalDescriptionText"],
+                "A Sections 8 and 15 combined declaration has been accepted and acknowledged.")
+        self.assertEqual(t.TSDRMap["MarkCurrentStatusDate"], "2010-09-08-04:00")
+        self.assertEqual(t.TSDRMap["MarkCurrentStatusDate"][0:10], t.TSDRMap["MarkCurrentStatusDateTruncated"])
+        applicant_info = t.TSDRMap["ApplicantList"][0]    
+        self.assertEqual(applicant_info["ApplicantName"], "PYTHON SOFTWARE FOUNDATION")
+        assignment = t.TSDRMap["AssignmentList"][0]
+        self.assertEqual(assignment["AssignorEntityName"],
                     "CORPORATION FOR NATIONAL RESEARCH INITIATIVES, INC.")
-            _onetest(counters, "Assignment URL as expected", assignment["AssignmentDocumentURL"],
-                    "http://assignments.uspto.gov/assignments/"\
-                     "assignment-tm-2849-0875.pdf")
-        except IndexError:
-            assignment_found = False
-        _onetest(counters, "Assignment found correctly", assignment_found, True)
-
-    print "self-test ended; %s tests passed, %s tests failed" % \
-          (counters["PASS"], counters["FAIL"])
-
-def _onetest(counters, testname, actual_value, expected_value):
-    '''
-    performs, tallies, and prints results of, a single test
-    '''
-    if actual_value == expected_value:
-        result="PASS"
-        print "PASS  Test: %s" % (testname)
-    else:
-        result = "FAIL"
-        print "FAIL  Test: %s\n  EXPECTED: >%s<\n       GOT: >%s<" % \
-              (testname, expected_value, actual_value)
-
-    counters[result] += 1
-    return result
-
+        self.assertEqual(assignment["AssignmentDocumentURL"],
+                    "http://assignments.uspto.gov/assignments/assignment-tm-2849-0875.pdf")
 
 if __name__ == "__main__":
     '''
     self-test if run as command
     '''
-    _selftest()
-
+    unittest.main()
 
 
