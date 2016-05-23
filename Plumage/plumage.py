@@ -1,7 +1,7 @@
 '''
 Plumage: Python module to obtain trademark status information from USPTO's TSDR system
 
-Copyright 2014-2015 Terry Carroll
+Copyright 2014-2016 Terry Carroll
 carroll@tjc.com
 
 License information:
@@ -30,11 +30,11 @@ except:
     SSL_INSTALLED = False
 ### PEP 476
 
-__version__ = "V. 0.9.2"
-__last_updated__ = "2015-08-11"
+__version__ = "V. 1.1.0"
+__last_updated__ = "2016-05-23"
 __author__ = "Terry Carroll"
 __URL__ = "https://github.com/codingatty"
-__copyright__ = "Copyright 2014-2015 Terry Carroll"
+__copyright__ = "Copyright 2014-2016 Terry Carroll"
 __license__ = "Apache License, version 2.0 (January 2004)"
 __licenseURL__ = "http://www.apache.org/licenses/LICENSE-2.0"
 
