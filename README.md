@@ -1,7 +1,7 @@
 Plumage-py
 ==========
 
-Plumage-py is a Python 2.7 implementation of [Plumage](https://github.com/codingatty/Plumage), a module to obtain trademark status information from USPTO's TSDR system.
+Plumage-py is a Python 2.7 implementation of [Plumage](https://github.com/codingatty/Plumage), a module to obtain trademark status information from the United States Patent & Trademark Office's (PTO) [Trademark Status & Document Retrieval](http://tsdr.uspto.gov/) (TSDR) system.  It takes as input either a registration number or application serial number, fetches the corresponding XML data from the PTO's TSDR website, and returns a dictionary of data associated with the specified TSDR entry.
 
 XSL files are sourced from the language-independent sister repository [Plumage](https://github.com/codingatty/Plumage):
 * [`ST66.xsl`](https://github.com/codingatty/Plumage/blob/master/ST66.xsl)
