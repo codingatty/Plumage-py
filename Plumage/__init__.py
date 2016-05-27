@@ -11,7 +11,7 @@ EXAMPLE
 >>> from Plumage import plumage
 >>> t = plumage.TSDRReq()
 >>> # Python trademark application, ser. no. 76/044,902
->>> t.getTSDRInfo("s", "76044902") 
+>>> t.getTSDRInfo("s", "76044902")
 >>> # Show application number and date, registration number and date...
 >>> t.tmdict["ApplicationNumber"]
 '76044902'
