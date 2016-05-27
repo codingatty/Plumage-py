@@ -22,13 +22,13 @@ import time
 import unittest
 from lxml import etree
 
-### PEP 476
+### PEP 476 begin
 try:
     import ssl
     SSL_INSTALLED = True
-except:
+except ImportError:
     SSL_INSTALLED = False
-### PEP 476
+### PEP 476 end
 
 __version__ = "V. 1.1.0"
 __last_updated__ = "2016-05-23"
@@ -47,12 +47,12 @@ class XSLTDescriptor(object):
       transform: compiled XSLT transform
     '''
 
-    def __init__(self, format):
+    def __init__(self, XMLformat):
         '''
         initialize a XSLTDescriptor object for the specified transform format
         '''
         xslt_dirname = _TSDR_dirname
-        xslt_filename = format+".xsl"
+        xslt_filename = XMLformat+".xsl"
         xslt_pathname = os.path.join(xslt_dirname, xslt_filename)
         with open(xslt_pathname) as _f:
             _stylesheet = _f.read()
@@ -133,7 +133,7 @@ class TSDRReq(object):
         self.XSLT = None
         return
 
-    def setPTOFormat(self, format):
+    def setPTOFormat(self, PTOFormat):
         '''
         Determines what format file will be fetched from the PTO.
             "ST66": ST66-format XML
@@ -143,9 +143,9 @@ class TSDRReq(object):
         If this is unset, "zip" will be assumed.
         '''
         valid_formats = ["ST66", "ST96", "zip"]
-        if format not in valid_formats:
-            raise ValueError("invalid PTO format '%s'" % format)
-        self.PTOFormat = format
+        if PTOFormat not in valid_formats:
+            raise ValueError("invalid PTO format '%s'" % PTOFormat)
+        self.PTOFormat = PTOFormat
         return
 
     def unsetPTOFormat(self):
@@ -508,7 +508,7 @@ class TSDRReq(object):
             try:
                 # see if this triggers an exception
                 f = StringIO.StringIO(text)
-                parsed_xml = etree.parse(f)
+                etree.parse(f)
                 # no exception; passes sanity check
             except etree.XMLSyntaxError, e:
                 error_reason = "getXMLData: exception(lxml.etree.XMLSyntaxError) parsing purported XML data.  "\
@@ -624,7 +624,6 @@ class TSDRReq(object):
           error_message (string): detailed error message, designed to be read by humans.
         '''
         valid_key_chars = set(string.letters + string.digits)
-        whitespace = set(string.whitespace)
         CSV_OK = True #Start out with no errors found
         no_error_found_message = "getCSVData: No obvious errors parsing XML to CSV"
         error_code = None
@@ -660,7 +659,7 @@ class TSDRReq(object):
                         % (line_number_offset+1, v, k)
                     raise ValueError
         except ValueError:
-            if error_code == None:   # Not good, something we didn't count on went wrong
+            if error_code is None:   # Not good, something we didn't count on went wrong
                 error_code = "CSV-UnknownError"
                 error_message = "getCSVData: unknown error validating CSV data"
             CSV_OK = False
