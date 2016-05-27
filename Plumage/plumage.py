@@ -66,10 +66,10 @@ class XSLTDescriptor(object):
 _TSDR_substitutions = {
     "$XSLTFILENAME$":"Not Set",                 # XSLT stylesheet file name
     "$XSLTLOCATION$":"Not Set",                 # XSLT stylesheet location (e.g., directory pathname)
-    "$IMPLEMENTATIONNAME$":"Plumage-py",          # implementation identifier
+    "$IMPLEMENTATIONNAME$":"Plumage-py",        # implementation identifier
     "$IMPLEMENTATIONVERSION$":__version__,      # implementation version no.
     "$IMPLEMENTATIONDATE$":__last_updated__,    # implementation date
-    "$IMPLEMENTATIONAUTHOR$":__author__ ,       # implementation author
+    "$IMPLEMENTATIONAUTHOR$":__author__,        # implementation author
     "$IMPLEMENTATIONURL$":__URL__,              # implementation URL
     "$IMPLEMENTATIONCOPYRIGHT$": __copyright__, # implementation copyright notice
     "$IMPLEMENTATIONLICENSE$":__license__,      # implementation license
@@ -162,7 +162,7 @@ class TSDRReq(object):
         '''
         self.XMLData = None
         self.ZipData = None
-        self.ImageFull  = None
+        self.ImageFull = None
         self.ImageThumb = None
         self.ErrorCode = None
         self.ErrorMessage = None
@@ -293,7 +293,7 @@ class TSDRReq(object):
                                 "%sn%s/info.xml"
         xml_url_template_st96 = "https://tsdrapi.uspto.gov/ts/cd/casestatus/"\
                                 "%sn%s/info.xml"
-        zip_url_template =      "https://tsdrapi.uspto.gov/ts/cd/casestatus/"\
+        zip_url_template      = "https://tsdrapi.uspto.gov/ts/cd/casestatus/"\
                                 "%sn%s/content.zip"
         pto_url_templates = {
             "ST66" : xml_url_template_st66,
@@ -534,10 +534,10 @@ class TSDRReq(object):
         if not number.isdigit():
             raise ValueError("Invalid identification number '%s' specified: " \
                              "must be all-numeric." % number)
-        if tmtype=='s':
-            expected_length=8
+        if tmtype == 's':
+            expected_length = 8
         else:
-            expected_length=7
+            expected_length = 7
         if len(number) != expected_length:
             raise ValueError("Invalid identification number '%s' specified: "\
                              "type %s should be %s digits." % \
@@ -548,7 +548,7 @@ class TSDRReq(object):
         process a zip file, completing appropriate fields of the TSDRReq
         '''
         # basic task, getting the xml data:
-        zipf = zipfile.ZipFile(stringio_file,"r")
+        zipf = zipfile.ZipFile(stringio_file, "r")
         xmlfiles = [name for name in zipf.namelist()
                     if name.lower().endswith(".xml")]
         assert len(xmlfiles) == 1
@@ -631,7 +631,7 @@ class TSDRReq(object):
         error_message = no_error_found_message
         try:
             lines = self.CSVData.split("\n")
-            if len(lines) <2:
+            if len(lines) < 2:
                 error_code = "CSV-ShortCSV"
                 error_message = "getCSVData: XML parsed to fewer than 2 lines of CSV"
                 raise ValueError
@@ -644,7 +644,7 @@ class TSDRReq(object):
                         "no key-value pair found in line <%s> (missing comma)" \
                         % (line_number_offset+1, line)
                     raise ValueError
-                k,v = line.split(',',1)
+                k, v = line.split(',', 1)
                 if not set(k).issubset(valid_key_chars):
                     error_code = "CSV-InvalidKey"
                     error_message = "getCSVData [line %s]: " \
@@ -689,22 +689,22 @@ class TestUM(unittest.TestCase):
         self.assertEqual(len(t.CSVData.split("\n")), 288)
         self.assertEqual(t.TSDRMap["ApplicationNumber"], "76044902")
         self.assertEqual(t.TSDRMap["ApplicationDate"], "2000-05-09-04:00")
-        self.assertEqual(t.TSDRMap["ApplicationDate"][0:10],  t.TSDRMap["ApplicationDateTruncated"])
+        self.assertEqual(t.TSDRMap["ApplicationDate"][0:10], t.TSDRMap["ApplicationDateTruncated"])
         self.assertEqual(t.TSDRMap["RegistrationNumber"], "2824281")
         self.assertEqual(t.TSDRMap["RegistrationDate"], "2004-03-23-05:00")
-        self.assertEqual(t.TSDRMap["RegistrationDate"][0:10],  t.TSDRMap["RegistrationDateTruncated"])
+        self.assertEqual(t.TSDRMap["RegistrationDate"][0:10], t.TSDRMap["RegistrationDateTruncated"])
         self.assertEqual(t.TSDRMap["MarkVerbalElementText"], "PYTHON")
         self.assertEqual(t.TSDRMap["MarkCurrentStatusExternalDescriptionText"],
-                "A Sections 8 and 15 combined declaration has been accepted and acknowledged.")
+                         "A Sections 8 and 15 combined declaration has been accepted and acknowledged.")
         self.assertEqual(t.TSDRMap["MarkCurrentStatusDate"], "2010-09-08-04:00")
         self.assertEqual(t.TSDRMap["MarkCurrentStatusDate"][0:10], t.TSDRMap["MarkCurrentStatusDateTruncated"])
         applicant_info = t.TSDRMap["ApplicantList"][0]
         self.assertEqual(applicant_info["ApplicantName"], "PYTHON SOFTWARE FOUNDATION")
         assignment = t.TSDRMap["AssignmentList"][0]
         self.assertEqual(assignment["AssignorEntityName"],
-                    "CORPORATION FOR NATIONAL RESEARCH INITIATIVES, INC.")
+                         "CORPORATION FOR NATIONAL RESEARCH INITIATIVES, INC.")
         self.assertEqual(assignment["AssignmentDocumentURL"],
-                    "http://assignments.uspto.gov/assignments/assignment-tm-2849-0875.pdf")
+                         "http://assignments.uspto.gov/assignments/assignment-tm-2849-0875.pdf")
 
 if __name__ == "__main__":
     '''
