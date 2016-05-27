@@ -13,7 +13,6 @@ Anyone who makes use of, or who modifies, this code is encouraged
 (but not required) to notify the author.
 '''
 
-from lxml import etree
 import StringIO
 import zipfile
 import os.path
@@ -21,6 +20,7 @@ import string
 import urllib2
 import time
 import unittest
+from lxml import etree
 
 ### PEP 476
 try:
@@ -674,12 +674,18 @@ class TSDRReq(object):
             s = s.replace(variable, _TSDR_substitutions[variable])
         return s
 
-class TestUM(unittest.TestCase):
+class TestSelf(unittest.TestCase):
+    '''
+    Simple self-test
+    '''
 
     def setUp(self):
         pass
 
-    def test_00_vanilla(self):
+    def test_00_selftest(self):
+        '''
+        Simple self-test
+        '''
         t = TSDRReq()
         t.getTSDRInfo("sn76044902.zip")
         self.assertEqual(len(t.XMLData), 30354)
@@ -707,9 +713,7 @@ class TestUM(unittest.TestCase):
                          "http://assignments.uspto.gov/assignments/assignment-tm-2849-0875.pdf")
 
 if __name__ == "__main__":
-    '''
-    self-test if run as command
-    '''
+    # self-test if run as command
     unittest.main()
 
 
