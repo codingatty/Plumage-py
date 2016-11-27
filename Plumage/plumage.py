@@ -184,6 +184,7 @@ class TSDRReq(object):
         Resets TSDR mapping
         '''
         self.TSDRMap = None
+        self.TSDRMapLists = None
         self.TSDRMapIsValid = False
         return
 
@@ -207,6 +208,7 @@ class TSDRReq(object):
             self.ImageFull (optional)
             self.CSVData
             self.TSDRMap
+            self.TSDRMapLists
         '''
         self.getXMLData(identifier, tmtype)
         if self.XMLDataIsValid:
@@ -234,6 +236,7 @@ class TSDRReq(object):
             self.ImageFull (optional)
             self.CSVData
             self.TSDRMap
+            self.TSDRMapLists
         '''
         self.resetXMLData()        # Clear out any data from prior use
         if tmtype is None:
@@ -413,6 +416,7 @@ class TSDRReq(object):
             self.CSVData
         Sets:
             self.TSDRMap
+            self.TSDRMapLists
         '''
         # note on general strategy:
         # generally, we read key/value pairs and simply add to dictionary
@@ -463,16 +467,8 @@ class TSDRReq(object):
                 current_dict = output_dict
             else:
                 current_dict[key] = data
-        output_dict.update(repeated_item_dict)
-        ### (This was a misguided idea, removed)
-        ###
-        ### First-listed applicant is current owner, so if it's there (and it
-        ### should be), promote it up to main list
-        ### if "ApplicantList" in repeated_item_dict.keys():
-        ###    primary_applicant_dict = repeated_item_dict["ApplicantList"][0]
-        ###    output_dict.update(primary_applicant_dict)
-        ###
         self.TSDRMap = output_dict
+        self.TSDRMapLists = repeated_item_dict
         self.TSDRMapIsValid = True
         return
 
@@ -703,12 +699,14 @@ class TestSelf(unittest.TestCase):
                          "A Sections 8 and 15 combined declaration has been accepted and acknowledged.")
         self.assertEqual(t.TSDRMap["MarkCurrentStatusDate"], "2010-09-08-04:00")
         self.assertEqual(t.TSDRMap["MarkCurrentStatusDate"][0:10], t.TSDRMap["MarkCurrentStatusDateTruncated"])
-        applicant_info = t.TSDRMap["ApplicantList"][0]
-        self.assertEqual(applicant_info["ApplicantName"], "PYTHON SOFTWARE FOUNDATION")
-        assignment = t.TSDRMap["AssignmentList"][0]
-        self.assertEqual(assignment["AssignorEntityName"],
+        applicant_list = t.TSDRMapLists["ApplicantList"]
+        applicant_info = applicant_list[0]    
+        self.assertEqual(applicant_info["ApplicantName"], "PYTHON SOFTWARE FOUNDATION")      
+        assignment_list = t.TSDRMapLists["AssignmentList"]
+        assignment_0 = assignment_list[0] # Zeroth (most recent) assignment
+        self.assertEqual(assignment_0["AssignorEntityName"],
                          "CORPORATION FOR NATIONAL RESEARCH INITIATIVES, INC.")
-        self.assertEqual(assignment["AssignmentDocumentURL"],
+        self.assertEqual(assignment_0["AssignmentDocumentURL"],
                          "http://assignments.uspto.gov/assignments/assignment-tm-2849-0875.pdf")
 
 if __name__ == "__main__":
