@@ -9,6 +9,8 @@ License information:
 This program is licensed under Apache License, version 2.0 (January 2004),
 http://www.apache.org/licenses/LICENSE-2.0
 
+SPX-License-Identifier: Apache-2.0
+
 Anyone who makes use of, or who modifies, this code is encouraged
 (but not required) to notify the author.
 '''
@@ -36,6 +38,7 @@ __author__ = "Terry Carroll"
 __URL__ = "https://github.com/codingatty"
 __copyright__ = "Copyright 2014-2016 Terry Carroll"
 __license__ = "Apache License, version 2.0 (January 2004)"
+__SPDX_LID__ = "Apache-2.0"
 __licenseURL__ = "http://www.apache.org/licenses/LICENSE-2.0"
 
 class XSLTDescriptor(object):
@@ -73,6 +76,7 @@ _TSDR_substitutions = {
     "$IMPLEMENTATIONURL$":__URL__,              # implementation URL
     "$IMPLEMENTATIONCOPYRIGHT$": __copyright__, # implementation copyright notice
     "$IMPLEMENTATIONLICENSE$":__license__,      # implementation license
+    "$IMPLEMENTATIONSPDXLID$":__SPDX_LID__,      # implementation license SPDX ID
     "$IMPLEMENTATIONLICENSEURL$":__licenseURL__, #Implementation license URL
     "$EXECUTIONDATETIME$":"Not Set",            # Execution time (set at runtime)
     "$XMLSOURCE$":"Not Set"                     # URL or pathname of XML source (set at runtime)

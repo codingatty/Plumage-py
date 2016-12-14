@@ -19,6 +19,7 @@ DiagnosticInfoXSLTAuthor,"Terry Carroll"<xsl:text/>
 DiagnosticInfoXSLTURL,"https://github.com/codingatty/Plumage"<xsl:text/>
 DiagnosticInfoXSLTCopyright,"Copyright 2014-2016 Terry Carroll"<xsl:text/>
 DiagnosticInfoXSLTLicense,"Apache License, version 2.0 (January 2004)"<xsl:text/>
+DiagnosticInfoXSLTSPDXLicenseIdentifier,"Apache-2.0"<xsl:text/>
 DiagnosticInfoXSLTLicenseURL,"http://www.apache.org/licenses/LICENSE-2.0"<xsl:text/>
 DiagnosticInfoImplementationName,"$IMPLEMENTATIONNAME$"<xsl:text/>
 DiagnosticInfoImplementationVersion,"$IMPLEMENTATIONVERSION$"<xsl:text/>
@@ -27,6 +28,7 @@ DiagnosticInfoImplementationAuthor,"$IMPLEMENTATIONAUTHOR$"<xsl:text/>
 DiagnosticInfoImplementationURL,"$IMPLEMENTATIONURL$"<xsl:text/>
 DiagnosticInfoImplementationCopyright,"$IMPLEMENTATIONCOPYRIGHT$"<xsl:text/>
 DiagnosticInfoImplementationLicense,"$IMPLEMENTATIONLICENSE$"<xsl:text/>
+DiagnosticInfoImplementationSPDXLicenseIdentifier,"$IMPLEMENTATIONSPDXLID$"<xsl:text/>
 DiagnosticInfoImplementationLicenseURL,"$IMPLEMENTATIONLICENSEURL$"<xsl:text/>
 DiagnosticInfoExecutionDateTime,"$EXECUTIONDATETIME$"<xsl:text/>
 DiagnosticInfoXMLSource,"$XMLSOURCE$"<xsl:text/>
