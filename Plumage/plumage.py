@@ -35,7 +35,7 @@ except ImportError:
 __version__ = "V. 1.1.0"
 __last_updated__ = "2016-05-23"
 __author__ = "Terry Carroll"
-__URL__ = "https://github.com/codingatty"
+__URL__ = "https://github.com/codingatty/Plumage-py"
 __copyright__ = "Copyright 2014-2016 Terry Carroll"
 __license__ = "Apache License, version 2.0 (January 2004)"
 __SPDX_LID__ = "Apache-2.0"
@@ -65,6 +65,22 @@ class XSLTDescriptor(object):
         self.location = xslt_dirname
         self.pathname = xslt_pathname
         self.transform = transform
+
+class TSDRMap(object):
+    '''
+    Object to hold the final results from TSDR
+      TSDRSingle: dictionary of one-valued attributes; e.g.,
+        registration number, application date etc.
+      TSDRMulti: Lists of multi-valued attributes; e.g. assignments, events, etc
+    '''
+
+    def __init__(self):
+        '''
+        initialize TSDRMap object; initial state: not valid and nulls for TSDRSingle and TSDRMulti
+        '''
+        self.TSDRSingle = None
+        self.TSDRMulti = None
+        self.TSDRMapIsValid = False
 
 _TSDR_substitutions = {
     "$XSLTFILENAME$":"Not Set",                 # XSLT stylesheet file name
@@ -187,9 +203,7 @@ class TSDRReq(object):
         '''
         Resets TSDR mapping
         '''
-        self.TSDRMap = None
-        self.TSDRMapLists = None
-        self.TSDRMapIsValid = False
+        self.TSDRMap = TSDRMap()
         return
 
     def getTSDRInfo(self, identifier=None, tmtype=None):
@@ -212,7 +226,6 @@ class TSDRReq(object):
             self.ImageFull (optional)
             self.CSVData
             self.TSDRMap
-            self.TSDRMapLists
         '''
         self.getXMLData(identifier, tmtype)
         if self.XMLDataIsValid:
@@ -240,7 +253,6 @@ class TSDRReq(object):
             self.ImageFull (optional)
             self.CSVData
             self.TSDRMap
-            self.TSDRMapLists
         '''
         self.resetXMLData()        # Clear out any data from prior use
         if tmtype is None:
@@ -420,7 +432,6 @@ class TSDRReq(object):
             self.CSVData
         Sets:
             self.TSDRMap
-            self.TSDRMapLists
         '''
         # note on general strategy:
         # generally, we read key/value pairs and simply add to dictionary
@@ -471,9 +482,10 @@ class TSDRReq(object):
                 current_dict = output_dict
             else:
                 current_dict[key] = data
-        self.TSDRMap = output_dict
-        self.TSDRMapLists = repeated_item_dict
-        self.TSDRMapIsValid = True
+        tsdrmap = self.TSDRMap
+        tsdrmap.TSDRSingle = output_dict
+        tsdrmap.TSDRMulti = repeated_item_dict
+        tsdrmap.TSDRMapIsValid = True
         return
 
     def _processFileContents(self, filedata):
@@ -691,22 +703,27 @@ class TestSelf(unittest.TestCase):
         self.assertEqual(t.XMLData[0:55], r'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>')
         self.assertEqual(t.ImageThumb[6:10], "JFIF")
         self.assertEqual(t.ImageFull[0:4], "\x89PNG")
-        self.assertEqual(len(t.CSVData.split("\n")), 288)
-        self.assertEqual(t.TSDRMap["ApplicationNumber"], "76044902")
-        self.assertEqual(t.TSDRMap["ApplicationDate"], "2000-05-09-04:00")
-        self.assertEqual(t.TSDRMap["ApplicationDate"][0:10], t.TSDRMap["ApplicationDateTruncated"])
-        self.assertEqual(t.TSDRMap["RegistrationNumber"], "2824281")
-        self.assertEqual(t.TSDRMap["RegistrationDate"], "2004-03-23-05:00")
-        self.assertEqual(t.TSDRMap["RegistrationDate"][0:10], t.TSDRMap["RegistrationDateTruncated"])
-        self.assertEqual(t.TSDRMap["MarkVerbalElementText"], "PYTHON")
-        self.assertEqual(t.TSDRMap["MarkCurrentStatusExternalDescriptionText"],
+        #print t.CSVData
+        self.assertEqual(len(t.CSVData.split("\n")), 290)
+        tmap = t.TSDRMap
+        self.assertEqual(tmap.TSDRSingle["ApplicationNumber"], "76044902")
+        self.assertEqual(tmap.TSDRSingle["ApplicationDate"], "2000-05-09-04:00")
+        self.assertEqual(tmap.TSDRSingle["ApplicationDate"][0:10],
+                         tmap.TSDRSingle["ApplicationDateTruncated"])
+        self.assertEqual(tmap.TSDRSingle["RegistrationNumber"], "2824281")
+        self.assertEqual(tmap.TSDRSingle["RegistrationDate"], "2004-03-23-05:00")
+        self.assertEqual(tmap.TSDRSingle["RegistrationDate"][0:10],
+                         tmap.TSDRSingle["RegistrationDateTruncated"])
+        self.assertEqual(tmap.TSDRSingle["MarkVerbalElementText"], "PYTHON")
+        self.assertEqual(tmap.TSDRSingle["MarkCurrentStatusExternalDescriptionText"],
                          "A Sections 8 and 15 combined declaration has been accepted and acknowledged.")
-        self.assertEqual(t.TSDRMap["MarkCurrentStatusDate"], "2010-09-08-04:00")
-        self.assertEqual(t.TSDRMap["MarkCurrentStatusDate"][0:10], t.TSDRMap["MarkCurrentStatusDateTruncated"])
-        applicant_list = t.TSDRMapLists["ApplicantList"]
+        self.assertEqual(tmap.TSDRSingle["MarkCurrentStatusDate"], "2010-09-08-04:00")
+        self.assertEqual(tmap.TSDRSingle["MarkCurrentStatusDate"][0:10],
+                         tmap.TSDRSingle["MarkCurrentStatusDateTruncated"])
+        applicant_list = tmap.TSDRMulti["ApplicantList"]
         applicant_info = applicant_list[0]    
         self.assertEqual(applicant_info["ApplicantName"], "PYTHON SOFTWARE FOUNDATION")      
-        assignment_list = t.TSDRMapLists["AssignmentList"]
+        assignment_list = tmap.TSDRMulti["AssignmentList"]
         assignment_0 = assignment_list[0] # Zeroth (most recent) assignment
         self.assertEqual(assignment_0["AssignorEntityName"],
                          "CORPORATION FOR NATIONAL RESEARCH INITIATIVES, INC.")
