@@ -1,14 +1,14 @@
 '''
 Plumage: Python module to obtain trademark status information from USPTO's TSDR system
 
-Copyright 2014-2016 Terry Carroll
+Version 1.2.0, 2016-03-15
+Copyright 2014-2017 Terry Carroll
 carroll@tjc.com
 
 License information:
 
-This program is licensed under Apache License, version 2.0 (January 2004),
-http://www.apache.org/licenses/LICENSE-2.0
-
+This program is licensed under Apache License, version 2.0 (January 2004);
+see http://www.apache.org/licenses/LICENSE-2.0
 SPX-License-Identifier: Apache-2.0
 
 Anyone who makes use of, or who modifies, this code is encouraged
@@ -32,11 +32,11 @@ except ImportError:
     SSL_INSTALLED = False
 ### PEP 476 end
 
-__version__ = "V. 1.1.0"
-__last_updated__ = "2016-05-23"
+__version__ = "V. 1.2.0"
+__last_updated__ = "2017-03-14"
 __author__ = "Terry Carroll"
 __URL__ = "https://github.com/codingatty/Plumage-py"
-__copyright__ = "Copyright 2014-2016 Terry Carroll"
+__copyright__ = "Copyright 2014-2017 Terry Carroll"
 __license__ = "Apache License, version 2.0 (January 2004)"
 __SPDX_LID__ = "Apache-2.0"
 __licenseURL__ = "http://www.apache.org/licenses/LICENSE-2.0"
@@ -92,7 +92,7 @@ _TSDR_substitutions = {
     "$IMPLEMENTATIONURL$":__URL__,              # implementation URL
     "$IMPLEMENTATIONCOPYRIGHT$": __copyright__, # implementation copyright notice
     "$IMPLEMENTATIONLICENSE$":__license__,      # implementation license
-    "$IMPLEMENTATIONSPDXLID$":__SPDX_LID__,      # implementation license SPDX ID
+    "$IMPLEMENTATIONSPDXLID$":__SPDX_LID__,     # implementation license SPDX ID
     "$IMPLEMENTATIONLICENSEURL$":__licenseURL__, #Implementation license URL
     "$EXECUTIONDATETIME$":"Not Set",            # Execution time (set at runtime)
     "$XMLSOURCE$":"Not Set"                     # URL or pathname of XML source (set at runtime)
@@ -196,14 +196,14 @@ class TSDRReq(object):
         '''
         self.CSVData = None
         self.CSVDataIsValid = False
-        self.resetTSDRMap()
+        self.resetTSDRData()
         return
 
-    def resetTSDRMap(self):
+    def resetTSDRData(self):
         '''
         Resets TSDR mapping
         '''
-        self.TSDRMap = TSDRMap()
+        self.TSDRData = TSDRMap()
         return
 
     def getTSDRInfo(self, identifier=None, tmtype=None):
@@ -225,13 +225,13 @@ class TSDRReq(object):
             self.ImageThumb (optional)
             self.ImageFull (optional)
             self.CSVData
-            self.TSDRMap
+            self.TSDRData
         '''
         self.getXMLData(identifier, tmtype)
         if self.XMLDataIsValid:
             self.getCSVData()
             if self.CSVDataIsValid:
-                self.getTSDRMap()
+                self.getTSDRData()
         return
 
     def getXMLData(self, identifier=None, tmtype=None):
@@ -252,7 +252,7 @@ class TSDRReq(object):
             self.ImageThumb (optional)
             self.ImageFull (optional)
             self.CSVData
-            self.TSDRMap
+            self.TSDRData
         '''
         self.resetXMLData()        # Clear out any data from prior use
         if tmtype is None:
@@ -420,7 +420,7 @@ class TSDRReq(object):
             self.ErrorMessage = errmsg
         return
 
-    def getTSDRMap(self):
+    def getTSDRData(self):
         '''
         Refactor key/data pairs to dictionary.
 
@@ -431,7 +431,7 @@ class TSDRReq(object):
         Reads:
             self.CSVData
         Sets:
-            self.TSDRMap
+            self.TSDRData
         '''
         # note on general strategy:
         # generally, we read key/value pairs and simply add to dictionary
@@ -451,7 +451,7 @@ class TSDRReq(object):
         # First-found "Applicant" is deemed current applicant, so copy that one to
         # the main entry.
 
-        self.resetTSDRMap()     # Clear out any data from prior use
+        self.resetTSDRData()     # Clear out any data from prior use
 
         if not self.CSVDataIsValid:
             self.ErrorCode = "Map-NoValidCSV"
@@ -482,10 +482,10 @@ class TSDRReq(object):
                 current_dict = output_dict
             else:
                 current_dict[key] = data
-        tsdrmap = self.TSDRMap
-        tsdrmap.TSDRSingle = output_dict
-        tsdrmap.TSDRMulti = repeated_item_dict
-        tsdrmap.TSDRMapIsValid = True
+        tsdrdata = self.TSDRData
+        tsdrdata.TSDRSingle = output_dict
+        tsdrdata.TSDRMulti = repeated_item_dict
+        tsdrdata.TSDRMapIsValid = True
         return
 
     def _processFileContents(self, filedata):
@@ -705,7 +705,7 @@ class TestSelf(unittest.TestCase):
         self.assertEqual(t.ImageFull[0:4], "\x89PNG")
         #print t.CSVData
         self.assertEqual(len(t.CSVData.split("\n")), 290)
-        tmap = t.TSDRMap
+        tmap = t.TSDRData
         self.assertEqual(tmap.TSDRSingle["ApplicationNumber"], "76044902")
         self.assertEqual(tmap.TSDRSingle["ApplicationDate"], "2000-05-09-04:00")
         self.assertEqual(tmap.TSDRSingle["ApplicationDate"][0:10],
