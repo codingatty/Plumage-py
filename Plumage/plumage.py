@@ -361,7 +361,7 @@ class TSDRReq(object):
         XML format and use the appropriate transform supplied as part of
         Plumage.
 
-        Either getTDSRDataFromPTO or getTDSRDataFromFile must be
+        Either getXMLDataFromPTO or getXMLDataFromFile must be
         successfully invoked before using this method.
 
         Parameters: none.
@@ -705,25 +705,25 @@ class TestSelf(unittest.TestCase):
         self.assertEqual(t.ImageFull[0:4], "\x89PNG")
         #print t.CSVData
         self.assertEqual(len(t.CSVData.split("\n")), 290)
-        tmap = t.TSDRData
-        self.assertEqual(tmap.TSDRSingle["ApplicationNumber"], "76044902")
-        self.assertEqual(tmap.TSDRSingle["ApplicationDate"], "2000-05-09-04:00")
-        self.assertEqual(tmap.TSDRSingle["ApplicationDate"][0:10],
-                         tmap.TSDRSingle["ApplicationDateTruncated"])
-        self.assertEqual(tmap.TSDRSingle["RegistrationNumber"], "2824281")
-        self.assertEqual(tmap.TSDRSingle["RegistrationDate"], "2004-03-23-05:00")
-        self.assertEqual(tmap.TSDRSingle["RegistrationDate"][0:10],
-                         tmap.TSDRSingle["RegistrationDateTruncated"])
-        self.assertEqual(tmap.TSDRSingle["MarkVerbalElementText"], "PYTHON")
-        self.assertEqual(tmap.TSDRSingle["MarkCurrentStatusExternalDescriptionText"],
+        tsdrdata=t.TSDRData
+        self.assertEqual(tsdrdata.TSDRSingle["ApplicationNumber"], "76044902")
+        self.assertEqual(tsdrdata.TSDRSingle["ApplicationDate"], "2000-05-09-04:00")
+        self.assertEqual(tsdrdata.TSDRSingle["ApplicationDate"][0:10],
+                         tsdrdata.TSDRSingle["ApplicationDateTruncated"])
+        self.assertEqual(tsdrdata.TSDRSingle["RegistrationNumber"], "2824281")
+        self.assertEqual(tsdrdata.TSDRSingle["RegistrationDate"], "2004-03-23-05:00")
+        self.assertEqual(tsdrdata.TSDRSingle["RegistrationDate"][0:10],
+                         tsdrdata.TSDRSingle["RegistrationDateTruncated"])
+        self.assertEqual(tsdrdata.TSDRSingle["MarkVerbalElementText"], "PYTHON")
+        self.assertEqual(tsdrdata.TSDRSingle["MarkCurrentStatusExternalDescriptionText"],
                          "A Sections 8 and 15 combined declaration has been accepted and acknowledged.")
-        self.assertEqual(tmap.TSDRSingle["MarkCurrentStatusDate"], "2010-09-08-04:00")
-        self.assertEqual(tmap.TSDRSingle["MarkCurrentStatusDate"][0:10],
-                         tmap.TSDRSingle["MarkCurrentStatusDateTruncated"])
-        applicant_list = tmap.TSDRMulti["ApplicantList"]
+        self.assertEqual(tsdrdata.TSDRSingle["MarkCurrentStatusDate"], "2010-09-08-04:00")
+        self.assertEqual(tsdrdata.TSDRSingle["MarkCurrentStatusDate"][0:10],
+                         tsdrdata.TSDRSingle["MarkCurrentStatusDateTruncated"])
+        applicant_list = tsdrdata.TSDRMulti["ApplicantList"]
         applicant_info = applicant_list[0]    
         self.assertEqual(applicant_info["ApplicantName"], "PYTHON SOFTWARE FOUNDATION")      
-        assignment_list = tmap.TSDRMulti["AssignmentList"]
+        assignment_list = tsdrdata.TSDRMulti["AssignmentList"]
         assignment_0 = assignment_list[0] # Zeroth (most recent) assignment
         self.assertEqual(assignment_0["AssignorEntityName"],
                          "CORPORATION FOR NATIONAL RESEARCH INITIATIVES, INC.")
