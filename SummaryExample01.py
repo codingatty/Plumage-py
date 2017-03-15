@@ -1,8 +1,8 @@
 from Plumage import plumage
 t = plumage.TSDRReq()
 t.getTSDRInfo("2564831", "r")   # get info on reg. no 2,564,831
-if t.TSDRData.TSDRMapIsValid:
-   tsdrdata=t.TSDRData
+tsdrdata=t.TSDRData
+if tsdrdata.TSDRMapIsValid:
    print "Application serial no: ", tsdrdata.TSDRSingle["ApplicationNumber"]
    print "Trademark text: ", tsdrdata.TSDRSingle["MarkVerbalElementText"]
    print "Application filing date: ", tsdrdata.TSDRSingle["ApplicationDate"]

@@ -699,13 +699,15 @@ class TestSelf(unittest.TestCase):
         '''
         t = TSDRReq()
         t.getTSDRInfo("sn76044902.zip")
+        self.assertTrue(t.XMLDataIsValid)
         self.assertEqual(len(t.XMLData), 30354)
         self.assertEqual(t.XMLData[0:55], r'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>')
         self.assertEqual(t.ImageThumb[6:10], "JFIF")
         self.assertEqual(t.ImageFull[0:4], "\x89PNG")
-        #print t.CSVData
+        self.assertTrue(t.CSVDataIsValid)
         self.assertEqual(len(t.CSVData.split("\n")), 290)
         tsdrdata=t.TSDRData
+        self.assertTrue(tsdrdata.TSDRMapIsValid)
         self.assertEqual(tsdrdata.TSDRSingle["ApplicationNumber"], "76044902")
         self.assertEqual(tsdrdata.TSDRSingle["ApplicationDate"], "2000-05-09-04:00")
         self.assertEqual(tsdrdata.TSDRSingle["ApplicationDate"][0:10],
