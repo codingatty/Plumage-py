@@ -41,7 +41,11 @@ __license__ = "Apache License, version 2.0 (January 2004)"
 __SPDX_LID__ = "Apache-2.0"
 __licenseURL__ = "http://www.apache.org/licenses/LICENSE-2.0"
 
-class XSLTDescriptor(object):
+COMMA = ","
+LINE_SEPARATOR = "\n"
+WHITESPACE = string.whitespace
+        
+class _XSLTDescriptor(object):
     '''
     Object used to organize information relating to pre-defined XSLT transforms
       filename: name of XSLT file
@@ -52,7 +56,7 @@ class XSLTDescriptor(object):
 
     def __init__(self, XMLformat):
         '''
-        initialize a XSLTDescriptor object for the specified transform format
+        initialize a _XSLTDescriptor object for the specified transform format
         '''
         xslt_dirname = _TSDR_dirname
         xslt_filename = XMLformat+".xsl"
@@ -101,8 +105,8 @@ _TSDR_substitutions = {
 _TSDR_dirname = os.path.dirname(__file__)
 
 _xslt_table = {
-    "ST66" : XSLTDescriptor("ST66"),
-    "ST96" : XSLTDescriptor("ST96")
+    "ST66" : _XSLTDescriptor("ST66"),
+    "ST96" : _XSLTDescriptor("ST96")
     }
 
 class TSDRReq(object):
@@ -408,16 +412,16 @@ class TSDRReq(object):
             _TSDR_substitutions["$XSLTLOCATION$"] = xslt_transform_info.location
         # Transform
         transformed_tree = transform(parsed_xml)
-        pairs = self._perform_substitution(str(transformed_tree))
-        self.CSVData = pairs
+        csv_string = self._perform_substitution(str(transformed_tree))
+        self.CSVData = self._normalize_empty_lines(csv_string)
 
-        (csvvalid, errcode, errmsg) = self._validateCSV()
-        if csvvalid:
+        csvresults = self._validateCSV()
+        if csvresults.CSV_OK:
             self.CSVDataIsValid = True
         else:
             self.CSVDataIsValid = False
-            self.ErrorCode = errcode
-            self.ErrorMessage = errmsg
+            self.ErrorCode = csvresults.error_code
+            self.ErrorMessage = csvresults.error_message
         return
 
     def getTSDRData(self):
@@ -463,8 +467,9 @@ class TSDRReq(object):
 
         current_dict = output_dict
         lines = self.CSVData.split("\n")
+        lines = self._drop_empty_lines(lines)
         for line in lines:
-            ## print "line: -->"+line+"<"
+            print "line: -->"+line+"<"
             [key, data] = line.split(',', 1)
             # normally, there will be quote marks; strip them off
             if data[0] == data[-1] == '"':
@@ -611,6 +616,50 @@ class TSDRReq(object):
             result = tag_map[tag]
         return result
 
+    def _normalize_empty_lines(self, string_of_lines):
+        '''
+        This method takes a string of lines, separated by the system line separator
+        characteor (e.g. \n), and eliminates lines that are empty or consisting entirely of
+        whitespace. Its purpose is to relax what input is accepted from the the XSLT process,
+        so that including empty lines is permitted and whether the final line ends with a
+        newline is immaterial.
+        '''
+        print len(string_of_lines)
+        lines = string_of_lines.split(LINE_SEPARATOR)
+        lines = self._drop_empty_lines(lines)
+        reassembled_string_of_lines = LINE_SEPARATOR.join(lines) + LINE_SEPARATOR
+        print len(reassembled_string_of_lines)
+        return reassembled_string_of_lines
+
+    def _drop_empty_lines(self, lines):
+        '''
+        This method takes a list of lines and drops those that are empty, where "empty"
+        means either zero-length or consisting only of whitespace.
+        '''
+        # if anything is left after stripping away leading and trailing whitespace, keep it
+        lines = [line for line in lines if len(line.strip(WHITESPACE))>0]
+        return lines
+
+    class _validateCSVResponse(object):
+        '''
+        Object used to hold response from _validateCSV
+        Note: a simple list would be fine, but a full-fledged response object is used
+        for consistency with C# and Java implementations
+          CSV_OK (boolean): status of whether CSV passes sanity check; if True, error_code and error_message
+                are not meaningful
+          error_code (string): short error code, designed to be inspected by calling program.
+          error_message (string): detailed error message, designed to be read by humans
+        '''
+
+        def __init__(self):
+            '''
+            initialize a _validateCSVResponse
+            '''
+            self.CSV_OK = True
+            no_error_found_message = "getCSVData: No obvious errors parsing XML to CSV."
+            self.error_code = None
+            self.error_message = no_error_found_message
+
     def _validateCSV(self):
         '''
         validateCSV performs a naive sanity-check of the CSV for obvious errors.
@@ -629,53 +678,54 @@ class TSDRReq(object):
               - No spaces or other whitespace anywhere except in VALUE, inside the
                 quotes; not even before/after the comma or after "VALUE".
 
-        Returns:
-          CSV_OK (boolean): True if no errors found, else False;
-          error_code (string): short error code, designed to be inspected by calling
-          program;
-          error_message (string): detailed error message, designed to be read by humans.
+        Returns _validateCSVResponse object
         '''
+        result = self._validateCSVResponse()
+        comma = ","
+        line_separator = "\n"
         valid_key_chars = set(string.letters + string.digits)
-        CSV_OK = True #Start out with no errors found
-        no_error_found_message = "getCSVData: No obvious errors parsing XML to CSV"
-        error_code = None
-        error_message = no_error_found_message
+        # following lines are to inject errors for testing
+        # self.CSVData = "MadeupKey1,\"MadeupValue1\""  # NG
+        # self.CSVData = "MadeupKey1,\"MadeupValue1\"" + line_separator # NG
+        # self.CSVData = "MadeupKey1,\"MadeupValue1\"" + line_separator + "MadeupKey2,\"MadeupValue2\""; # OK
+        # self.CSVData = "MadeupKey1,\"MadeupValue1\"" + line_separator + "MadeupKey2,\"MadeupValue2\"" + line_separator # OK
         try:
-            lines = self.CSVData.split("\n")
+            lines = self.CSVData.split(line_separator)
+            lines = self._drop_empty_lines(lines)
             if len(lines) < 2:
-                error_code = "CSV-ShortCSV"
-                error_message = "getCSVData: XML parsed to fewer than 2 lines of CSV"
+                result.error_code = "CSV-ShortCSV"
+                result.error_message = "getCSVData: XML parsed to fewer than 2 lines of CSV"
                 raise ValueError
             for line_number_offset in range(0, len(lines)):
                 line = lines[line_number_offset]
                 comma_position = line.find(',')
                 if comma_position == -1:
-                    error_code = "CSV-InvalidKeyValuePair"
-                    error_message = "getCSVData [line %s]: " \
+                    result.error_code = "CSV-InvalidKeyValuePair"
+                    result.error_message = "getCSVData [line %s]: " \
                         "no key-value pair found in line <%s> (missing comma)" \
                         % (line_number_offset+1, line)
                     raise ValueError
                 k, v = line.split(',', 1)
                 if not set(k).issubset(valid_key_chars):
-                    error_code = "CSV-InvalidKey"
-                    error_message = "getCSVData [line %s]: " \
+                    result.error_code = "CSV-InvalidKey"
+                    result.error_message = "getCSVData [line %s]: " \
                         "invalid key <%s> found (invalid characters in key)" \
                         % (line_number_offset+1, k)
                     raise ValueError
                 stripped_v = v[1:-1]
                 if '"' + stripped_v + '"' != v:
-                    error_code = "CSV-InvalidValue"
-                    error_message = "getCSVData [line %s]: " \
+                    result.error_code = "CSV-InvalidValue"
+                    result.error_message = "getCSVData [line %s]: " \
                         "invalid value <%s> found for key <%s> " \
                         "(does not begin and end with double-quote character)" \
                         % (line_number_offset+1, v, k)
                     raise ValueError
         except ValueError:
-            if error_code is None:   # Not good, something we didn't count on went wrong
-                error_code = "CSV-UnknownError"
-                error_message = "getCSVData: unknown error validating CSV data"
-            CSV_OK = False
-        return (CSV_OK, error_code, error_message)
+            if result.error_code is None:   # Not good, something we didn't count on went wrong
+                result.error_code = "CSV-UnknownError"
+                result.error_message = "getCSVData: unknown error validating CSV data"
+            result.CSV_OK = False
+        return result
 
     def _perform_substitution(self, s):
         '''
