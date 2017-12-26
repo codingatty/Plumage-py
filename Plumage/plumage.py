@@ -469,7 +469,6 @@ class TSDRReq(object):
         lines = self.CSVData.split("\n")
         lines = self._drop_empty_lines(lines)
         for line in lines:
-            print "line: -->"+line+"<"
             [key, data] = line.split(',', 1)
             # normally, there will be quote marks; strip them off
             if data[0] == data[-1] == '"':
@@ -624,11 +623,9 @@ class TSDRReq(object):
         so that including empty lines is permitted and whether the final line ends with a
         newline is immaterial.
         '''
-        print len(string_of_lines)
         lines = string_of_lines.split(LINE_SEPARATOR)
         lines = self._drop_empty_lines(lines)
         reassembled_string_of_lines = LINE_SEPARATOR.join(lines) + LINE_SEPARATOR
-        print len(reassembled_string_of_lines)
         return reassembled_string_of_lines
 
     def _drop_empty_lines(self, lines):
@@ -684,11 +681,6 @@ class TSDRReq(object):
         comma = ","
         line_separator = "\n"
         valid_key_chars = set(string.letters + string.digits)
-        # following lines are to inject errors for testing
-        # self.CSVData = "MadeupKey1,\"MadeupValue1\""  # NG
-        # self.CSVData = "MadeupKey1,\"MadeupValue1\"" + line_separator # NG
-        # self.CSVData = "MadeupKey1,\"MadeupValue1\"" + line_separator + "MadeupKey2,\"MadeupValue2\""; # OK
-        # self.CSVData = "MadeupKey1,\"MadeupValue1\"" + line_separator + "MadeupKey2,\"MadeupValue2\"" + line_separator # OK
         try:
             lines = self.CSVData.split(line_separator)
             lines = self._drop_empty_lines(lines)
@@ -785,5 +777,3 @@ class TestSelf(unittest.TestCase):
 if __name__ == "__main__":
     # self-test if run as command
     unittest.main()
-
-
