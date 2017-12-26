@@ -1,19 +1,27 @@
 '''
-Plumage: Python module to obtain trademark status information from USPTO's TSDR system
+Plumage:
+    Python module to obtain trademark status information from USPTO's TSDR system
 
-Version 1.2.0, 2016-03-15
-Copyright 2014-2017 Terry Carroll
-carroll@tjc.com
+To use:
+    from Plumage import plumage
+    t = plumage.TSDRReq()
+    t.getTSDRInfo("75181334", "s") 
 
-License information:
-
-This program is licensed under Apache License, version 2.0 (January 2004);
-see http://www.apache.org/licenses/LICENSE-2.0
-SPX-License-Identifier: Apache-2.0
-
-Anyone who makes use of, or who modifies, this code is encouraged
-(but not required) to notify the author.
+For details, see https://github.com/codingatty/Plumage/wiki
 '''
+
+# Version 1.2.0, 2016-03-15
+# Copyright 2014-2017 Terry Carroll
+# carroll@tjc.com
+#
+# License information:
+#
+# This program is licensed under Apache License, version 2.0 (January 2004);
+# see http://www.apache.org/licenses/LICENSE-2.0
+# SPX-License-Identifier: Apache-2.0
+#
+# Anyone who makes use of, or who modifies, this code is encouraged
+# (but not required) to notify the author.
 
 import StringIO
 import zipfile
@@ -725,53 +733,6 @@ class TSDRReq(object):
             s = s.replace(variable, _TSDR_substitutions[variable])
         return s
 
-class TestSelf(unittest.TestCase):
-    '''
-    Simple self-test
-    '''
-
-    def setUp(self):
-        pass
-
-    def test_00_selftest(self):
-        '''
-        Simple self-test
-        '''
-        t = TSDRReq()
-        t.getTSDRInfo("sn76044902.zip")
-        self.assertTrue(t.XMLDataIsValid)
-        self.assertEqual(len(t.XMLData), 30354)
-        self.assertEqual(t.XMLData[0:55], r'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>')
-        self.assertEqual(t.ImageThumb[6:10], "JFIF")
-        self.assertEqual(t.ImageFull[0:4], "\x89PNG")
-        self.assertTrue(t.CSVDataIsValid)
-        self.assertEqual(len(t.CSVData.split("\n")), 290)
-        tsdrdata=t.TSDRData
-        self.assertTrue(tsdrdata.TSDRMapIsValid)
-        self.assertEqual(tsdrdata.TSDRSingle["ApplicationNumber"], "76044902")
-        self.assertEqual(tsdrdata.TSDRSingle["ApplicationDate"], "2000-05-09-04:00")
-        self.assertEqual(tsdrdata.TSDRSingle["ApplicationDate"][0:10],
-                         tsdrdata.TSDRSingle["ApplicationDateTruncated"])
-        self.assertEqual(tsdrdata.TSDRSingle["RegistrationNumber"], "2824281")
-        self.assertEqual(tsdrdata.TSDRSingle["RegistrationDate"], "2004-03-23-05:00")
-        self.assertEqual(tsdrdata.TSDRSingle["RegistrationDate"][0:10],
-                         tsdrdata.TSDRSingle["RegistrationDateTruncated"])
-        self.assertEqual(tsdrdata.TSDRSingle["MarkVerbalElementText"], "PYTHON")
-        self.assertEqual(tsdrdata.TSDRSingle["MarkCurrentStatusExternalDescriptionText"],
-                         "A Sections 8 and 15 combined declaration has been accepted and acknowledged.")
-        self.assertEqual(tsdrdata.TSDRSingle["MarkCurrentStatusDate"], "2010-09-08-04:00")
-        self.assertEqual(tsdrdata.TSDRSingle["MarkCurrentStatusDate"][0:10],
-                         tsdrdata.TSDRSingle["MarkCurrentStatusDateTruncated"])
-        applicant_list = tsdrdata.TSDRMulti["ApplicantList"]
-        applicant_info = applicant_list[0]    
-        self.assertEqual(applicant_info["ApplicantName"], "PYTHON SOFTWARE FOUNDATION")      
-        assignment_list = tsdrdata.TSDRMulti["AssignmentList"]
-        assignment_0 = assignment_list[0] # Zeroth (most recent) assignment
-        self.assertEqual(assignment_0["AssignorEntityName"],
-                         "CORPORATION FOR NATIONAL RESEARCH INITIATIVES, INC.")
-        self.assertEqual(assignment_0["AssignmentDocumentURL"],
-                         "http://assignments.uspto.gov/assignments/assignment-tm-2849-0875.pdf")
-
 if __name__ == "__main__":
-    # self-test if run as command
-    unittest.main()
+    # if run as command, print short documentation and exit
+    print __doc__
