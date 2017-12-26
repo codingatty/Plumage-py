@@ -12,7 +12,7 @@ class TestUM(unittest.TestCase):
     #
     def test_A001_basic(self):
         t = plumage.TSDRReq()
-        t.getTSDRInfo("Plumage/sn76044902.zip")
+        t.getTSDRInfo("testfiles/sn76044902.zip")
         self.assertTrue(t.XMLDataIsValid)
         self.assertEqual(len(t.XMLData), 30354)
         self.assertEqual(t.XMLData[0:55], r'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>')
@@ -73,7 +73,7 @@ class TestUM(unittest.TestCase):
         self.assertFalse(t.XMLDataIsValid)
         self.assertFalse(t.CSVDataIsValid)
         self.assertFalse(t.TSDRData.TSDRMapIsValid)
-        t.getXMLData("Plumage/sn76044902.zip")
+        t.getXMLData("testfiles/sn76044902.zip")
         self.assertTrue(t.XMLDataIsValid)
         self.assertFalse(t.CSVDataIsValid)
         self.assertFalse(t.TSDRData.TSDRMapIsValid)
@@ -170,7 +170,7 @@ class TestUM(unittest.TestCase):
             altXSL = f.read()
         t = plumage.TSDRReq()
         t.setXSLT(altXSL)
-        t.getTSDRInfo("Plumage/sn76044902.zip")
+        t.getTSDRInfo("testfiles/sn76044902.zip")
         self.assertTrue(t.XMLDataIsValid)
         self.assertTrue(t.CSVDataIsValid)
         self.assertTrue(t.TSDRData.TSDRMapIsValid)
@@ -200,7 +200,7 @@ PublicationDate,"<xsl:value-of select="tm:PublicationDetails/tm:Publication/tm:P
         '''
         t = plumage.TSDRReq()
         t.setXSLT(altXSL)
-        t.getTSDRInfo("Plumage/sn76044902.zip")
+        t.getTSDRInfo("testfiles/sn76044902.zip")
         self.assertTrue(t.XMLDataIsValid)
         self.assertTrue(t.CSVDataIsValid)
         self.assertTrue(t.TSDRData.TSDRMapIsValid)
@@ -214,7 +214,7 @@ PublicationDate,"<xsl:value-of select="tm:PublicationDetails/tm:Publication/tm:P
         '''
         t = plumage.TSDRReq()
         t.setXSLT(xsl_text)
-        t.getXMLData("Plumage/sn76044902.zip")
+        t.getXMLData("testfiles/sn76044902.zip")
         t.getCSVData()
         if success_expected:
             self.assertTrue(t.CSVDataIsValid)
