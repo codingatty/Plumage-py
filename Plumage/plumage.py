@@ -469,7 +469,7 @@ class TSDRReq(object):
         lines = self.CSVData.split("\n")
         lines = self._drop_empty_lines(lines)
         for line in lines:
-            [key, data] = line.split(',', 1)
+            [key, data] = line.split(COMMA, 1)
             # normally, there will be quote marks; strip them off
             if data[0] == data[-1] == '"':
                 data = data[1:-1]
@@ -678,11 +678,9 @@ class TSDRReq(object):
         Returns _validateCSVResponse object
         '''
         result = self._validateCSVResponse()
-        comma = ","
-        line_separator = "\n"
         valid_key_chars = set(string.letters + string.digits)
         try:
-            lines = self.CSVData.split(line_separator)
+            lines = self.CSVData.split(LINE_SEPARATOR)
             lines = self._drop_empty_lines(lines)
             if len(lines) < 2:
                 result.error_code = "CSV-ShortCSV"
@@ -690,14 +688,14 @@ class TSDRReq(object):
                 raise ValueError
             for line_number_offset in range(0, len(lines)):
                 line = lines[line_number_offset]
-                comma_position = line.find(',')
+                comma_position = line.find(COMMA)
                 if comma_position == -1:
                     result.error_code = "CSV-InvalidKeyValuePair"
                     result.error_message = "getCSVData [line %s]: " \
                         "no key-value pair found in line <%s> (missing comma)" \
                         % (line_number_offset+1, line)
                     raise ValueError
-                k, v = line.split(',', 1)
+                k, v = line.split(COMMA, 1)
                 if not set(k).issubset(valid_key_chars):
                     result.error_code = "CSV-InvalidKey"
                     result.error_message = "getCSVData [line %s]: " \
