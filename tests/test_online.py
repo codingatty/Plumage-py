@@ -21,20 +21,24 @@ class TestUM(unittest.TestCase):
         self.assertEqual(tsdrdata.TSDRSingle["ApplicationDate"][0:10],
                          tsdrdata.TSDRSingle["ApplicationDateTruncated"])
         self.assertEqual(tsdrdata.TSDRSingle["RegistrationNumber"], "2824281")
+        if tsdrdata.TSDRSingle["DiagnosticInfoXSLTFormat"] == "ST.96":  #ST.96 does not include time portion in reg date
+            self.assertEqual(tsdrdata.TSDRSingle["RegistrationDate"], "2004-03-23")
+        else:
+            self.assertEqual(tsdrdata.TSDRSingle["RegistrationDate"], "2004-03-23-05:00")
+
         self.assertEqual(tsdrdata.TSDRSingle["RegistrationDate"][0:10],
                          tsdrdata.TSDRSingle["RegistrationDateTruncated"])
         self.assertEqual(tsdrdata.TSDRSingle["MarkVerbalElementText"], "PYTHON")
-        if "ApplicantList" in tsdrdata.TSDRMulti:
-            applicant_list = tsdrdata.TSDRMulti["ApplicantList"]
-            applicant_info = applicant_list[0]    
-            self.assertEqual(applicant_info["ApplicantName"], "PYTHON SOFTWARE FOUNDATION")
-        if "AssigmentList" in tsdrdata.TSDRMulti:
+        applicant_list = tsdrdata.TSDRMulti["ApplicantList"]
+        applicant_info = applicant_list[0]    
+        self.assertEqual(applicant_info["ApplicantName"], "PYTHON SOFTWARE FOUNDATION")
+        if t.PTOFormat != "ST66":   # non-zipped ST.66 format does not include assignments
             assignment_list = tsdrdata.TSDRMulti["AssignmentList"]
             assignment_0 = assignment_list[0] # Zeroth (most recent) assignment
             self.assertEqual(assignment_0["AssignorEntityName"],
-                         "CORPORATION FOR NATIONAL RESEARCH INITIATIVES, INC.")
+                     "CORPORATION FOR NATIONAL RESEARCH INITIATIVES, INC.")
             self.assertEqual(assignment_0["AssignmentDocumentURL"],
-                         "http://assignments.uspto.gov/assignments/assignment-tm-2849-0875.pdf")
+                     "http://assignments.uspto.gov/assignments/assignment-tm-2849-0875.pdf")
         ## Diagnostic info
         self.assertEqual(tsdrdata.TSDRSingle["DiagnosticInfoXSLTURL"],
                          "https://github.com/codingatty/Plumage")
