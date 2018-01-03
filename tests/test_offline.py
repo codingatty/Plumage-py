@@ -3,13 +3,13 @@ from Plumage import plumage
 
 class TestUM(unittest.TestCase):
 
-# Group A: Basics
-# Group B: XML fetch only
-# Group C: CSV creation
-# Group D: All the way through TSDR map
-# Group E: Parameter validations
-# Group F: XML/XSL variations
-# Group G: CSV/XSL validations
+    # Group A: Basics exercises
+    # Group B: XML fetch only
+    # Group C: CSV creation
+    # Group D: All the way through TSDR map
+    # Group E: Parameter validations
+    # Group F: XML/XSL variations
+    # Group G: CSV/XSL validations
  
     def setUp(self):
         pass
