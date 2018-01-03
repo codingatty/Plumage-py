@@ -96,7 +96,7 @@ class TestUM(unittest.TestCase):
         self.assertEqual(tsdrdata.TSDRSingle["DiagnosticInfoImplementationURL"],
                          "https://github.com/codingatty/Plumage-py")
         self.assertEqual(tsdrdata.TSDRSingle["DiagnosticInfoImplementationVersion"],
-                         "V. 1.2.0")
+                         "1.2.0")
         self.assertEqual(tsdrdata.TSDRSingle["DiagnosticInfoImplementationLicenseURL"],
                          "http://www.apache.org/licenses/LICENSE-2.0")
         self.assertEqual(tsdrdata.TSDRSingle["DiagnosticInfoImplementationLicense"],

@@ -11,7 +11,7 @@ For details, see https://github.com/codingatty/Plumage/wiki
 '''
 
 # Version 1.2.0, 2016-03-15
-# Copyright 2014-2017 Terry Carroll
+# Copyright 2014-2018 Terry Carroll
 # carroll@tjc.com
 #
 # License information:
@@ -40,11 +40,11 @@ except ImportError:
     SSL_INSTALLED = False
 ### PEP 476 end
 
-__version__ = "V. 1.2.0"
-__last_updated__ = "2017-03-14"
+__version__ = "1.2.0"
+__last_updated__ = "2018-02-03"
 __author__ = "Terry Carroll"
 __URL__ = "https://github.com/codingatty/Plumage-py"
-__copyright__ = "Copyright 2014-2017 Terry Carroll"
+__copyright__ = "Copyright 2014-2018 Terry Carroll"
 __license__ = "Apache License, version 2.0 (January 2004)"
 __SPDX_LID__ = "Apache-2.0"
 __licenseURL__ = "http://www.apache.org/licenses/LICENSE-2.0"
