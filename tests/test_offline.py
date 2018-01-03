@@ -2,15 +2,53 @@ import unittest
 from Plumage import plumage
 
 class TestUM(unittest.TestCase):
+
+# Group A: Basics
+# Group B: XML fetch only
+# Group C: CSV creation
+# Group D: All the way through TSDR map
+# Group E: Parameter validations
+# Group F: XML/XSL variations
+# Group G: CSV/XSL validations
  
     def setUp(self):
         pass
 
-
     # Group A
-    # Basic exercise
-    #
-    def test_A001_basic(self):
+    # Basic exercises
+
+    def test_A001_test_initialize(self):
+        '''
+        Simple test, just verify TSDRReq can be initialized correctly
+        '''
+        t = plumage.TSDRReq()
+        self.assertFalse(t.XMLDataIsValid)
+        self.assertFalse(t.CSVDataIsValid)
+        self.assertFalse(t.TSDRData.TSDRMapIsValid)
+    
+    def test_A002_step_by_step(self):
+        t = plumage.TSDRReq()
+        self.assertFalse(t.XMLDataIsValid)
+        self.assertFalse(t.CSVDataIsValid)
+        self.assertFalse(t.TSDRData.TSDRMapIsValid)
+        t.getXMLData("testfiles/sn76044902.zip")
+        self.assertTrue(t.XMLDataIsValid)
+        self.assertFalse(t.CSVDataIsValid)
+        self.assertFalse(t.TSDRData.TSDRMapIsValid)
+        t.getCSVData()
+        self.assertTrue(t.XMLDataIsValid)
+        self.assertTrue(t.CSVDataIsValid)
+        self.assertFalse(t.TSDRData.TSDRMapIsValid)
+        t.getTSDRData()
+        self.assertTrue(t.XMLDataIsValid)
+        self.assertTrue(t.CSVDataIsValid)
+        self.assertTrue(t.TSDRData.TSDRMapIsValid)
+        t.resetXMLData()
+        self.assertFalse(t.XMLDataIsValid)
+        self.assertFalse(t.CSVDataIsValid)
+        self.assertFalse(t.TSDRData.TSDRMapIsValid)
+
+    def test_A003_typical_use(self):
         t = plumage.TSDRReq()
         t.getTSDRInfo("testfiles/sn76044902.zip")
         self.assertTrue(t.XMLDataIsValid)
@@ -68,36 +106,24 @@ class TestUM(unittest.TestCase):
         self.assertEqual(tsdrdata.TSDRSingle["DiagnosticInfoImplementationSPDXLicenseIdentifier"],
                          "Apache-2.0")
 
-    def test_A002_step_by_step(self):
-        t = plumage.TSDRReq()
-        self.assertFalse(t.XMLDataIsValid)
-        self.assertFalse(t.CSVDataIsValid)
-        self.assertFalse(t.TSDRData.TSDRMapIsValid)
-        t.getXMLData("testfiles/sn76044902.zip")
-        self.assertTrue(t.XMLDataIsValid)
-        self.assertFalse(t.CSVDataIsValid)
-        self.assertFalse(t.TSDRData.TSDRMapIsValid)
-        t.getCSVData()
-        self.assertTrue(t.XMLDataIsValid)
-        self.assertTrue(t.CSVDataIsValid)
-        self.assertFalse(t.TSDRData.TSDRMapIsValid)
-        t.getTSDRData()
-        self.assertTrue(t.XMLDataIsValid)
-        self.assertTrue(t.CSVDataIsValid)
-        self.assertTrue(t.TSDRData.TSDRMapIsValid)
-        t.resetXMLData()
-        self.assertFalse(t.XMLDataIsValid)
-        self.assertFalse(t.CSVDataIsValid)
-        self.assertFalse(t.TSDRData.TSDRMapIsValid)
 
     # Group B
+    # Test XML fetch only
+
+    # Group C
+    # Test through CSV creation
+
+    # Group D
+    # Test all the way through TSDR map
+
+    # Group E
     # Test parameter validations
-    #
-    def test_B001_no_such_file(self):
+    
+    def test_E001_no_such_file(self):
         t = plumage.TSDRReq()
         self.assertRaises(IOError, t.getTSDRInfo, "filedoesnotexist.zip")
 
-    def test_B002_getTSDRInfo_parameter_validation(self):
+    def test_E002_getTSDRInfo_parameter_validation(self):
         t = plumage.TSDRReq()
         self.assertRaises(ValueError, t.getTSDRInfo, "123456789", "s") # > 8-digit serial no.
         self.assertRaises(ValueError, t.getTSDRInfo, "1234567", "s")   # < 8-digit serial no.
@@ -109,10 +135,10 @@ class TestUM(unittest.TestCase):
         self.assertRaises(ValueError, t.getTSDRInfo, "123456Z", "r")   # non-numeric reg. no
         self.assertRaises(ValueError, t.getTSDRInfo, "123456", "X")    # incorrect type (not "s"/"r")
 
-    # Group C
-    # XSL variations
-    #
-    def test_C001_flag_ST961D3(self):
+    # Group F
+    # XML/XSL variations
+    
+    def test_F001_flag_ST961D3(self):
         '''
         Plumage recognizes ST.96 1_D3 format XML, but no longer supports
         '''
@@ -123,7 +149,7 @@ class TestUM(unittest.TestCase):
         self.assertFalse(t.TSDRData.TSDRMapIsValid)
         self.assertEqual(t.ErrorCode,"CSV-UnsupportedXML")
 
-    def test_C002_process_ST961D3(self):
+    def test_F002_process_ST961D3(self):
         '''
         test using an alternate XSL file.
         In this case, rn2178784-ST-961_D3.xml is a file formatted under 
@@ -137,7 +163,7 @@ class TestUM(unittest.TestCase):
         t.getTSDRInfo("testfiles/rn2178784-ST-961_D3.xml")
         self.assertTrue(t.TSDRData.TSDRMapIsValid)
 
-    def test_C003_compare_ST96_support(self):
+    def test_F003_compare_ST96_support(self):
         '''
         compare the old and new formats & confirm identical results
         '''
@@ -161,7 +187,7 @@ class TestUM(unittest.TestCase):
         for key in t_new_keys:
             self.assertEqual(t_new.TSDRData.TSDRSingle[key], t_old.TSDRData.TSDRSingle[key], key)
 
-    def test_C004_process_with_alternate_XSL(self):
+    def test_F004_process_with_alternate_XSL(self):
         '''
         Process alternate XSL.
         Pull out nothing but application no. and publication date
@@ -175,7 +201,7 @@ class TestUM(unittest.TestCase):
         self.assertTrue(t.CSVDataIsValid)
         self.assertTrue(t.TSDRData.TSDRMapIsValid)
 
-    def test_C005_process_with_alternate_XSL_inline(self):
+    def test_F005_process_with_alternate_XSL_inline(self):
         '''
         Process alternate XSL, placed inline
         Pull out nothing but application no. and publication date.
@@ -205,9 +231,9 @@ PublicationDate,"<xsl:value-of select="tm:PublicationDetails/tm:Publication/tm:P
         self.assertTrue(t.CSVDataIsValid)
         self.assertTrue(t.TSDRData.TSDRMapIsValid)
 
-    # Group D
+    # Group G
     # XSL/CSV validations
-    #
+    
     def _interior_test_with_XSLT_override(self, xsl_text, success_expected=True):
         '''
         Interior test for each call
@@ -224,7 +250,7 @@ PublicationDate,"<xsl:value-of select="tm:PublicationDetails/tm:Publication/tm:P
             self.assertFalse(t.CSVDataIsValid)
         return t
 
-    def test_D001_XSLT_with_blanks(self):
+    def test_G001_XSLT_with_blanks(self):
         '''
         Process alternate XSL, slightly malformed to generate empty lines;
         make sure they're ignored (new feature in Plumage 1.2)
@@ -259,7 +285,7 @@ PublicationDate,"<xsl:value-of select="tm:PublicationDetails/tm:Publication/tm:P
         t = self._interior_test_with_XSLT_override(altXSL, success_expected=True)
         self.assertEqual(len(t.CSVData), normal_CSV_length)
 
-    def test_D002_CSV_too_short(self):
+    def test_G002_CSV_too_short(self):
         '''
         Sanity check requires at least two non-blank lines (at least two fields) in CSV.
         '''
@@ -295,7 +321,7 @@ PublicationDate,"<xsl:value-of select="tm:PublicationDetails/tm:Publication/tm:P
         t = self._interior_test_with_XSLT_override(altXSL, success_expected=False)
         self.assertEqual(t.ErrorCode, "CSV-ShortCSV")
 
-    def test_D003_CSV_malformed(self):
+    def test_G003_CSV_malformed(self):
         '''
         Test common malforms of CSVs get caught
         '''
