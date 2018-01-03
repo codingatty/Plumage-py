@@ -1,4 +1,5 @@
 from Plumage import plumage
+# This example works for Plumage-py v1.2 (forthcoming)
 t = plumage.TSDRReq()
 t.getTSDRInfo("2564831", "r")   # get info on reg. no 2,564,831
 tsdrdata=t.TSDRData
