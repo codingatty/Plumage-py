@@ -25,8 +25,8 @@ class TestUM(unittest.TestCase):
         self.assertFalse(t.XMLDataIsValid)
         self.assertFalse(t.CSVDataIsValid)
         self.assertFalse(t.TSDRData.TSDRMapIsValid)
-    
-    def test_A002_step_by_step(self):
+
+    def test_A002_step_by_step_and_reset(self):
         t = plumage.TSDRReq()
         self.assertFalse(t.XMLDataIsValid)
         self.assertFalse(t.CSVDataIsValid)
@@ -106,15 +106,53 @@ class TestUM(unittest.TestCase):
         self.assertEqual(tsdrdata.TSDRSingle["DiagnosticInfoImplementationSPDXLicenseIdentifier"],
                          "Apache-2.0")
 
-
     # Group B
     # Test XML fetch only
-
+    def test_B001_step_by_step_thru_xml(self):
+        t = plumage.TSDRReq()
+        self.assertFalse(t.XMLDataIsValid)
+        self.assertFalse(t.CSVDataIsValid)
+        self.assertFalse(t.TSDRData.TSDRMapIsValid)
+        t.getXMLData("testfiles/sn76044902.zip")
+        self.assertTrue(t.XMLDataIsValid)
+        self.assertFalse(t.CSVDataIsValid)
+        self.assertFalse(t.TSDRData.TSDRMapIsValid)
+        
     # Group C
     # Test through CSV creation
-
+    def test_C001_step_by_step_thru_csv(self):
+        t = plumage.TSDRReq()
+        self.assertFalse(t.XMLDataIsValid)
+        self.assertFalse(t.CSVDataIsValid)
+        self.assertFalse(t.TSDRData.TSDRMapIsValid)
+        t.getXMLData("testfiles/sn76044902.zip")
+        self.assertTrue(t.XMLDataIsValid)
+        self.assertFalse(t.CSVDataIsValid)
+        self.assertFalse(t.TSDRData.TSDRMapIsValid)
+        t.getCSVData()
+        self.assertTrue(t.XMLDataIsValid)
+        self.assertTrue(t.CSVDataIsValid)
+        self.assertFalse(t.TSDRData.TSDRMapIsValid)
+       
     # Group D
     # Test all the way through TSDR map
+    def test_D001_step_by_step_thru_map(self):
+        t = plumage.TSDRReq()
+        self.assertFalse(t.XMLDataIsValid)
+        self.assertFalse(t.CSVDataIsValid)
+        self.assertFalse(t.TSDRData.TSDRMapIsValid)
+        t.getXMLData("testfiles/sn76044902.zip")
+        self.assertTrue(t.XMLDataIsValid)
+        self.assertFalse(t.CSVDataIsValid)
+        self.assertFalse(t.TSDRData.TSDRMapIsValid)
+        t.getCSVData()
+        self.assertTrue(t.XMLDataIsValid)
+        self.assertTrue(t.CSVDataIsValid)
+        self.assertFalse(t.TSDRData.TSDRMapIsValid)
+        t.getTSDRData()
+        self.assertTrue(t.XMLDataIsValid)
+        self.assertTrue(t.CSVDataIsValid)
+        self.assertTrue(t.TSDRData.TSDRMapIsValid)
 
     # Group E
     # Test parameter validations
