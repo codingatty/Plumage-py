@@ -50,8 +50,8 @@ class TestUM(unittest.TestCase):
                          "http://www.apache.org/licenses/LICENSE-2.0")
         self.assertEqual(tsdrdata.TSDRSingle["DiagnosticInfoImplementationURL"],
                          "https://github.com/codingatty/Plumage-py")
-        self.assertEqual(tsdrdata.TSDRSingle["DiagnosticInfoImplementationVersion"],
-                         "V. 1.2.0")
+        self.assertRegexpMatches(tsdrdata.TSDRSingle["DiagnosticInfoImplementationVersion"],
+                         r"^\d+\.\d+\.\d+(-(\w+))*$")
         self.assertEqual(tsdrdata.TSDRSingle["DiagnosticInfoImplementationLicenseURL"],
                          "http://www.apache.org/licenses/LICENSE-2.0")
         self.assertEqual(tsdrdata.TSDRSingle["DiagnosticInfoImplementationLicense"],

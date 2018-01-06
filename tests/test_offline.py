@@ -208,7 +208,7 @@ class TestUM(unittest.TestCase):
     def test_F003_confirm_ST96_support_201605(self):
         '''
         In May 2016, the USPTO switched from ST96 V1_D3 to ST96 2.2.1.
-        This test is to ensure that Plumage provided identical result
+        This test is to ensure that Plumage provides identical result
         under both the the old and new formats. 
         '''
         #old:
