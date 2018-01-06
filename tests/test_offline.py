@@ -205,9 +205,11 @@ class TestUM(unittest.TestCase):
         t.getTSDRInfo(self.TESTFILES_DIR+"rn2178784-ST-961_D3.xml")
         self.assertTrue(t.TSDRData.TSDRMapIsValid)
 
-    def test_F003_compare_ST96_support(self):
+    def test_F003_confirm_ST96_support_201605(self):
         '''
-        compare the old and new formats & confirm identical results
+        In May 2016, the USPTO switched from ST96 V1_D3 to ST96 2.2.1.
+        This test is to ensure that Plumage provided identical result
+        under both the the old and new formats. 
         '''
         #old:
         t_old = plumage.TSDRReq()
