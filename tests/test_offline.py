@@ -235,7 +235,6 @@ class TestUM(unittest.TestCase):
         # (No "Diagnostic..." entries to filter out)
         self.assertEqual(t_new.TSDRData.TSDRMulti, t_old.TSDRData.TSDRMulti)
 
-
     def test_F004_process_with_alternate_XSL(self):
         '''
         Process alternate XSL.
