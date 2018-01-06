@@ -217,19 +217,24 @@ class TestUM(unittest.TestCase):
             ST961D3xslt = f.read()
         t_old.setXSLT(ST961D3xslt)
         t_old.getTSDRInfo(self.TESTFILES_DIR+"rn2178784-ST-961_D3.xml")
-        #ignore the Diag... keys; they are expected to differ
-        t_old_keys = set([x for x in t_old.TSDRData.TSDRSingle.keys() if not x.startswith("Diag")])
+        #ignore the DiagnosticInfo... keys; they are expected to differ
+        t_old_keys = set([x for x in t_old.TSDRData.TSDRSingle.keys() if not x.startswith("DiagnosticInfo")])
 
         #new:
         t_new = plumage.TSDRReq()
         t_new.getTSDRInfo(self.TESTFILES_DIR+"rn2178784-ST-962.2.1.xml")
-        t_new_keys = set([x for x in t_new.TSDRData.TSDRSingle.keys() if not x.startswith("Diag")])
+        t_new_keys = set([x for x in t_new.TSDRData.TSDRSingle.keys() if not x.startswith("DiagnosticInfo")])
 
         # Same keys in both
         self.assertEqual(t_new_keys, t_old_keys)
         # and same values
         for key in t_new_keys:
             self.assertEqual(t_new.TSDRData.TSDRSingle[key], t_old.TSDRData.TSDRSingle[key], key)
+
+        # Confirm the TSDRMultis match, too
+        # (No "Diagnostic..." entries to filter out)
+        self.assertEqual(t_new.TSDRData.TSDRMulti, t_old.TSDRData.TSDRMulti)
+
 
     def test_F004_process_with_alternate_XSL(self):
         '''
