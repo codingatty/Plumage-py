@@ -40,7 +40,7 @@ except ImportError:
     SSL_INSTALLED = False
 ### PEP 476 end
 
-__version__ = "1.2.0"
+__version__ = "1.2.0-prerelease"
 __last_updated__ = "2018-02-03"
 __author__ = "Terry Carroll"
 __URL__ = "https://github.com/codingatty/Plumage-py"

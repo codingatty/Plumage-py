@@ -3,7 +3,7 @@ from Plumage import plumage
 
 class TestUM(unittest.TestCase):
 
-    # Group A: Basics exercises
+    # Group A: Basic exercises
     # Group B: XML fetch only
     # Group C: CSV creation
     # Group D: All the way through TSDR map
@@ -95,8 +95,10 @@ class TestUM(unittest.TestCase):
                          "http://www.apache.org/licenses/LICENSE-2.0")
         self.assertEqual(tsdrdata.TSDRSingle["DiagnosticInfoImplementationURL"],
                          "https://github.com/codingatty/Plumage-py")
-        self.assertEqual(tsdrdata.TSDRSingle["DiagnosticInfoImplementationVersion"],
-                         "1.2.0")
+        self.assertRegexpMatches(tsdrdata.TSDRSingle["DiagnosticInfoImplementationVersion"],
+                         r"^\d+\.\d+\.\d+(-(\w+))*$")
+        # r"^\d+\.\d+\.\d+(-(\w+))*$"  :
+        #   matches release number in the form "1.2.3", with an optional dashed suffix like "-prelease"
         self.assertEqual(tsdrdata.TSDRSingle["DiagnosticInfoImplementationLicenseURL"],
                          "http://www.apache.org/licenses/LICENSE-2.0")
         self.assertEqual(tsdrdata.TSDRSingle["DiagnosticInfoImplementationLicense"],
