@@ -286,6 +286,7 @@ PublicationDate,"<xsl:value-of select="tm:PublicationDetails/tm:Publication/tm:P
         '''
         Interior test for each call
         '''
+        
         t = plumage.TSDRReq()
         t.setXSLT(xsl_text)
         t.getXMLData(self.TESTFILES_DIR+"sn76044902.zip")
