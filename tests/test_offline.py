@@ -253,6 +253,8 @@ class TestUM(unittest.TestCase):
         '''
         Process alternate XSL, placed inline
         Pull out nothing but application no. and publication date.
+        Other than placing the XSL inline, this is identical to 
+        Test_F004_process_with_alternate_XSL
 
         Note: using inline is not recommended; XSL processor is picky and inline
         XSL is hard to debug. The recommended approach is to use an external file
