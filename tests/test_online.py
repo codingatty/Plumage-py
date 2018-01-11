@@ -77,7 +77,7 @@ class TestUM(unittest.TestCase):
         t.getTSDRInfo("76044902", "s")
         self._validate_sample(t)
 
-    def test_online_004_ST66xmlfile_by_serialno(self):
+    def test_online_004_ST96xmlfile_by_serialno(self):
         t = plumage.TSDRReq()
         t.setPTOFormat("ST96")
         t.getTSDRInfo("76044902", "s")
