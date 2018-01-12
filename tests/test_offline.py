@@ -11,6 +11,8 @@ class TestUM(unittest.TestCase):
     # Group F: XML/XSL variations
     # Group G: CSV/XSL validations
 
+    # Group O (in test_online.py): Online tests that actually hit the PTO TSDR system
+
     TESTFILES_DIR = "testfiles\\"
  
     def setUp(self):

@@ -61,29 +61,29 @@ class TestUM(unittest.TestCase):
         self.assertEqual(tsdrdata.TSDRSingle["DiagnosticInfoImplementationSPDXLicenseIdentifier"],
                          "Apache-2.0")
 
-    def test_online_001_zipfile_by_serialno(self):
+    def test_O001_zipfile_by_serialno(self):
         t = plumage.TSDRReq()
         t.getTSDRInfo("76044902", "s")
         self._validate_sample(t)
 
-    def test_online_002_zipfile_by_refno(self):
+    def test_O002_zipfile_by_regno(self):
         t = plumage.TSDRReq()
         t.getTSDRInfo("2824281", "r")
         self._validate_sample(t)
 
-    def test_online_003_ST66xmlfile_by_serialno(self):
+    def test_O003_ST66xmlfile_by_serialno(self):
         t = plumage.TSDRReq()
         t.setPTOFormat("ST66")
         t.getTSDRInfo("76044902", "s")
         self._validate_sample(t)
 
-    def test_online_004_ST96xmlfile_by_serialno(self):
+    def test_O004_ST96xmlfile_by_serialno(self):
         t = plumage.TSDRReq()
         t.setPTOFormat("ST96")
         t.getTSDRInfo("76044902", "s")
         self._validate_sample(t)
 
-    def test_online_005_step_by_step(self):
+    def test_O005_step_by_step(self):
         t = plumage.TSDRReq()
         self.assertFalse(t.XMLDataIsValid)
         self.assertFalse(t.CSVDataIsValid)
@@ -106,7 +106,7 @@ class TestUM(unittest.TestCase):
         self.assertFalse(t.CSVDataIsValid)
         self.assertFalse(t.TSDRData.TSDRMapIsValid)
 
-    def test_online_099_no_such_app(self):
+    def test_O099_no_such_app(self):
         '''
         Test no-such-application returns no data, and a Fetch-404 error code
         '''
