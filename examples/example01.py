@@ -1,19 +1,20 @@
 from Plumage import plumage
-# This example works through Plumage-py v1.1
+# This example works for Plumage-py v1.2 (forthcoming)
 t = plumage.TSDRReq()
-t.getTSDRInfo("75181334", "s")   # get info on application ser. no 75/181,334
-if t.TSDRMapIsValid:
-   print "Application serial no: ", t.TSDRMap["ApplicationNumber"]
-   print "Trademark text: ", t.TSDRMap["MarkVerbalElementText"]
-   print "Application filing date: ", t.TSDRMap["ApplicationDate"]
-   print "Registration no: ", t.TSDRMap["RegistrationNumber"]
+t.getTSDRInfo("2564831", "r")   # get info on reg. no 2,564,831
+tsdrdata=t.TSDRData
+if tsdrdata.TSDRMapIsValid:
+   print "Application serial no: ", tsdrdata.TSDRSingle["ApplicationNumber"]
+   print "Trademark text: ", tsdrdata.TSDRSingle["MarkVerbalElementText"]
+   print "Application filing date: ", tsdrdata.TSDRSingle["ApplicationDate"]
+   print "Registration no: ", tsdrdata.TSDRSingle["RegistrationNumber"]
    # Owner info is in most recent (0th) entry in ApplicantList
-   applicant_list = t.TSDRMap["ApplicantList"]
+   applicant_list = tsdrdata.TSDRMulti["ApplicantList"]
    current_owner_info = applicant_list[0]
    print "Owner:", current_owner_info["ApplicantName"]
    print "Owner address: ", current_owner_info["ApplicantCombinedAddress"]
    # Get most recent event: 0th entry in event list
-   event_list = t.TSDRMap["MarkEventList"]
+   event_list = tsdrdata.TSDRMulti["MarkEventList"]
    most_recent_event = event_list[0]
    print "Most recent event: ", most_recent_event["MarkEventDescription"]
    print "Event date: ", most_recent_event["MarkEventDate"]

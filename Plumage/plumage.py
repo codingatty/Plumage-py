@@ -10,7 +10,7 @@ To use:
 For details, see https://github.com/codingatty/Plumage/wiki
 '''
 
-# Version 1.2.0, 2018-mm-dd
+# Version 1.2.0, 2018-01-28
 # Copyright 2014-2018 Terry Carroll
 # carroll@tjc.com
 #
@@ -40,8 +40,8 @@ except ImportError:
     SSL_INSTALLED = False
 ### PEP 476 end
 
-__version__ = "1.2.0-prerelease"
-__last_updated__ = "2018-01-06"
+__version__ = "1.2.0"
+__last_updated__ = "2018-01-28"
 __author__ = "Terry Carroll"
 __URL__ = "https://github.com/codingatty/Plumage-py"
 __copyright__ = "Copyright 2014-2018 Terry Carroll"
