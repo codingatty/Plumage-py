@@ -1,3 +1,4 @@
+#! python2
 import unittest
 from Plumage import plumage
 
