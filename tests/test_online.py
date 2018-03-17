@@ -1,6 +1,6 @@
 #! python2
 import unittest
-from Plumage import plumage
+from testing_context import plumage
 
 class TestUM(unittest.TestCase):
  

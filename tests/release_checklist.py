@@ -3,7 +3,7 @@ import unittest
 import os.path
 from datetime import datetime
 
-from Plumage import plumage
+from testing_context import plumage
 
 class TestUM(unittest.TestCase):
     '''
