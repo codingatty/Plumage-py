@@ -23,7 +23,17 @@ For details, see https://github.com/codingatty/Plumage/wiki
 # Anyone who makes use of, or who modifies, this code is encouraged
 # (but not required) to notify the author.
 
-import StringIO
+import sys
+PYTHON3 = sys.version_info.major == 3
+PYTHON2 = sys.version_info.major == 2
+
+if PYTHON2:
+    import StringIO
+    stringio = StringIO.StringIO
+if PYTHON3:
+    import io
+    stringio = io.StringIO
+
 import zipfile
 import os.path
 import string
@@ -393,7 +403,7 @@ class TSDRReq(object):
             return
 
         # Prep the XML
-        f = StringIO.StringIO(self.XMLData)
+        f = stringio(self.XMLData)
         parsed_xml = etree.parse(f)
         # if a transform template is provided, use it,
         # otherwise figure out which to use...
@@ -502,7 +512,7 @@ class TSDRReq(object):
 
     def _processFileContents(self, filedata):
         # At this point, we've read data, but don't know whether its XML or zip
-        stringIOfile = StringIO.StringIO(filedata)
+        stringIOfile = stringio(filedata)
         if zipfile.is_zipfile(stringIOfile):
             # it's a zip file, process it as a zip file, pulling XML data, and other stuff, from the zip
             self._processZip(stringIOfile, filedata)
@@ -531,7 +541,7 @@ class TSDRReq(object):
         else:
             try:
                 # see if this triggers an exception
-                f = StringIO.StringIO(text)
+                f = stringio(text)
                 etree.parse(f)
                 # no exception; passes sanity check
             except etree.XMLSyntaxError, e:
