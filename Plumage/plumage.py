@@ -30,14 +30,20 @@ PYTHON2 = sys.version_info.major == 2
 if PYTHON2:
     import StringIO
     stringio = StringIO.StringIO
+    import urllib2
+    URL_open = urllib2.urlopen
+    HTTPError = urllib2.HTTPError
+    
 if PYTHON3:
     import io
     stringio = io.StringIO
+    import urllib
+    URL_open = urllib.request.urlopen
+    HTTPError = urllib.error.HTTPError
 
 import zipfile
 import os.path
 import string
-import urllib2
 import time
 import unittest
 from lxml import etree
@@ -353,10 +359,10 @@ class TSDRReq(object):
             ### PEP 476:
             ### use context paramenter if it is supported (TypeError if not)
             try:
-                f = urllib2.urlopen(pto_url, context=self.UNVERIFIED_CONTEXT)
+                f = URL_open(pto_url, context=self.UNVERIFIED_CONTEXT)
             except TypeError as e:
-                f = urllib2.urlopen(pto_url)
-        except urllib2.HTTPError as e:
+                f = URL_open(pto_url)
+        except HTTPError as e:
             if e.code == 404:
                 self.ErrorCode = "Fetch-404"
                 self.ErrorMessage = "getXMLDataFromPTO: Error fetching from PTO. "\
