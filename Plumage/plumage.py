@@ -23,11 +23,29 @@ For details, see https://github.com/codingatty/Plumage/wiki
 # Anyone who makes use of, or who modifies, this code is encouraged
 # (but not required) to notify the author.
 
-import StringIO
+from __future__ import print_function
+import sys
+PYTHON3 = sys.version_info.major == 3
+PYTHON2 = sys.version_info.major == 2
+
+if PYTHON2:
+    import StringIO
+    stringio = StringIO.StringIO
+    import urllib2
+    URL_open = urllib2.urlopen
+    HTTPError = urllib2.HTTPError
+    
+if PYTHON3:
+    import io
+    stringio = io.StringIO
+    import urllib.request
+    URL_open = urllib.request.urlopen
+    import urllib.error
+    HTTPError = urllib.error.HTTPError
+
 import zipfile
 import os.path
 import string
-import urllib2
 import time
 import unittest
 from lxml import etree
@@ -341,12 +359,12 @@ class TSDRReq(object):
         ## in Python 2.7, and attempt the "with" statement before it bites me and I remember.
         try:
             ### PEP 476:
-            ### use context paramenter if it is supported (TypeError if not)
+            ### use context parameter if it is supported (TypeError if not)
             try:
-                f = urllib2.urlopen(pto_url, context=self.UNVERIFIED_CONTEXT)
+                f = URL_open(pto_url, context=self.UNVERIFIED_CONTEXT)
             except TypeError as e:
-                f = urllib2.urlopen(pto_url)
-        except urllib2.HTTPError as e:
+                f = URL_open(pto_url)
+        except HTTPError as e:
             if e.code == 404:
                 self.ErrorCode = "Fetch-404"
                 self.ErrorMessage = "getXMLDataFromPTO: Error fetching from PTO. "\
@@ -393,7 +411,7 @@ class TSDRReq(object):
             return
 
         # Prep the XML
-        f = StringIO.StringIO(self.XMLData)
+        f = stringio(self.XMLData)
         parsed_xml = etree.parse(f)
         # if a transform template is provided, use it,
         # otherwise figure out which to use...
@@ -502,7 +520,7 @@ class TSDRReq(object):
 
     def _processFileContents(self, filedata):
         # At this point, we've read data, but don't know whether its XML or zip
-        stringIOfile = StringIO.StringIO(filedata)
+        stringIOfile = stringio(filedata)
         if zipfile.is_zipfile(stringIOfile):
             # it's a zip file, process it as a zip file, pulling XML data, and other stuff, from the zip
             self._processZip(stringIOfile, filedata)
@@ -531,10 +549,10 @@ class TSDRReq(object):
         else:
             try:
                 # see if this triggers an exception
-                f = StringIO.StringIO(text)
+                f = stringio(text)
                 etree.parse(f)
                 # no exception; passes sanity check
-            except etree.XMLSyntaxError, e:
+            except etree.XMLSyntaxError as e:
                 error_reason = "getXMLData: exception(lxml.etree.XMLSyntaxError) parsing purported XML data.  "\
                                  "Reason: '<%s>'" %  e.message
         return error_reason
@@ -735,4 +753,4 @@ class TSDRReq(object):
 
 if __name__ == "__main__":
     # if run as command, print short documentation and exit
-    print __doc__
+    print(__doc__)
