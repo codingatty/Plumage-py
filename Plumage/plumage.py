@@ -551,7 +551,7 @@ class TSDRReq(object):
                 f = stringio(text)
                 etree.parse(f)
                 # no exception; passes sanity check
-            except etree.XMLSyntaxError, e:
+            except etree.XMLSyntaxError as e:
                 error_reason = "getXMLData: exception(lxml.etree.XMLSyntaxError) parsing purported XML data.  "\
                                  "Reason: '<%s>'" %  e.message
         return error_reason
