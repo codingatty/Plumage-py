@@ -1,4 +1,3 @@
-#! python2
 import unittest
 from testing_context import plumage
 
