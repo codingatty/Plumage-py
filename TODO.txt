@@ -3,5 +3,5 @@ For preliminary Python2 to Python3 alignment:
 _X_ StringIO import
 _X_ urllib2 / urllib import
 _X_ print as function
-___ except..as  syntax
+_X_ except..as  syntax
 

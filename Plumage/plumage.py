@@ -38,8 +38,9 @@ if PYTHON2:
 if PYTHON3:
     import io
     stringio = io.StringIO
-    import urllib
+    import urllib.request
     URL_open = urllib.request.urlopen
+    import urllib.error
     HTTPError = urllib.error.HTTPError
 
 import zipfile
