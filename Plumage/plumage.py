@@ -23,6 +23,7 @@ For details, see https://github.com/codingatty/Plumage/wiki
 # Anyone who makes use of, or who modifies, this code is encouraged
 # (but not required) to notify the author.
 
+from __future__ import print_function
 import sys
 PYTHON3 = sys.version_info.major == 3
 PYTHON2 = sys.version_info.major == 2
@@ -357,7 +358,7 @@ class TSDRReq(object):
         ## in Python 2.7, and attempt the "with" statement before it bites me and I remember.
         try:
             ### PEP 476:
-            ### use context paramenter if it is supported (TypeError if not)
+            ### use context parameter if it is supported (TypeError if not)
             try:
                 f = URL_open(pto_url, context=self.UNVERIFIED_CONTEXT)
             except TypeError as e:
@@ -751,4 +752,4 @@ class TSDRReq(object):
 
 if __name__ == "__main__":
     # if run as command, print short documentation and exit
-    print __doc__
+    print(__doc__)
