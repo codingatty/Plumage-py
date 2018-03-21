@@ -114,8 +114,19 @@ class TestUM(unittest.TestCase):
                          "Apache-2.0")
 
     # Group B
-    # Test XML fetch only
-    def test_B001_step_by_step_thru_xml(self):
+    # Test XML fetch only, unzipped XML
+    def test_B001_step_by_step_thru_xml_unzipped(self):
+        t = plumage.TSDRReq()
+        self.assertFalse(t.XMLDataIsValid)
+        self.assertFalse(t.CSVDataIsValid)
+        self.assertFalse(t.TSDRData.TSDRMapIsValid)
+        t.getXMLData(self.TESTFILES_DIR+"sn76044902.xml")
+        self.assertTrue(t.XMLDataIsValid)
+        self.assertFalse(t.CSVDataIsValid)
+        self.assertFalse(t.TSDRData.TSDRMapIsValid)
+
+    # Test XML fetch only, zipped
+    def test_B002_step_by_step_thru_xml_zipped(self):
         t = plumage.TSDRReq()
         self.assertFalse(t.XMLDataIsValid)
         self.assertFalse(t.CSVDataIsValid)
@@ -126,8 +137,23 @@ class TestUM(unittest.TestCase):
         self.assertFalse(t.TSDRData.TSDRMapIsValid)
         
     # Group C
-    # Test through CSV creation
-    def test_C001_step_by_step_thru_csv(self):
+    # Test through CSV creation, unzipped XML
+    def test_C001_step_by_step_thru_csv_unzipped(self):
+        t = plumage.TSDRReq()
+        self.assertFalse(t.XMLDataIsValid)
+        self.assertFalse(t.CSVDataIsValid)
+        self.assertFalse(t.TSDRData.TSDRMapIsValid)
+        t.getXMLData(self.TESTFILES_DIR+"sn76044902.xml")
+        self.assertTrue(t.XMLDataIsValid)
+        self.assertFalse(t.CSVDataIsValid)
+        self.assertFalse(t.TSDRData.TSDRMapIsValid)
+        t.getCSVData()
+        self.assertTrue(t.XMLDataIsValid)
+        self.assertTrue(t.CSVDataIsValid)
+        self.assertFalse(t.TSDRData.TSDRMapIsValid)
+
+    # Test through CSV creation, zipped
+    def test_C001_step_by_step_thru_csv_zipped(self):
         t = plumage.TSDRReq()
         self.assertFalse(t.XMLDataIsValid)
         self.assertFalse(t.CSVDataIsValid)
