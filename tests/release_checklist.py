@@ -24,7 +24,7 @@ class TestUM(unittest.TestCase):
         self.modification_timestamp = os.path.getmtime(plumage_source_path)
 
     def test_001_releaseno(self):
-        self.assertEqual(self.tsdr_single["DiagnosticInfoImplementationVersion"], "1.2.0")
+        self.assertEqual(self.tsdr_single["DiagnosticInfoImplementationVersion"], "1.3.0")
 
     def test_002_modificationdate(self):
         modification_date = datetime.fromtimestamp(self.modification_timestamp).strftime("%Y-%m-%d")

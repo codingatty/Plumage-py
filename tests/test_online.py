@@ -1,4 +1,6 @@
-#! python2
+import sys
+PYTHON3 = sys.version_info.major == 3
+PYTHON2 = sys.version_info.major == 2
 import unittest
 from testing_context import plumage
 
@@ -51,7 +53,11 @@ class TestUM(unittest.TestCase):
                          "http://www.apache.org/licenses/LICENSE-2.0")
         self.assertEqual(tsdrdata.TSDRSingle["DiagnosticInfoImplementationURL"],
                          "https://github.com/codingatty/Plumage-py")
-        self.assertRegexpMatches(tsdrdata.TSDRSingle["DiagnosticInfoImplementationVersion"],
+        if PYTHON2: # method renamed from assertRegexpMatches to assertRegex between Py2 and Py3
+            self.assertRegexpMatches(tsdrdata.TSDRSingle["DiagnosticInfoImplementationVersion"],
+                         r"^\d+\.\d+\.\d+(-(\w+))*$")
+        if PYTHON3:
+            self.assertRegex(tsdrdata.TSDRSingle["DiagnosticInfoImplementationVersion"],
                          r"^\d+\.\d+\.\d+(-(\w+))*$")
         self.assertEqual(tsdrdata.TSDRSingle["DiagnosticInfoImplementationLicenseURL"],
                          "http://www.apache.org/licenses/LICENSE-2.0")

@@ -31,6 +31,7 @@ PYTHON2 = sys.version_info.major == 2
 if PYTHON2:
     import StringIO
     stringio = StringIO.StringIO
+    bytesio = StringIO.StringIO # In Python2, stringIO takes strings of binary data
     import urllib2
     URL_open = urllib2.urlopen
     HTTPError = urllib2.HTTPError
@@ -38,6 +39,7 @@ if PYTHON2:
 if PYTHON3:
     import io
     stringio = io.StringIO
+    bytesio  = io.BytesIO # In Python3, use BytesIO for binary data
     import urllib.request
     URL_open = urllib.request.urlopen
     import urllib.error
@@ -58,7 +60,7 @@ except ImportError:
     SSL_INSTALLED = False
 ### PEP 476 end
 
-__version__ = "1.2.0"
+__version__ = "1.3.0-DRAFT"
 __last_updated__ = "2018-01-28"
 __author__ = "Terry Carroll"
 __URL__ = "https://github.com/codingatty/Plumage-py"
@@ -87,7 +89,7 @@ class _XSLTDescriptor(object):
         xslt_dirname = _TSDR_dirname
         xslt_filename = XMLformat+".xsl"
         xslt_pathname = os.path.join(xslt_dirname, xslt_filename)
-        with open(xslt_pathname) as _f:
+        with open(xslt_pathname, "rb") as _f:
             _stylesheet = _f.read()
             _xslt_root = etree.XML(_stylesheet)
             transform = etree.XSLT(_xslt_root)
@@ -411,12 +413,19 @@ class TSDRReq(object):
             return
 
         # Prep the XML
-        f = stringio(self.XMLData)
+        if PYTHON2:
+            f = stringio(self.XMLData)
+        if PYTHON3:
+            f = bytesio(self.XMLData.encode(encoding="utf-8"))
         parsed_xml = etree.parse(f)
         # if a transform template is provided, use it,
         # otherwise figure out which to use...
         if self.XSLT is not None:
-            xslt_root = etree.XML(self.XSLT)
+            if PYTHON2:
+                override_XSLT = self.XSLT
+            if PYTHON3:  # Py3 req's byte-string or string w/o Unicode declaration
+                override_XSLT = self.XSLT.encode(encoding="utf-8")
+            xslt_root = etree.XML(override_XSLT)
             transform = etree.XSLT(xslt_root)
             _TSDR_substitutions["$XSLTFILENAME$"] = "CALLER-PROVIDED XSLT"
             _TSDR_substitutions["$XSLTPATHNAME$"] = "CALLER-PROVIDED XSLT"
@@ -519,14 +528,18 @@ class TSDRReq(object):
         return
 
     def _processFileContents(self, filedata):
-        # At this point, we've read data, but don't know whether its XML or zip
-        stringIOfile = stringio(filedata)
-        if zipfile.is_zipfile(stringIOfile):
+        # At this point, we've read data (as binary), but don't know whether its XML or zip
+        in_memory_file = bytesio(filedata)
+        if zipfile.is_zipfile(in_memory_file):
             # it's a zip file, process it as a zip file, pulling XML data, and other stuff, from the zip
-            self._processZip(stringIOfile, filedata)
+            self._processZip(in_memory_file, filedata)
         else:
-            # it's not a zip, it's assumed XML-only; just copy to XMLData (other fields will remain None)
-            self.XMLData = filedata
+            # it's not a zip, it's assumed XML-only;
+            # store to XMLData (other fields will remain None)
+            if PYTHON2: #Python2, filedata is already a string
+                self.XMLData = filedata
+            if PYTHON3: #Python3, filedata is bytes; must encode to a (Unicode) string
+                self.XMLData = filedata.decode(encoding="utf-8")
 
         error_reason = self._xml_sanity_check(self.XMLData)
         if error_reason != "":
@@ -549,7 +562,10 @@ class TSDRReq(object):
         else:
             try:
                 # see if this triggers an exception
-                f = stringio(text)
+                if PYTHON2:
+                    f = stringio(text)
+                if PYTHON3:
+                    f = bytesio(text.encode(encoding="utf-8"))
                 etree.parse(f)
                 # no exception; passes sanity check
             except etree.XMLSyntaxError as e:
@@ -585,18 +601,24 @@ class TSDRReq(object):
                              "type %s should be %s digits." % \
                              (number, tmtype, expected_length))
 
-    def _processZip(self, stringio_file, zipdata):
+    def _processZip(self, in_memory_file, zipdata):
         '''
         process a zip file, completing appropriate fields of the TSDRReq
         '''
         # basic task, getting the xml data:
-        zipf = zipfile.ZipFile(stringio_file, "r")
+        zipf = zipfile.ZipFile(in_memory_file, "r")
         xmlfiles = [name for name in zipf.namelist()
                     if name.lower().endswith(".xml")]
         assert len(xmlfiles) == 1
         xmlfilename = xmlfiles[0]
-        self.XMLData = zipf.read(xmlfilename)
-
+        xml_data_from_zipfile = zipf.read(xmlfilename)
+        if PYTHON2:
+            # In Python2, ZipFile.read() returns a string; just use it
+            self.XMLData = xml_data_from_zipfile
+        if PYTHON3:
+            # In Python3, ZipFile.read() returns bytes; must encode into a string
+            self.XMLData = xml_data_from_zipfile.decode(encoding="utf-8")
+        
         # bells & whistles:
         self.ImageFull  = None
         self.ImageThumb = None
@@ -704,7 +726,7 @@ class TSDRReq(object):
         Returns _validateCSVResponse object
         '''
         result = self._validateCSVResponse()
-        valid_key_chars = set(string.letters + string.digits)
+        valid_key_chars = set(string.ascii_letters + string.digits)
         try:
             lines = self.CSVData.split(LINE_SEPARATOR)
             lines = self._drop_empty_lines(lines)

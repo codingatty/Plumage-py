@@ -1,4 +1,6 @@
-#! python2
+import sys
+PYTHON3 = sys.version_info.major == 3
+PYTHON2 = sys.version_info.major == 2
 import unittest
 from testing_context import plumage
 
@@ -52,15 +54,19 @@ class TestUM(unittest.TestCase):
         self.assertFalse(t.XMLDataIsValid)
         self.assertFalse(t.CSVDataIsValid)
         self.assertFalse(t.TSDRData.TSDRMapIsValid)
-
+        
     def test_A003_typical_use(self):
         t = plumage.TSDRReq()
         t.getTSDRInfo(self.TESTFILES_DIR+"sn76044902.zip")
         self.assertTrue(t.XMLDataIsValid)
         self.assertEqual(len(t.XMLData), 30354)
         self.assertEqual(t.XMLData[0:55], r'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>')
-        self.assertEqual(t.ImageThumb[6:10], "JFIF")
-        self.assertEqual(t.ImageFull[0:4], "\x89PNG")
+        if PYTHON2:
+            self.assertEqual(t.ImageThumb[6:10], "JFIF")
+            self.assertEqual(t.ImageFull[0:4], "\x89PNG")
+        if PYTHON3:
+            self.assertEqual(t.ImageThumb[6:10], b"JFIF")
+            self.assertEqual(t.ImageFull[0:4], b"\x89PNG")
         self.assertTrue(t.CSVDataIsValid)
         self.assertEqual(len(t.CSVData.split("\n")), 291)
         tsdrdata=t.TSDRData
@@ -100,7 +106,11 @@ class TestUM(unittest.TestCase):
                          "http://www.apache.org/licenses/LICENSE-2.0")
         self.assertEqual(tsdrdata.TSDRSingle["DiagnosticInfoImplementationURL"],
                          "https://github.com/codingatty/Plumage-py")
-        self.assertRegexpMatches(tsdrdata.TSDRSingle["DiagnosticInfoImplementationVersion"],
+        if PYTHON2: # method renamed from assertRegexpMatches to assertRegex between Py2 and Py3
+            self.assertRegexpMatches(tsdrdata.TSDRSingle["DiagnosticInfoImplementationVersion"],
+                         r"^\d+\.\d+\.\d+(-(\w+))*$")
+        if PYTHON3:
+            self.assertRegex(tsdrdata.TSDRSingle["DiagnosticInfoImplementationVersion"],
                          r"^\d+\.\d+\.\d+(-(\w+))*$")
         # r"^\d+\.\d+\.\d+(-(\w+))*$"  :
         #   matches release number in the form "1.2.3", with an optional dashed suffix like "-prelease"
@@ -153,7 +163,7 @@ class TestUM(unittest.TestCase):
         self.assertFalse(t.TSDRData.TSDRMapIsValid)
 
     # Test through CSV creation, zipped
-    def test_C001_step_by_step_thru_csv_zipped(self):
+    def test_C002_step_by_step_thru_csv_zipped(self):
         t = plumage.TSDRReq()
         self.assertFalse(t.XMLDataIsValid)
         self.assertFalse(t.CSVDataIsValid)
@@ -189,7 +199,6 @@ class TestUM(unittest.TestCase):
 
     # Group E
     # Test parameter validations
-    
     def test_E001_no_such_file(self):
         t = plumage.TSDRReq()
         self.assertRaises(IOError, t.getTSDRInfo, "filedoesnotexist.zip")
@@ -219,7 +228,7 @@ class TestUM(unittest.TestCase):
         self.assertFalse(t.CSVDataIsValid)
         self.assertFalse(t.TSDRData.TSDRMapIsValid)
         self.assertEqual(t.ErrorCode,"CSV-UnsupportedXML")
-
+        
     def test_F002_process_ST961D3(self):
         '''
         test using an alternate XSL file.
@@ -233,7 +242,7 @@ class TestUM(unittest.TestCase):
         t.setXSLT(ST961D3xslt)
         t.getTSDRInfo(self.TESTFILES_DIR+"rn2178784-ST-961_D3.xml")
         self.assertTrue(t.TSDRData.TSDRMapIsValid)
-
+        
     def test_F003_confirm_ST96_support_201605(self):
         '''
         In May 2016, the USPTO switched from ST96 V1_D3 to ST96 2.2.1.
@@ -277,7 +286,7 @@ class TestUM(unittest.TestCase):
         self.assertTrue(t.XMLDataIsValid)
         self.assertTrue(t.CSVDataIsValid)
         self.assertTrue(t.TSDRData.TSDRMapIsValid)
-
+        
     def test_F005_process_with_alternate_XSL_inline(self):
         '''
         Process alternate XSL, placed inline
@@ -329,7 +338,7 @@ PublicationDate,"<xsl:value-of select="tm:PublicationDetails/tm:Publication/tm:P
         else:
             self.assertFalse(t.CSVDataIsValid)
         return t
-
+    
     def test_G001_XSLT_with_blanks(self):
         '''
         Process alternate XSL, slightly malformed to generate empty lines;
@@ -486,4 +495,4 @@ PublicationDate,"<xsl:value-of select="tm:PublicationDetails/tm:Publication/tm:P
         self.assertEqual(t.ErrorCode, "CSV-InvalidValue")
 
 if __name__ == '__main__':
-    unittest.main(verbosity=5)
+    unittest.main(verbosity=2)
