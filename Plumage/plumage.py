@@ -10,7 +10,7 @@ To use:
 For details, see https://github.com/codingatty/Plumage/wiki
 '''
 
-# Version 1.2.0, 2018-01-28
+# Version 1.3.0, 2018-03-22
 # Copyright 2014-2018 Terry Carroll
 # carroll@tjc.com
 #
@@ -60,8 +60,8 @@ except ImportError:
     SSL_INSTALLED = False
 ### PEP 476 end
 
-__version__ = "1.3.0-DRAFT"
-__last_updated__ = "2018-01-28"
+__version__ = "1.3.0"
+__last_updated__ = "2018-03-22"
 __author__ = "Terry Carroll"
 __URL__ = "https://github.com/codingatty/Plumage-py"
 __copyright__ = "Copyright 2014-2018 Terry Carroll"
@@ -90,6 +90,11 @@ class _XSLTDescriptor(object):
         xslt_filename = XMLformat+".xsl"
         xslt_pathname = os.path.join(xslt_dirname, xslt_filename)
         with open(xslt_pathname, "rb") as _f:
+            # Note: reading this in as binary for Py2/Py3 compatibility, even though it's a text file
+            #  Python2 will read it in as a string anyway;
+            #  Python 3 will read it in as bytes, which etree.XML() requires;
+            #  using bin mode will avoid having to treat Py2 and Py3 differently,
+            #  i.e., having to use:  _stylesheet.encode(encoding="utf-8") for Py3 
             _stylesheet = _f.read()
             _xslt_root = etree.XML(_stylesheet)
             transform = etree.XSLT(_xslt_root)
