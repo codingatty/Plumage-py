@@ -8,7 +8,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Development environment upgraded to [lxml](http://lxml.de/) 4.2.0
 
 Because the only change in this release is to support Python 3, there is no corresponding release 1.3.0 for
-[Plumage-dotnet](https://github.com/codingatty/Plumage-dotnet), which remains at [V1.2.0](https://github.com/codingatty/Plumage-dotnet/releases/tag/V1.2.0)
+[Plumage-dotnet](https://github.com/codingatty/Plumage-dotnet), which remains at [V1.2.0](https://github.com/codingatty/Plumage-dotnet/releases/tag/V1.2.0).
 
 ## [1.2.0](https://github.com/codingatty/Plumage-py/releases/tag/V1.2.0) - 2018-01-28 (*"Cloudbusting"*)
 - API change: single-instance values and multiple-instance values are broken into two data fields (see release notes for details)
