@@ -1,7 +1,9 @@
+import os
 import sys
-PYTHON3 = sys.version_info.major == 3
-PYTHON2 = sys.version_info.major == 2
 import unittest
+PYTHON2 = sys.version_info.major == 2
+PYTHON3 = sys.version_info.major == 3
+
 from testing_context import plumage
 
 class TestUM(unittest.TestCase):
@@ -16,7 +18,7 @@ class TestUM(unittest.TestCase):
 
     # Group O (in test_online.py): Online tests that actually hit the PTO TSDR system
 
-    TESTFILES_DIR = "testfiles\\"
+    TESTFILES_DIR = "testfiles"
  
     def setUp(self):
         pass
@@ -38,7 +40,8 @@ class TestUM(unittest.TestCase):
         self.assertFalse(t.XMLDataIsValid)
         self.assertFalse(t.CSVDataIsValid)
         self.assertFalse(t.TSDRData.TSDRMapIsValid)
-        t.getXMLData(self.TESTFILES_DIR+"sn76044902.zip")
+        testfile = os.path.join(self.TESTFILES_DIR, "sn76044902.zip")
+        t.getXMLData(testfile)
         self.assertTrue(t.XMLDataIsValid)
         self.assertFalse(t.CSVDataIsValid)
         self.assertFalse(t.TSDRData.TSDRMapIsValid)
@@ -57,7 +60,8 @@ class TestUM(unittest.TestCase):
         
     def test_A003_typical_use(self):
         t = plumage.TSDRReq()
-        t.getTSDRInfo(self.TESTFILES_DIR+"sn76044902.zip")
+        testfile = os.path.join(self.TESTFILES_DIR, "sn76044902.zip")
+        t.getTSDRInfo(testfile)
         self.assertTrue(t.XMLDataIsValid)
         self.assertEqual(len(t.XMLData), 30354)
         self.assertEqual(t.XMLData[0:55], r'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>')
@@ -130,7 +134,8 @@ class TestUM(unittest.TestCase):
         self.assertFalse(t.XMLDataIsValid)
         self.assertFalse(t.CSVDataIsValid)
         self.assertFalse(t.TSDRData.TSDRMapIsValid)
-        t.getXMLData(self.TESTFILES_DIR+"sn76044902.xml")
+        testfile = os.path.join(self.TESTFILES_DIR, "sn76044902.xml")
+        t.getXMLData(testfile)
         self.assertTrue(t.XMLDataIsValid)
         self.assertFalse(t.CSVDataIsValid)
         self.assertFalse(t.TSDRData.TSDRMapIsValid)
@@ -141,7 +146,8 @@ class TestUM(unittest.TestCase):
         self.assertFalse(t.XMLDataIsValid)
         self.assertFalse(t.CSVDataIsValid)
         self.assertFalse(t.TSDRData.TSDRMapIsValid)
-        t.getXMLData(self.TESTFILES_DIR+"sn76044902.zip")
+        testfile = os.path.join(self.TESTFILES_DIR, "sn76044902.zip")
+        t.getXMLData(testfile)
         self.assertTrue(t.XMLDataIsValid)
         self.assertFalse(t.CSVDataIsValid)
         self.assertFalse(t.TSDRData.TSDRMapIsValid)
@@ -153,7 +159,8 @@ class TestUM(unittest.TestCase):
         self.assertFalse(t.XMLDataIsValid)
         self.assertFalse(t.CSVDataIsValid)
         self.assertFalse(t.TSDRData.TSDRMapIsValid)
-        t.getXMLData(self.TESTFILES_DIR+"sn76044902.xml")
+        testfile = os.path.join(self.TESTFILES_DIR, "sn76044902.xml")
+        t.getXMLData(testfile)
         self.assertTrue(t.XMLDataIsValid)
         self.assertFalse(t.CSVDataIsValid)
         self.assertFalse(t.TSDRData.TSDRMapIsValid)
@@ -168,7 +175,8 @@ class TestUM(unittest.TestCase):
         self.assertFalse(t.XMLDataIsValid)
         self.assertFalse(t.CSVDataIsValid)
         self.assertFalse(t.TSDRData.TSDRMapIsValid)
-        t.getXMLData(self.TESTFILES_DIR+"sn76044902.zip")
+        testfile = os.path.join(self.TESTFILES_DIR, "sn76044902.zip")
+        t.getXMLData(testfile)
         self.assertTrue(t.XMLDataIsValid)
         self.assertFalse(t.CSVDataIsValid)
         self.assertFalse(t.TSDRData.TSDRMapIsValid)
@@ -184,7 +192,8 @@ class TestUM(unittest.TestCase):
         self.assertFalse(t.XMLDataIsValid)
         self.assertFalse(t.CSVDataIsValid)
         self.assertFalse(t.TSDRData.TSDRMapIsValid)
-        t.getXMLData(self.TESTFILES_DIR+"sn76044902.zip")
+        testfile = os.path.join(self.TESTFILES_DIR, "sn76044902.zip")
+        t.getXMLData(testfile)
         self.assertTrue(t.XMLDataIsValid)
         self.assertFalse(t.CSVDataIsValid)
         self.assertFalse(t.TSDRData.TSDRMapIsValid)
@@ -223,7 +232,8 @@ class TestUM(unittest.TestCase):
         Plumage recognizes ST.96 1_D3 format XML, but no longer supports
         '''
         t = plumage.TSDRReq()
-        t.getTSDRInfo(self.TESTFILES_DIR+"rn2178784-ST-961_D3.xml")
+        testfile = os.path.join(self.TESTFILES_DIR, "rn2178784-ST-961_D3.xml")
+        t.getTSDRInfo(testfile)
         self.assertTrue(t.XMLDataIsValid)
         self.assertFalse(t.CSVDataIsValid)
         self.assertFalse(t.TSDRData.TSDRMapIsValid)
@@ -237,10 +247,12 @@ class TestUM(unittest.TestCase):
         is an XSLT file that used to support that format
         '''
         t = plumage.TSDRReq()
-        with open(self.TESTFILES_DIR+"ST96-V1.0.1.xsl") as f:
+        testxsl = os.path.join(self.TESTFILES_DIR, "ST96-V1.0.1.xsl")
+        with open(testxsl) as f:
             ST961D3xslt = f.read()
         t.setXSLT(ST961D3xslt)
-        t.getTSDRInfo(self.TESTFILES_DIR+"rn2178784-ST-961_D3.xml")
+        testfile = os.path.join(self.TESTFILES_DIR, "rn2178784-ST-961_D3.xml")
+        t.getTSDRInfo(testfile)
         self.assertTrue(t.TSDRData.TSDRMapIsValid)
         
     def test_F003_confirm_ST96_support_201605(self):
@@ -251,16 +263,19 @@ class TestUM(unittest.TestCase):
         '''
         #old:
         t_old = plumage.TSDRReq()
-        with open(self.TESTFILES_DIR+"ST96-V1.0.1.xsl") as f:
+        testxsl = os.path.join(self.TESTFILES_DIR, "ST96-V1.0.1.xsl")
+        with open(testxsl) as f:
             ST961D3xslt = f.read()
         t_old.setXSLT(ST961D3xslt)
-        t_old.getTSDRInfo(self.TESTFILES_DIR+"rn2178784-ST-961_D3.xml")
+        testfile = os.path.join(self.TESTFILES_DIR, "rn2178784-ST-961_D3.xml")
+        t_old.getTSDRInfo(testfile)
         #ignore the DiagnosticInfo... keys; they are expected to differ
         t_old_keys = set([x for x in t_old.TSDRData.TSDRSingle.keys() if not x.startswith("DiagnosticInfo")])
 
         #new:
         t_new = plumage.TSDRReq()
-        t_new.getTSDRInfo(self.TESTFILES_DIR+"rn2178784-ST-962.2.1.xml")
+        testfile = os.path.join(self.TESTFILES_DIR, "rn2178784-ST-962.2.1.xml")
+        t_new.getTSDRInfo(testfile)
         t_new_keys = set([x for x in t_new.TSDRData.TSDRSingle.keys() if not x.startswith("DiagnosticInfo")])
 
         # Same keys in both
@@ -278,11 +293,13 @@ class TestUM(unittest.TestCase):
         Process alternate XSL.
         Pull out nothing but application no. and publication date
         '''
-        with open(self.TESTFILES_DIR+"appno+pubdate.xsl") as f:
+        testxsl = os.path.join(self.TESTFILES_DIR, "appno+pubdate.xsl")
+        with open(testxsl) as f:
             altXSL = f.read()
         t = plumage.TSDRReq()
         t.setXSLT(altXSL)
-        t.getTSDRInfo(self.TESTFILES_DIR+"sn76044902.zip")
+        testfile = os.path.join(self.TESTFILES_DIR, "sn76044902.zip")
+        t.getTSDRInfo(testfile)
         self.assertTrue(t.XMLDataIsValid)
         self.assertTrue(t.CSVDataIsValid)
         self.assertTrue(t.TSDRData.TSDRMapIsValid)
@@ -314,7 +331,8 @@ PublicationDate,"<xsl:value-of select="tm:PublicationDetails/tm:Publication/tm:P
         '''
         t = plumage.TSDRReq()
         t.setXSLT(altXSL)
-        t.getTSDRInfo(self.TESTFILES_DIR+"sn76044902.zip")
+        testfile = os.path.join(self.TESTFILES_DIR, "sn76044902.zip")
+        t.getTSDRInfo(testfile)
         self.assertTrue(t.XMLDataIsValid)
         self.assertTrue(t.CSVDataIsValid)
         self.assertTrue(t.TSDRData.TSDRMapIsValid)
@@ -329,7 +347,8 @@ PublicationDate,"<xsl:value-of select="tm:PublicationDetails/tm:Publication/tm:P
         
         t = plumage.TSDRReq()
         t.setXSLT(xsl_text)
-        t.getXMLData(self.TESTFILES_DIR+"sn76044902.zip")
+        testfile = os.path.join(self.TESTFILES_DIR, "sn76044902.zip")
+        t.getXMLData(testfile)
         t.getCSVData()
         if success_expected:
             self.assertTrue(t.CSVDataIsValid)
@@ -344,8 +363,8 @@ PublicationDate,"<xsl:value-of select="tm:PublicationDetails/tm:Publication/tm:P
         Process alternate XSL, slightly malformed to generate empty lines;
         make sure they're ignored (new feature in Plumage 1.2)
         '''
-
-        with open(self.TESTFILES_DIR+"xsl_exception_test_skeleton.txt") as f:
+        testskeleton = os.path.join(self.TESTFILES_DIR, "xsl_exception_test_skeleton.txt")
+        with open(testskeleton) as f:
             XSL_skeleton = f.read()
         XSLGUTS = "XSLGUTS\n" 
         XSL_text_tag = '<xsl:text/>'
@@ -379,7 +398,8 @@ PublicationDate,"<xsl:value-of select="tm:PublicationDetails/tm:Publication/tm:P
         Sanity check requires at least two non-blank lines (at least two fields) in CSV.
         '''
 
-        with open(self.TESTFILES_DIR+"xsl_exception_test_skeleton.txt") as f:
+        testskeleton = os.path.join(self.TESTFILES_DIR, "xsl_exception_test_skeleton.txt")
+        with open(testskeleton) as f:
             XSL_skeleton = f.read()
         XSLGUTS = "XSLGUTS\n" 
         XSL_text_tag = '<xsl:text/>'
@@ -415,7 +435,8 @@ PublicationDate,"<xsl:value-of select="tm:PublicationDetails/tm:Publication/tm:P
         Test common malforms of CSVs get caught
         '''
 
-        with open(self.TESTFILES_DIR+"xsl_exception_test_skeleton.txt") as f:
+        testskeleton = os.path.join(self.TESTFILES_DIR, "xsl_exception_test_skeleton.txt")
+        with open(testskeleton) as f:
             XSL_skeleton = f.read()
         XSLGUTS = "XSLGUTS\n" 
         XSL_text_tag = '<xsl:text/>'

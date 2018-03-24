@@ -1,7 +1,8 @@
 import sys
-PYTHON3 = sys.version_info.major == 3
-PYTHON2 = sys.version_info.major == 2
 import unittest
+PYTHON2 = sys.version_info.major == 2
+PYTHON3 = sys.version_info.major == 3
+
 from testing_context import plumage
 
 class TestUM(unittest.TestCase):
