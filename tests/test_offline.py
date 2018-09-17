@@ -72,7 +72,6 @@ class TestUM(unittest.TestCase):
             self.assertEqual(t.ImageThumb[6:10], b"JFIF")
             self.assertEqual(t.ImageFull[0:4], b"\x89PNG")
         self.assertTrue(t.CSVDataIsValid)
-        self.assertEqual(len(t.CSVData.split("\n")), 291)
         tsdrdata=t.TSDRData
         self.assertTrue(tsdrdata.TSDRMapIsValid)
         self.assertEqual(tsdrdata.TSDRSingle["ApplicationNumber"], "76044902")
