@@ -286,7 +286,9 @@ class TestUM(unittest.TestCase):
 
         # Confirm the TSDRMultis match, too
         # (No "Diagnostic..." entries to filter out)
-        self.assertEqual(t_new.TSDRData.TSDRMulti, t_old.TSDRData.TSDRMulti)
+        for listkey in t_old.TSDRData.TSDRMulti.keys():
+            self.assertEqual(t_new.TSDRData.TSDRMulti[listkey],
+                             t_old.TSDRData.TSDRMulti[listkey])
 
     def test_F004_process_with_alternate_XSL(self):
         '''

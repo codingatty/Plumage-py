@@ -19,178 +19,207 @@
 
 -->
 
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:tm="http://www.wipo.int/standards/XMLSchema/trademarks" xmlns:pto="urn:us:gov:doc:uspto:trademark:status">
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:default="http://www.wipo.int/standards/XMLSchema/trademarks" xmlns:ns2="urn:us:gov:doc:uspto:trademark:status">
 <xsl:output method="text" encoding="utf-8"/>
 <xsl:variable name='NL'><xsl:text>&#10;</xsl:text></xsl:variable><!-- NL = newline character X'0A' -->
 
-<xsl:template match="tm:Transaction">
-<xsl:apply-templates select=".//tm:TradeMark"/>
-<xsl:apply-templates select=".//tm:Applicant"/>
-<xsl:apply-templates select=".//tm:MarkEvent"/>
-<xsl:apply-templates select=".//tm:AssignmentBagExt"/>
+<xsl:template match="default:Transaction">
+<xsl:apply-templates select=".//default:TradeMark"/>
+<xsl:apply-templates select=".//default:Applicant"/>
+<xsl:apply-templates select=".//default:MarkEvent"/>
+<xsl:apply-templates select=".//default:AssignmentBagExt"/>
+<xsl:text/>DiagnosticInfoXSLTFilename,"$XSLTFILENAME$"
+DiagnosticInfoXSLTLocation,"$XSLTLOCATION$"
+DiagnosticInfoXSLTVersion,"1.1.1"
+DiagnosticInfoXSLTDate,"2018-08-21"
+DiagnosticInfoXSLTFormat,"ST.66"
+DiagnosticInfoXSLTAuthor,"Terry Carroll"
+DiagnosticInfoXSLTURL,"https://github.com/codingatty/Plumage"
+DiagnosticInfoXSLTCopyright,"Copyright 2014-2017 Terry Carroll"
+DiagnosticInfoXSLTLicense,"Apache License, version 2.0 (January 2004)"
+DiagnosticInfoXSLTSPDXLicenseIdentifier,"Apache-2.0"
+DiagnosticInfoXSLTLicenseURL,"http://www.apache.org/licenses/LICENSE-2.0"
+DiagnosticInfoImplementationName,"$IMPLEMENTATIONNAME$"
+DiagnosticInfoImplementationVersion,"$IMPLEMENTATIONVERSION$"
+DiagnosticInfoImplementationDate,"$IMPLEMENTATIONDATE$"
+DiagnosticInfoImplementationAuthor,"$IMPLEMENTATIONAUTHOR$"
+DiagnosticInfoImplementationURL,"$IMPLEMENTATIONURL$"
+DiagnosticInfoImplementationCopyright,"$IMPLEMENTATIONCOPYRIGHT$"
+DiagnosticInfoImplementationLicense,"$IMPLEMENTATIONLICENSE$"
+DiagnosticInfoImplementationSPDXLicenseIdentifier,"$IMPLEMENTATIONSPDXLID$"
+DiagnosticInfoImplementationLicenseURL,"$IMPLEMENTATIONLICENSEURL$"
+DiagnosticInfoExecutionDateTime,"$EXECUTIONDATETIME$"
+DiagnosticInfoXMLSource,"$XMLSOURCE$"
+DiagnosticInfoXSLProcessorVersion,"<xsl:value-of select="system-property('xsl:version')"/>"
+DiagnosticInfoXSLProcessorVendor,"<xsl:value-of select="system-property('xsl:vendor')"/>"
+DiagnosticInfoXSLProcessorVendorURL,"<xsl:value-of select="system-property('xsl:vendor-url')"/>"
 </xsl:template>
 
-<xsl:template match="tm:TradeMark">
-<xsl:text/>DiagnosticInfoXSLTFilename,"$XSLTFILENAME$"<xsl:text/>
-DiagnosticInfoXSLTLocation,"$XSLTLOCATION$"<xsl:text/>
-DiagnosticInfoXSLTVersion,"1.1.1"<xsl:text/>
-DiagnosticInfoXSLTDate,"2017-03-15"<xsl:text/>
-DiagnosticInfoXSLTFormat,"ST.66"<xsl:text/>
-DiagnosticInfoXSLTAuthor,"Terry Carroll"<xsl:text/>
-DiagnosticInfoXSLTURL,"https://github.com/codingatty/Plumage"<xsl:text/>
-DiagnosticInfoXSLTCopyright,"Copyright 2014-2017 Terry Carroll"<xsl:text/>
-DiagnosticInfoXSLTLicense,"Apache License, version 2.0 (January 2004)"<xsl:text/>
-DiagnosticInfoXSLTSPDXLicenseIdentifier,"Apache-2.0"<xsl:text/>
-DiagnosticInfoXSLTLicenseURL,"http://www.apache.org/licenses/LICENSE-2.0"<xsl:text/>
-DiagnosticInfoImplementationName,"$IMPLEMENTATIONNAME$"<xsl:text/>
-DiagnosticInfoImplementationVersion,"$IMPLEMENTATIONVERSION$"<xsl:text/>
-DiagnosticInfoImplementationDate,"$IMPLEMENTATIONDATE$"<xsl:text/>
-DiagnosticInfoImplementationAuthor,"$IMPLEMENTATIONAUTHOR$"<xsl:text/>
-DiagnosticInfoImplementationURL,"$IMPLEMENTATIONURL$"<xsl:text/>
-DiagnosticInfoImplementationCopyright,"$IMPLEMENTATIONCOPYRIGHT$"<xsl:text/>
-DiagnosticInfoImplementationLicense,"$IMPLEMENTATIONLICENSE$"<xsl:text/>
-DiagnosticInfoImplementationSPDXLicenseIdentifier,"$IMPLEMENTATIONSPDXLID$"<xsl:text/>
-DiagnosticInfoImplementationLicenseURL,"$IMPLEMENTATIONLICENSEURL$"<xsl:text/>
-DiagnosticInfoExecutionDateTime,"$EXECUTIONDATETIME$"<xsl:text/>
-DiagnosticInfoXMLSource,"$XMLSOURCE$"<xsl:text/>
-DiagnosticInfoXSLProcessorVersion,"<xsl:value-of select="system-property('xsl:version')"/>"<xsl:text/>
-DiagnosticInfoXSLProcessorVendor,"<xsl:value-of select="system-property('xsl:vendor')"/>"<xsl:text/>
-DiagnosticInfoXSLProcessorVendorURL,"<xsl:value-of select="system-property('xsl:vendor-url')"/>"<xsl:text/>
-MarkCurrentStatusDate,"<xsl:value-of select="tm:MarkCurrentStatusDate"/>"<xsl:text/>
-MarkCurrentStatusDateTruncated,"<xsl:value-of select="substring(tm:MarkCurrentStatusDate,1,10)"/>"<xsl:text/>
-ApplicationNumber,"<xsl:value-of select="tm:ApplicationNumber"/>"<xsl:text/>
-ApplicationDate,"<xsl:value-of select="tm:ApplicationDate"/>"<xsl:text/>
-ApplicationDateTruncated,"<xsl:value-of select="substring(tm:ApplicationDate,1,10)"/>"<xsl:text/>
-RegistrationNumber,"<xsl:value-of select="tm:RegistrationNumber"/>"<xsl:text/>
-RegistrationDate,"<xsl:value-of select="tm:RegistrationDate"/>"<xsl:text/>
-RegistrationDateTruncated,"<xsl:value-of select="substring(tm:RegistrationDate,1,10)"/>"<xsl:text/>
-<xsl:apply-templates select="tm:WordMarkSpecification"/>
-<xsl:apply-templates select="tm:TradeMarkExt"/>
-<xsl:apply-templates select="tm:PublicationDetails"/>
-<xsl:apply-templates select="tm:RepresentativeDetails"/>
-<xsl:apply-templates select="tm:StaffDetails"/>
+<xsl:template match="default:TradeMark">
+<xsl:text/>MarkCurrentStatusDate,"<xsl:value-of select="default:MarkCurrentStatusDate"/>"
+MarkCurrentStatusDateTruncated,"<xsl:value-of select="substring(default:MarkCurrentStatusDate,1,10)"/>"
+ApplicationNumber,"<xsl:value-of select="default:ApplicationNumber"/>"
+ApplicationDate,"<xsl:value-of select="default:ApplicationDate"/>"
+ApplicationDateTruncated,"<xsl:value-of select="substring(default:ApplicationDate,1,10)"/>"
+RegistrationNumber,"<xsl:value-of select="default:RegistrationNumber"/>"
+RegistrationDate,"<xsl:value-of select="default:RegistrationDate"/>"
+RegistrationDateTruncated,"<xsl:value-of select="substring(default:RegistrationDate,1,10)"/>"
+<xsl:apply-templates select="default:WordMarkSpecification"/>
+<xsl:apply-templates select="default:TradeMarkExt"/>
+<xsl:apply-templates select="default:GoodsServicesDetails/default:GoodsServices/default:ClassDescriptionDetails/default:ClassDescription"/>
+<xsl:apply-templates select="default:GoodsServicesDetails/default:GoodsServices/default:ClassDescriptionDetails/default:ClassDescription/default:ClassDescriptionExt/ns2:DomesticClassNumbers"/>
+<xsl:apply-templates select="default:GoodsServicesDetails/default:GoodsServices/default:ClassDescriptionDetails/default:ClassDescription/default:ClassDescriptionExt/ns2:FilingBasisDetails"/>
+<xsl:apply-templates select="default:PublicationDetails"/>
+<xsl:apply-templates select="default:RepresentativeDetails"/>
+<xsl:apply-templates select="default:StaffDetails"/>
 </xsl:template>
 
-<xsl:template match="tm:WordMarkSpecification">
-MarkVerbalElementText,"<xsl:value-of select="tm:MarkVerbalElementText"/>"<xsl:text/>
+<xsl:template match="default:WordMarkSpecification">
+<xsl:text/>MarkVerbalElementText,"<xsl:value-of select="default:MarkVerbalElementText"/>"
 </xsl:template>
 
-<xsl:template match="tm:TradeMarkExt">
-MarkCurrentStatusExternalDescriptionText,"<xsl:value-of select="pto:MarkCurrentStatusExternalDescriptionText"/>"<xsl:text/>
-RegisterCategory,"<xsl:value-of select="pto:RegisterCategory"/>"<xsl:text/>
-RenewalDate,"<xsl:value-of select="pto:AdditionalMarkDetails/pto:RenewalDate"/>"<xsl:text/>
-RenewalDateTruncated,"<xsl:value-of select="substring(pto:AdditionalMarkDetails/pto:RenewalDate,1,10)"/>"<xsl:text/>
-<xsl:if test="pto:RelatedMarkDetails/pto:InternationalApplicationNumber != ''">
-InternationalApplicationNumber,"<xsl:value-of select="pto:RelatedMarkDetails/pto:InternationalApplicationNumber"/>"<xsl:text/>
+<xsl:template match="default:TradeMarkExt">
+<xsl:text/>MarkCurrentStatusExternalDescriptionText,"<xsl:value-of select="ns2:MarkCurrentStatusExternalDescriptionText"/>"
+RegisterCategory,"<xsl:value-of select="ns2:RegisterCategory"/>"
+RenewalDate,"<xsl:value-of select="ns2:AdditionalMarkDetails/ns2:RenewalDate"/>"
+RenewalDateTruncated,"<xsl:value-of select="substring(ns2:AdditionalMarkDetails/ns2:RenewalDate,1,10)"/>"
+<xsl:if test="ns2:RelatedMarkDetails/ns2:InternationalApplicationNumber != ''">
+    <xsl:text/>InternationalApplicationNumber,"<xsl:value-of select="ns2:RelatedMarkDetails/ns2:InternationalApplicationNumber"/>"
 </xsl:if>
-<xsl:if test="pto:RelatedMarkDetails/pto:InternationalRegistrationNumber != ''">
-InternationalRegistrationNumber,"<xsl:value-of select="pto:RelatedMarkDetails/pto:InternationalRegistrationNumber"/>"<xsl:text/>
+<xsl:if test="ns2:RelatedMarkDetails/ns2:InternationalRegistrationNumber != ''">
+    <xsl:text/>InternationalRegistrationNumber,"<xsl:value-of select="ns2:RelatedMarkDetails/ns2:InternationalRegistrationNumber"/>"
 </xsl:if>
-<xsl:apply-templates select="pto:OfficeDetails"/>
+<xsl:apply-templates select="ns2:OfficeDetails"/>
 </xsl:template>
 
-<xsl:template match="pto:OfficeDetails">
-LawOfficeAssignedText,"<xsl:value-of select="pto:LawOfficeAssignedText"/>"<xsl:text/>
-CurrentLocationCode,"<xsl:value-of select="pto:CurrentLocationCode"/>"<xsl:text/>
-CurrentLocationText,"<xsl:value-of select="pto:CurrentLocationText"/>"<xsl:text/>
-CurrentLocationDate,"<xsl:value-of select="pto:CurrentLocationDate"/>"<xsl:text/>
-CurrentLocationDateTruncated,"<xsl:value-of select="substring(pto:CurrentLocationDate,1,10)"/>"<xsl:text/>
+<xsl:template match="ns2:OfficeDetails">
+<xsl:text/>LawOfficeAssignedText,"<xsl:value-of select="ns2:LawOfficeAssignedText"/>"
+CurrentLocationCode,"<xsl:value-of select="ns2:CurrentLocationCode"/>"
+CurrentLocationText,"<xsl:value-of select="ns2:CurrentLocationText"/>"
+CurrentLocationDate,"<xsl:value-of select="ns2:CurrentLocationDate"/>"
+CurrentLocationDateTruncated,"<xsl:value-of select="substring(ns2:CurrentLocationDate,1,10)"/>"
 </xsl:template>
 
-<xsl:template match="tm:Applicant">
-BeginRepeatedField,"Applicant"<xsl:text/>
-ApplicantName,"<xsl:value-of select="tm:ApplicantAddressBook/tm:FormattedNameAddress/tm:Name/tm:FreeFormatName/tm:FreeFormatNameDetails/tm:FreeFormatNameLine"/>"<xsl:text/>
-ApplicantDescription,"<xsl:value-of select="tm:ApplicantExt/pto:PartyTypeDescriptionText"/>"<xsl:text/>
-<xsl:apply-templates select="tm:ApplicantAddressBook/tm:FormattedNameAddress/tm:Address/tm:FormattedAddress"/>
-EndRepeatedField,"Applicant"<xsl:text/>
+<xsl:template match="default:Applicant">
+<xsl:text/>BeginRepeatedField,"Applicant"
+ApplicantName,"<xsl:value-of select="default:ApplicantAddressBook/default:FormattedNameAddress/default:Name/default:FreeFormatName/default:FreeFormatNameDetails/default:FreeFormatNameLine"/>"
+ApplicantDescription,"<xsl:value-of select="default:ApplicantExt/ns2:PartyTypeDescriptionText"/>"
+<xsl:apply-templates select="default:ApplicantAddressBook/default:FormattedNameAddress/default:Address/default:FormattedAddress"/>
+EndRepeatedField,"Applicant"
 </xsl:template>
 
-<xsl:template match="tm:ApplicantAddressBook/tm:FormattedNameAddress/tm:Address/tm:FormattedAddress">
-ApplicantAddressLine01,"<xsl:value-of select="tm:AddressRoom"/>"<xsl:text/>
-ApplicantAddressLine02,""<xsl:text/>
-ApplicantAddressCity,"<xsl:value-of select="tm:AddressCity"/>"<xsl:text/>
-ApplicantAddressGeoRegion,"<xsl:value-of select="tm:AddressState"/>"<xsl:text/>
-ApplicantPostalCode,"<xsl:value-of select="tm:AddressPostcode"/>"<xsl:text/>
-ApplicantCountryCode,"<xsl:value-of select="tm:FormattedAddressCountryCode"/>"<xsl:text/>
+<xsl:template match="default:ApplicantAddressBook/default:FormattedNameAddress/default:Address/default:FormattedAddress">
+<xsl:text/>ApplicantAddressLine01,"<xsl:value-of select="default:AddressRoom"/>"
+ApplicantAddressLine02,""
+ApplicantAddressCity,"<xsl:value-of select="default:AddressCity"/>"
+ApplicantAddressGeoRegion,"<xsl:value-of select="default:AddressState"/>"
+ApplicantPostalCode,"<xsl:value-of select="default:AddressPostcode"/>"
+ApplicantCountryCode,"<xsl:value-of select="default:FormattedAddressCountryCode"/>"<xsl:text/>
 <xsl:value-of select="concat($NL, 'ApplicantCombinedAddress,&quot;', 
-  tm:AddressRoom, '/',
+  default:AddressRoom, '/',
   '/',
-  tm:AddressCity, '/',
-  tm:AddressState, '/',
-  tm:AddressPostcode, '/',
-  tm:FormattedAddressCountryCode, '&quot;'
+  default:AddressCity, '/',
+  default:AddressState, '/',
+  default:AddressPostcode, '/',
+  default:FormattedAddressCountryCode, '&quot;'
   )"/>
 </xsl:template>
 
-<xsl:template match="tm:MarkEvent">
-BeginRepeatedField,"MarkEvent"<xsl:text/>
-MarkEventDate,"<xsl:value-of select="tm:MarkEventDate"/>"<xsl:text/>
-MarkEventDateTruncated,"<xsl:value-of select="substring(tm:MarkEventDate,1,10)"/>"<xsl:text/>
-MarkEventDescription,"<xsl:value-of select="tm:MarkEventExt/pto:MarkEventInternalDescriptionText"/>"<xsl:text/>
-MarkEventEntryNumber,"<xsl:value-of select="tm:MarkEventExt/pto:MarkEventEntryNumber"/>"<xsl:text/>
-EndRepeatedField,"MarkEvent"<xsl:text/>
+<xsl:template match="default:MarkEvent">
+<xsl:text/>BeginRepeatedField,"MarkEvent"
+MarkEventDate,"<xsl:value-of select="default:MarkEventDate"/>"
+MarkEventDateTruncated,"<xsl:value-of select="substring(default:MarkEventDate,1,10)"/>"
+MarkEventDescription,"<xsl:value-of select="default:MarkEventExt/ns2:MarkEventInternalDescriptionText"/>"
+MarkEventEntryNumber,"<xsl:value-of select="default:MarkEventExt/ns2:MarkEventEntryNumber"/>"
+EndRepeatedField,"MarkEvent"
 </xsl:template>
 
-<xsl:template match="tm:PublicationDetails">
-PublicationDate,"<xsl:value-of select="tm:Publication/tm:PublicationDate"/>"<xsl:text/>
-PublicationDateTruncated,"<xsl:value-of select="substring(tm:Publication/tm:PublicationDate,1,10)"/>"<xsl:text/> 
+<xsl:template match="default:GoodsServicesDetails/default:GoodsServices/default:ClassDescriptionDetails/default:ClassDescription">
+<xsl:text/>BeginRepeatedField,"InternationalClassDescription"
+InternationalClassNumber,"<xsl:value-of select="default:ClassNumber"/>"
+GoodsServicesDescription,"<xsl:value-of select="default:GoodsServicesDescription"/>"
+EndRepeatedField,"InternationalClassDescription"
 </xsl:template>
 
-<xsl:template match="tm:RepresentativeDetails">
-<xsl:if test="tm:Representative/tm:Comment = 'Domestic Correspondent'">
-CorrespondentName,"<xsl:value-of select="tm:Representative/tm:RepresentativeAddressBook/tm:FormattedNameAddress/tm:Name/tm:FreeFormatName/tm:FreeFormatNameDetails/tm:FreeFormatNameLine[1]"/>"<xsl:text/>
-CorrespondentOrganization,"<xsl:value-of select="tm:Representative/tm:RepresentativeAddressBook/tm:FormattedNameAddress/tm:Name/tm:FreeFormatName/tm:FreeFormatNameDetails/tm:FreeFormatNameLine[2]"/>"<xsl:text/>
-<xsl:apply-templates select=".//tm:FormattedAddress"/>
-<xsl:apply-templates select=".//tm:ContactInformationDetails"/>
+<xsl:template match="default:GoodsServicesDetails/default:GoodsServices/default:ClassDescriptionDetails/default:ClassDescription/default:ClassDescriptionExt/ns2:DomesticClassNumbers">
+<xsl:text/>BeginRepeatedField,"DomesticClassDescription"
+PrimaryClassNumber,"<xsl:value-of select="../ns2:PrimeClassText"/>"
+NationalClassNumber,"<xsl:value-of select="."/>"
+EndRepeatedField,"DomesticClassDescription"
+</xsl:template>
+
+<xsl:template match="default:GoodsServicesDetails/default:GoodsServices/default:ClassDescriptionDetails/default:ClassDescription/default:ClassDescriptionExt/ns2:FilingBasisDetails">
+<xsl:text/>BeginRepeatedField,"FirstUseDates"
+PrimaryClassNumber,"<xsl:value-of select="../ns2:PrimeClassText"/>"
+FirstUseDateNumber,"<xsl:value-of select="ns2:FirstUseDateNumber"/>"
+FirstUseInCommerceDate,"<xsl:value-of select="ns2:FirstUseInCommerceDate"/>"
+EndRepeatedField,"FirstUseDates"
+</xsl:template>
+
+<xsl:template match="default:PublicationDetails">
+<xsl:text/>PublicationDate,"<xsl:value-of select="default:Publication/default:PublicationDate"/>"
+PublicationDateTruncated,"<xsl:value-of select="substring(default:Publication/default:PublicationDate,1,10)"/>"
+</xsl:template>
+
+<xsl:template match="default:RepresentativeDetails">
+<xsl:if test="default:Representative/default:Comment = 'Domestic Correspondent'">
+<xsl:text/>CorrespondentName,"<xsl:value-of select="default:Representative/default:RepresentativeAddressBook/default:FormattedNameAddress/default:Name/default:FreeFormatName/default:FreeFormatNameDetails/default:FreeFormatNameLine[1]"/>"
+CorrespondentOrganization,"<xsl:value-of select="default:Representative/default:RepresentativeAddressBook/default:FormattedNameAddress/default:Name/default:FreeFormatName/default:FreeFormatNameDetails/default:FreeFormatNameLine[2]"/>"
+<xsl:apply-templates select=".//default:FormattedAddress"/>
+<xsl:apply-templates select=".//default:ContactInformationDetails"/>
 </xsl:if>
 </xsl:template>
 
-<xsl:template match="tm:FormattedAddress">
-CorrespondentAddressLine01,"<xsl:value-of select="normalize-space(tm:AddressBuilding)"/>"<xsl:text/>
-CorrespondentAddressLine02,"<xsl:value-of select="normalize-space(tm:AddressStreet)"/>"<xsl:text/>
-CorrespondentAddressCity,"<xsl:value-of select="normalize-space(tm:AddressCity)"/>"<xsl:text/>
-CorrespondentAddressGeoRegion,"<xsl:value-of select="normalize-space(tm:AddressState)"/>"<xsl:text/>
-CorrespondentPostalCode,"<xsl:value-of select="normalize-space(tm:AddressPostcode)"/>"<xsl:text/>
-CorrespondentCountryCode,"<xsl:value-of select="normalize-space(tm:FormattedAddressCountryCode)"/>"<xsl:text/> 
+<xsl:template match="default:FormattedAddress">
+<xsl:text/>CorrespondentAddressLine01,"<xsl:value-of select="normalize-space(default:AddressBuilding)"/>"
+CorrespondentAddressLine02,"<xsl:value-of select="normalize-space(default:AddressStreet)"/>"
+CorrespondentAddressCity,"<xsl:value-of select="normalize-space(default:AddressCity)"/>"
+CorrespondentAddressGeoRegion,"<xsl:value-of select="normalize-space(default:AddressState)"/>"
+CorrespondentPostalCode,"<xsl:value-of select="normalize-space(default:AddressPostcode)"/>"
+CorrespondentCountryCode,"<xsl:value-of select="normalize-space(default:FormattedAddressCountryCode)"/>"<xsl:text/> 
 <xsl:value-of select="concat($NL, 'CorrespondentCombinedAddress,&quot;', 
-  normalize-space(tm:AddressBuilding), '/',
-  normalize-space(tm:AddressStreet), '/',
-  normalize-space(tm:AddressCity), '/',
-  normalize-space(tm:AddressState), '/',
-  normalize-space(tm:AddressPostcode), '/',
-  normalize-space(tm:FormattedAddressCountryCode),
+  normalize-space(default:AddressBuilding), '/',
+  normalize-space(default:AddressStreet), '/',
+  normalize-space(default:AddressCity), '/',
+  normalize-space(default:AddressState), '/',
+  normalize-space(default:AddressPostcode), '/',
+  normalize-space(default:FormattedAddressCountryCode),
   '&quot;'
   )"/>
 </xsl:template>
 
-<xsl:template match="tm:ContactInformationDetails">
-CorrespondentPhoneNumber,"<xsl:value-of select="tm:Phone"/>"<xsl:text/>
-CorrespondentFaxNumber,"<xsl:value-of select="tm:Fax"/>"<xsl:text/>
-CorrespondentEmailAddress,"<xsl:value-of select="tm:Email"/>"<xsl:text/>
+<xsl:template match="default:ContactInformationDetails">
+CorrespondentPhoneNumber,"<xsl:value-of select="default:Phone"/>"
+CorrespondentFaxNumber,"<xsl:value-of select="default:Fax"/>"
+CorrespondentEmailAddress,"<xsl:value-of select="default:Email"/>"
 </xsl:template>
 
-<xsl:template match="tm:StaffDetails">
-StaffName,"<xsl:value-of select="tm:Staff/tm:StaffName"/>"<xsl:text/>
-StaffOfficialTitle,"<xsl:value-of select="tm:Staff/tm:OfficialTitle"/>"<xsl:text/>
+<xsl:template match="default:StaffDetails">
+<xsl:if test="default:Staff/default:StaffName != ''">
+    <xsl:text/>StaffName,"<xsl:value-of select="default:Staff/default:StaffName"/>"
+</xsl:if>
+<xsl:if test="default:Staff/default:OfficialTitle != ''">
+    <xsl:text/>StaffOfficialTitle,"<xsl:value-of select="default:Staff/default:OfficialTitle"/>"
+</xsl:if>
 </xsl:template>
 
-<xsl:template match="tm:AssignmentBagExt">
-<xsl:apply-templates select="pto:Assignment"/>
+<xsl:template match="default:AssignmentBagExt">
+<xsl:apply-templates select="ns2:Assignment"/>
 </xsl:template>
 
-<xsl:template match="pto:Assignment">
-BeginRepeatedField,"Assignment"<xsl:text/>
-AssignmentIdentifier,"<xsl:value-of select="pto:AssignmentIdentifier"/>"<xsl:text/>
-AssignmentConveyanceCategory,"<xsl:value-of select="pto:AssignmentConveyanceCategory"/>"<xsl:text/>
-AssignmentGroupCategory,"<xsl:value-of select="pto:AssignmentGroupCategory"/>"<xsl:text/>
-AssignmentRecordedDate,"<xsl:value-of select="pto:AssignmentRecordedDate"/>"<xsl:text/>
-AssignmentRecordedDateTruncated,"<xsl:value-of select="substring(pto:AssignmentRecordedDate,1,10)"/>"<xsl:text/>
-AssignmentExecutedDate,"<xsl:value-of select="pto:Assignor/pto:AssignmentExecutionDate"/>"<xsl:text/>
-AssignmentExecutedDateTruncated,"<xsl:value-of select="substring(pto:Assignor/pto:AssignmentExecutionDate,1,10)"/>"<xsl:text/>
-AssignorEntityName,"<xsl:value-of select="pto:Assignor/pto:Contact/pto:Name/pto:EntityName"/>"<xsl:text/>
-AssigneeEntityName,"<xsl:value-of select="pto:Assignee/pto:Contact/pto:Name/pto:EntityName"/>"<xsl:text/>
-AssignmentDocumentURL,"<xsl:value-of select="pto:AssignmentDocumentBag"/>"<xsl:text/>
-EndRepeatedField,"Assignment"<xsl:text/>
+<xsl:template match="ns2:Assignment">
+<xsl:text/>BeginRepeatedField,"Assignment"
+AssignmentIdentifier,"<xsl:value-of select="ns2:AssignmentIdentifier"/>"
+AssignmentConveyanceCategory,"<xsl:value-of select="ns2:AssignmentConveyanceCategory"/>"
+AssignmentGroupCategory,"<xsl:value-of select="ns2:AssignmentGroupCategory"/>"
+AssignmentRecordedDate,"<xsl:value-of select="ns2:AssignmentRecordedDate"/>"
+AssignmentRecordedDateTruncated,"<xsl:value-of select="substring(ns2:AssignmentRecordedDate,1,10)"/>"
+AssignmentExecutedDate,"<xsl:value-of select="ns2:Assignor/ns2:AssignmentExecutionDate"/>"
+AssignmentExecutedDateTruncated,"<xsl:value-of select="substring(ns2:Assignor/ns2:AssignmentExecutionDate,1,10)"/>"
+AssignorEntityName,"<xsl:value-of select="ns2:Assignor/ns2:Contact/ns2:Name/ns2:EntityName"/>"
+AssigneeEntityName,"<xsl:value-of select="ns2:Assignee/ns2:Contact/ns2:Name/ns2:EntityName"/>"
+AssignmentDocumentURL,"<xsl:value-of select="ns2:AssignmentDocumentBag"/>"
+EndRepeatedField,"Assignment"
 </xsl:template>
 
 
