@@ -516,5 +516,31 @@ PublicationDate,"<xsl:value-of select="tm:PublicationDetails/tm:Publication/tm:P
         t = self._interior_test_with_XSLT_override(altXSL, success_expected=False)
         self.assertEqual(t.ErrorCode, "CSV-InvalidValue")
 
+    # Group H
+    # Feature additions
+    
+    def test_H001_verify_class_fields_exist(self):
+        '''
+        Make sure the three new dicts added to support trademark classifications:
+          InternationalClassDescriptionList
+          DomesticClassDescriptionList
+          FirstUseDatesList
+        are present for both ST.66 and ST.96 formats.
+        '''
+        t66 = plumage.TSDRReq()
+        testfile = os.path.join(self.TESTFILES_DIR, "sn76044902-ST66.xml")
+        t66.getTSDRInfo(testfile)
+        t96 = plumage.TSDRReq()
+        testfile = os.path.join(self.TESTFILES_DIR, "sn76044902-ST96.xml")
+        t96.getTSDRInfo(testfile)
+        self.assertTrue("InternationalClassDescriptionList" in t66.TSDRData.TSDRMulti)
+        self.assertTrue("DomesticClassDescriptionList" in t66.TSDRData.TSDRMulti)
+        self.assertTrue("FirstUseDatesList" in t66.TSDRData.TSDRMulti)
+        self.assertTrue("InternationalClassDescriptionList" in t96.TSDRData.TSDRMulti)
+        self.assertTrue("DomesticClassDescriptionList" in t96.TSDRData.TSDRMulti)
+        self.assertTrue("FirstUseDatesList" in t96.TSDRData.TSDRMulti)
+        
+
+
 if __name__ == '__main__':
     unittest.main(verbosity=2)
