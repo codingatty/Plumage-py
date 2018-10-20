@@ -543,11 +543,10 @@ PublicationDate,"<xsl:value-of select="tm:PublicationDetails/tm:Publication/tm:P
         
     def test_H002_verify_intl_class_consistency(self):
         '''
-        Make sure the three new dicts added to support trademark classifications:
-          InternationalClassDescriptionList
-          DomesticClassDescriptionList
-          FirstUseDatesList
-        are present for both ST.66 and ST.96 formats.
+        Make sure that all international classes are reported consistently and correctly
+          InternationalClassDescriptionList / InternationalClassNumber
+          DomesticClassDescriptionList / PrimaryClassNumber
+          DomesticClassDescriptionList / NiceClassNumber (ST.96 only)
         '''
         t66 = plumage.TSDRReq()
         testfile = os.path.join(self.TESTFILES_DIR, "sn76044902-ST66.xml")
