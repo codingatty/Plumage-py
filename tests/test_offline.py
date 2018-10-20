@@ -1,6 +1,7 @@
 import os
 import sys
 import unittest
+
 PYTHON2 = sys.version_info.major == 2
 PYTHON3 = sys.version_info.major == 3
 
@@ -540,6 +541,46 @@ PublicationDate,"<xsl:value-of select="tm:PublicationDetails/tm:Publication/tm:P
         self.assertTrue("DomesticClassDescriptionList" in t96.TSDRData.TSDRMulti)
         self.assertTrue("FirstUseDatesList" in t96.TSDRData.TSDRMulti)
         
+    def test_H002_verify_intl_class_consistency(self):
+        '''
+        Make sure the three new dicts added to support trademark classifications:
+          InternationalClassDescriptionList
+          DomesticClassDescriptionList
+          FirstUseDatesList
+        are present for both ST.66 and ST.96 formats.
+        '''
+        t66 = plumage.TSDRReq()
+        testfile = os.path.join(self.TESTFILES_DIR, "sn76044902-ST66.xml")
+        t66.getTSDRInfo(testfile)
+        tsdrmulti = t66.TSDRData.TSDRMulti
+        ICD_list = tsdrmulti["InternationalClassDescriptionList"]
+        ST66_IC_nos = [entry["InternationalClassNumber"] for entry in ICD_list]
+        DCD_list = tsdrmulti["DomesticClassDescriptionList"]
+        ST66_DCD_PrimaryClass_nos = [entry["PrimaryClassNumber"] for entry in DCD_list]
+        FUD_list = tsdrmulti["FirstUseDatesList"]
+        ST66_FUD_PrimaryClass_nos = [entry["PrimaryClassNumber"] for entry in FUD_list]
+        t96 = plumage.TSDRReq()
+        testfile = os.path.join(self.TESTFILES_DIR, "sn76044902-ST96.xml")
+        t96.getTSDRInfo(testfile)
+        tsdrmulti = t96.TSDRData.TSDRMulti
+        ICD_list = tsdrmulti["InternationalClassDescriptionList"]
+        ST96_IC_nos = [entry["InternationalClassNumber"] for entry in ICD_list]
+        DCD_list = tsdrmulti["DomesticClassDescriptionList"]
+        ST96_DCD_PrimaryClass_nos = [entry["PrimaryClassNumber"] for entry in DCD_list]
+        ST96_DCD_NiceClass_nos = [entry["NiceClassNumber"] for entry in DCD_list]
+        FUD_list = tsdrmulti["FirstUseDatesList"]
+        ST96_FUD_PrimaryClass_nos = [entry["PrimaryClassNumber"] for entry in FUD_list]
+        # All of these should be the class nos "009" and "042", although possibly multiple times
+        control_set = set(["009", "042"])
+        self.assertEqual(control_set, set(ST66_IC_nos))
+        self.assertEqual(control_set, set(ST96_IC_nos))
+        self.assertEqual(control_set, set(ST66_DCD_PrimaryClass_nos))
+        self.assertEqual(control_set, set(ST96_DCD_PrimaryClass_nos))
+        self.assertEqual(control_set, set(ST96_DCD_NiceClass_nos)) # No ST.66 equivalent
+        self.assertEqual(control_set, set(ST66_FUD_PrimaryClass_nos))
+        self.assertEqual(control_set, set(ST96_FUD_PrimaryClass_nos))
+  
+
 
 
 if __name__ == '__main__':
