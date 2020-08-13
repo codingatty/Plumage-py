@@ -1,5 +1,8 @@
 import os
 import sys
+from datetime  import datetime
+from datetime  import timedelta
+import time
 import unittest
 
 PYTHON2 = sys.version_info.major == 2
@@ -533,7 +536,7 @@ PublicationDate,"<xsl:value-of select="tm:PublicationDetails/tm:Publication/tm:P
         self.assertEqual(t.ErrorCode, "CSV-InvalidValue")
 
     # Group H
-    # Feature additions
+    # support for additional fields
     
     def test_H001_verify_class_fields_exist(self):
         '''
@@ -594,8 +597,48 @@ PublicationDate,"<xsl:value-of select="tm:PublicationDetails/tm:Publication/tm:P
         self.assertEqual(control_set, set(ST66_FUD_PrimaryClass_nos))
         self.assertEqual(control_set, set(ST96_FUD_PrimaryClass_nos))
   
+# Group I
+    # tests for new features
 
+    def execute_one_timed_call(self, fake_delay=None):
+        '''
+        Fake delay is the amount of time, in seconds, to delay before calling
+        '''
+        t = plumage.TSDRReq()
+        testfile = os.path.join(self.TESTFILES_DIR, "sn76044902.zip")
 
+        # try a call and make sure it works:
+        starting_time = datetime.now()
+        if fake_delay is not None:
+            time.sleep(fake_delay)
+        t.getTSDRInfo(testfile)
+        ending_time = datetime.now()
+        self.assertTrue(t.TSDRData.TSDRMapIsValid)
+        total_time_in_ms = (ending_time-starting_time)/timedelta(milliseconds=1)
+        return total_time_in_ms
+
+    def test_I0001_default_delay(self):
+        '''
+        Test to make sure data calls are delayed to keep from looking like a denial-of-service attack against PTO
+
+        Note: testing timing is fraught with uncertainty, but assuming a local file read is more or less instantaneous,
+        this shouldn't be too bad, at least within the 100-milisecond range used here
+        '''
+
+        tolerance = 100   # 100 ms
+        default_delay = 1 # default 1-second delay
+
+        # see how we did:
+        #total_time_in_ms = self.execute_one_timed_call(fake_delay=3)
+        
+        # First run should be almost instantaneous:
+        total_time_in_ms = self.execute_one_timed_call()
+        self.assertAlmostEqual(total_time_in_ms, 0, delta=tolerance)
+
+        # But second run should be delayed about a second (1000 ms)
+        total_time_in_ms = self.execute_one_timed_call()
+        self.assertGreater(total_time_in_ms, 1000) # more than one second
+        self.assertLess(total_time_in_ms, 1100)    # but not that much longer (i.e < 1.1 sec)
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)
