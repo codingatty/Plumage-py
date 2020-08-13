@@ -49,6 +49,8 @@ import zipfile
 import os.path
 import string
 import time
+from datetime  import datetime
+from datetime  import timedelta
 import unittest
 from lxml import etree
 
@@ -158,6 +160,9 @@ class TSDRReq(object):
     '''
     TSDR request object
     '''
+
+    _prior_TSDR_call_time = None
+    _TSDR_delay_time = 1           # at last one second between calls to TSDR (real or simulated)
 
     def __init__(self):
         '''
@@ -303,6 +308,11 @@ class TSDRReq(object):
             self.CSVData
             self.TSDRData
         '''
+        
+        if TSDRReq.prior_TSDR_call_time is not None:
+            _waitFromTime(TSDRReq.prior_TSDR_call_time, TSDRReq._TSDR_delay_time)
+        TSDRReq.prior_TSDR_call_time = datetime.now()
+
         self.resetXMLData()        # Clear out any data from prior use
         if tmtype is None:
             self.getXMLDataFromFile(identifier)
@@ -789,6 +799,22 @@ class TSDRReq(object):
         for variable in _TSDR_substitutions:
             s = s.replace(variable, _TSDR_substitutions[variable])
         return s
+
+def _waitFromTime(fromtime, duration):
+    '''
+    Wait until the specified duration (in seconds) after fromtime (datetime) has occurred
+    '''
+    print(datetime.now(), "ENTERING waitFromTime")
+    now = datetime.now()
+    print("NOW: ", now)
+    td = timedelta(seconds=duration)
+    end_time = fromtime+td
+    pause_time = (end_time - now).total_seconds()
+    print("required pause time:", pause_time)
+    if pause_time > 0:
+        print("still need to pause ", datetime.now())
+        time.sleep(pause_time)
+    print(now)
 
 if __name__ == "__main__":
     # if run as command, print short documentation and exit

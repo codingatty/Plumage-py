@@ -25,6 +25,7 @@ class TestUM(unittest.TestCase):
     TESTFILES_DIR = "testfiles"
  
     def setUp(self):
+        plumage.TSDRReq.prior_TSDR_call_time = None # start each test with fresh prior-call time
         pass
 
     # Group A
@@ -233,13 +234,21 @@ class TestUM(unittest.TestCase):
     def test_E002_getTSDRInfo_parameter_validation(self):
         t = plumage.TSDRReq()
         self.assertRaises(ValueError, t.getTSDRInfo, "123456789", "s") # > 8-digit serial no.
+        plumage.TSDRReq.prior_TSDR_call_time = None                    # reset already-called flag after each call to avoid delays in test
         self.assertRaises(ValueError, t.getTSDRInfo, "1234567", "s")   # < 8-digit serial no.
+        plumage.TSDRReq.prior_TSDR_call_time = None 
         self.assertRaises(ValueError, t.getTSDRInfo, 123456789, "s")   # non-character serial no.
+        plumage.TSDRReq.prior_TSDR_call_time = None 
         self.assertRaises(ValueError, t.getTSDRInfo, "1234567Z", "s")  # non-numeric serial no.
+        plumage.TSDRReq.prior_TSDR_call_time = None 
         self.assertRaises(ValueError, t.getTSDRInfo, "12345678", "r")  # > 7-digit reg. no
+        plumage.TSDRReq.prior_TSDR_call_time = None 
         self.assertRaises(ValueError, t.getTSDRInfo, "123456", "r")    # < 7-digit reg. no
+        plumage.TSDRReq.prior_TSDR_call_time = None 
         self.assertRaises(ValueError, t.getTSDRInfo, 23456, "r")       # non-character reg. no
+        plumage.TSDRReq.prior_TSDR_call_time = None 
         self.assertRaises(ValueError, t.getTSDRInfo, "123456Z", "r")   # non-numeric reg. no
+        plumage.TSDRReq.prior_TSDR_call_time = None 
         self.assertRaises(ValueError, t.getTSDRInfo, "123456", "X")    # incorrect type (not "s"/"r")
 
     # Group F
@@ -287,6 +296,7 @@ class TestUM(unittest.TestCase):
         t_old.setXSLT(ST961D3xslt)
         testfile = os.path.join(self.TESTFILES_DIR, "rn2178784-ST-961_D3.xml")
         t_old.getTSDRInfo(testfile)
+        plumage.TSDRReq.prior_TSDR_call_time = None  # reset already-called flag after each call to avoid delays in test
         #ignore the DiagnosticInfo... keys; they are expected to differ
         t_old_keys = set([x for x in t_old.TSDRData.TSDRSingle.keys() if not x.startswith("DiagnosticInfo")])
 
@@ -294,6 +304,7 @@ class TestUM(unittest.TestCase):
         t_new = plumage.TSDRReq()
         testfile = os.path.join(self.TESTFILES_DIR, "rn2178784-ST-962.2.1.xml")
         t_new.getTSDRInfo(testfile)
+        plumage.TSDRReq.prior_TSDR_call_time = None  # reset already-called flag after each call to avoid delays in test
         t_new_keys = set([x for x in t_new.TSDRData.TSDRSingle.keys() if not x.startswith("DiagnosticInfo")])
 
         # Same keys in both
@@ -366,6 +377,7 @@ PublicationDate,"<xsl:value-of select="tm:PublicationDetails/tm:Publication/tm:P
         '''
         
         t = plumage.TSDRReq()
+        plumage.TSDRReq.prior_TSDR_call_time = None  # reset already-called flag after each call to avoid delays in test
         t.setXSLT(xsl_text)
         testfile = os.path.join(self.TESTFILES_DIR, "sn76044902.zip")
         t.getXMLData(testfile)
@@ -549,6 +561,7 @@ PublicationDate,"<xsl:value-of select="tm:PublicationDetails/tm:Publication/tm:P
         t66 = plumage.TSDRReq()
         testfile = os.path.join(self.TESTFILES_DIR, "sn76044902-ST66.xml")
         t66.getTSDRInfo(testfile)
+        plumage.TSDRReq.prior_TSDR_call_time = None  # reset already-called flag after each call to avoid delays in test
         t96 = plumage.TSDRReq()
         testfile = os.path.join(self.TESTFILES_DIR, "sn76044902-ST96.xml")
         t96.getTSDRInfo(testfile)
@@ -569,6 +582,7 @@ PublicationDate,"<xsl:value-of select="tm:PublicationDetails/tm:Publication/tm:P
         t66 = plumage.TSDRReq()
         testfile = os.path.join(self.TESTFILES_DIR, "sn76044902-ST66.xml")
         t66.getTSDRInfo(testfile)
+        plumage.TSDRReq.prior_TSDR_call_time = None  # reset already-called flag after each call to avoid delays in test
         tsdrmulti = t66.TSDRData.TSDRMulti
         ICD_list = tsdrmulti["InternationalClassDescriptionList"]
         ST66_IC_nos = [entry["InternationalClassNumber"] for entry in ICD_list]
