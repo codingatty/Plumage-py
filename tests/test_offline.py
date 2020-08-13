@@ -127,6 +127,21 @@ class TestUM(unittest.TestCase):
         self.assertEqual(tsdrdata.TSDRSingle["DiagnosticInfoImplementationSPDXLicenseIdentifier"],
                          "Apache-2.0")
 
+    # Test release-independent metainfo data (does not change release-to-release)
+    def test_A004_check_releaseindependent_metadata(self):
+        self.assertEqual(plumage.metainfo["LibraryName"], "Plumage-py")
+        self.assertEqual(plumage.metainfo["Author"], "Terry Carroll")
+        self.assertEqual(plumage.metainfo["URL"], "https://github.com/codingatty/Plumage-py")
+        self.assertEqual(plumage.metainfo["License"], "Apache License, version 2.0 (January 2004)")
+        self.assertEqual(plumage.metainfo["SPDX_LID"], "Apache-2.0")
+        self.assertEqual(plumage.metainfo["LicenseURL"], "http://www.apache.org/licenses/LICENSE-2.0")
+
+    # Test release-dependent metainfo data (changes, or may change, from release-to-release)
+    def test_A005_check_releasedependent_metadata(self):
+        self.assertEqual(plumage.metainfo["Version"], "1.3.0")
+        self.assertEqual(plumage.metainfo["LastUpdated"], "2018-03-22")
+        self.assertEqual(plumage.metainfo["Copyright"], "Copyright 2014-2018 Terry Carroll")
+
     # Group B
     # Test XML fetch only, unzipped XML
     def test_B001_step_by_step_thru_xml_unzipped(self):

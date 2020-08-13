@@ -5,5 +5,5 @@ _X_ urllib2 / urllib import
 _X_ print as function
 _X_ except..as  syntax
 ___ default pause between TSDR calls
-___ Provide metainfo without TSDR call
+_X_ Provide metainfo without TSDR call
 

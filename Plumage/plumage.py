@@ -69,6 +69,18 @@ __license__ = "Apache License, version 2.0 (January 2004)"
 __SPDX_LID__ = "Apache-2.0"
 __licenseURL__ = "http://www.apache.org/licenses/LICENSE-2.0"
 
+metainfo = {
+    "LibraryName": "Plumage-py",
+    "Version": __version__,
+    "LastUpdated": __last_updated__,
+    "Author": __author__,
+    "URL": __URL__,
+    "Copyright": __copyright__,
+    "License": __license__,
+    "SPDX_LID": __SPDX_LID__,
+    "LicenseURL": __licenseURL__
+}
+
 COMMA = ","
 LINE_SEPARATOR = "\n"
 WHITESPACE = string.whitespace
