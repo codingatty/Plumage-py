@@ -86,7 +86,16 @@ metainfo = {
 COMMA = ","
 LINE_SEPARATOR = "\n"
 WHITESPACE = string.whitespace
-        
+
+def SetIntervalTime(value):
+    try:
+        TSDRReq._TSDR_minimum_interval = 0 + value # force an error if non-numeric
+    except TypeError:
+        raise TypeError("interval value must be an int or float")
+
+def UnSetIntervalTime():
+    TSDRReq._TSDR_minimum_interval = TSDRReq._default_TSDR_minimum_interval
+
 class _XSLTDescriptor(object):
     '''
     Object used to organize information relating to pre-defined XSLT transforms
@@ -161,8 +170,9 @@ class TSDRReq(object):
     TSDR request object
     '''
 
-    _prior_TSDR_call_time = None
-    _TSDR_delay_time = 1           # at last one second between calls to TSDR (real or simulated)
+    _prior_TSDR_call_time = None   # time of previous TSDR call (real or simulated), if any
+    _default_TSDR_minimum_interval = 1.0 # at least one second between calls to TSDR (real or simulated)
+    _TSDR_minimum_interval = _default_TSDR_minimum_interval     
 
     def __init__(self):
         '''
@@ -309,9 +319,9 @@ class TSDRReq(object):
             self.TSDRData
         '''
         
-        if TSDRReq.prior_TSDR_call_time is not None:
-            _waitFromTime(TSDRReq.prior_TSDR_call_time, TSDRReq._TSDR_delay_time)
-        TSDRReq.prior_TSDR_call_time = datetime.now()
+        if TSDRReq._prior_TSDR_call_time is not None:
+            _waitFromTime(TSDRReq._prior_TSDR_call_time, TSDRReq._TSDR_minimum_interval)
+        TSDRReq._prior_TSDR_call_time = datetime.now()
 
         self.resetXMLData()        # Clear out any data from prior use
         if tmtype is None:
@@ -804,17 +814,17 @@ def _waitFromTime(fromtime, duration):
     '''
     Wait until the specified duration (in seconds) after fromtime (datetime) has occurred
     '''
-    print(datetime.now(), "ENTERING waitFromTime")
+    DEBUG = False
     now = datetime.now()
-    print("NOW: ", now)
+    if DEBUG: print(datetime.now(), "ENTERING _waitFromTime at: ", now)
     td = timedelta(seconds=duration)
     end_time = fromtime+td
     pause_time = (end_time - now).total_seconds()
-    print("required pause time:", pause_time)
+    if DEBUG:  print("required pause time:", pause_time)
     if pause_time > 0:
-        print("still need to pause ", datetime.now())
+        if DEBUG: print("Still need to pause at ", datetime.now())
         time.sleep(pause_time)
-    print(now)
+    if DEBUG: print(datetime.now(), "EXITING _waitFromTime at: ", now)
 
 if __name__ == "__main__":
     # if run as command, print short documentation and exit

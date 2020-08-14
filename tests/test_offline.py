@@ -19,13 +19,19 @@ class TestUM(unittest.TestCase):
     # Group E: Parameter validations
     # Group F: XML/XSL variations
     # Group G: CSV/XSL validations
-
+    # Group H: test add'l fields as added
+    # Group I: test timing
+    #  
     # Group O (in test_online.py): Online tests that actually hit the PTO TSDR system
 
     TESTFILES_DIR = "testfiles"
+    # Save initial timing info for reset later 
+    INITIAL_PRIOR_TSDR_CALL_TIME  = plumage.TSDRReq._prior_TSDR_call_time 
  
     def setUp(self):
-        plumage.TSDRReq.prior_TSDR_call_time = None # start each test with fresh prior-call time
+        # start each test with fresh prior-call time; tests with multiple TSDRReqs will need to reset themselves to avoid delay
+        plumage.TSDRReq._prior_TSDR_call_time =  TestUM.INITIAL_PRIOR_TSDR_CALL_TIME 
+        plumage.UnSetIntervalTime()
         pass
 
     # Group A
@@ -234,21 +240,21 @@ class TestUM(unittest.TestCase):
     def test_E002_getTSDRInfo_parameter_validation(self):
         t = plumage.TSDRReq()
         self.assertRaises(ValueError, t.getTSDRInfo, "123456789", "s") # > 8-digit serial no.
-        plumage.TSDRReq.prior_TSDR_call_time = None                    # reset already-called flag after each call to avoid delays in test
+        plumage.TSDRReq._prior_TSDR_call_time = TestUM.INITIAL_PRIOR_TSDR_CALL_TIME  # reset already-called flag after each call to avoid delays in test
         self.assertRaises(ValueError, t.getTSDRInfo, "1234567", "s")   # < 8-digit serial no.
-        plumage.TSDRReq.prior_TSDR_call_time = None 
+        plumage.TSDRReq._prior_TSDR_call_time = TestUM.INITIAL_PRIOR_TSDR_CALL_TIME 
         self.assertRaises(ValueError, t.getTSDRInfo, 123456789, "s")   # non-character serial no.
-        plumage.TSDRReq.prior_TSDR_call_time = None 
+        plumage.TSDRReq._prior_TSDR_call_time = TestUM.INITIAL_PRIOR_TSDR_CALL_TIME 
         self.assertRaises(ValueError, t.getTSDRInfo, "1234567Z", "s")  # non-numeric serial no.
-        plumage.TSDRReq.prior_TSDR_call_time = None 
+        plumage.TSDRReq._prior_TSDR_call_time = TestUM.INITIAL_PRIOR_TSDR_CALL_TIME 
         self.assertRaises(ValueError, t.getTSDRInfo, "12345678", "r")  # > 7-digit reg. no
-        plumage.TSDRReq.prior_TSDR_call_time = None 
+        plumage.TSDRReq._prior_TSDR_call_time = TestUM.INITIAL_PRIOR_TSDR_CALL_TIME 
         self.assertRaises(ValueError, t.getTSDRInfo, "123456", "r")    # < 7-digit reg. no
-        plumage.TSDRReq.prior_TSDR_call_time = None 
+        plumage.TSDRReq._prior_TSDR_call_time = TestUM.INITIAL_PRIOR_TSDR_CALL_TIME 
         self.assertRaises(ValueError, t.getTSDRInfo, 23456, "r")       # non-character reg. no
-        plumage.TSDRReq.prior_TSDR_call_time = None 
+        plumage.TSDRReq._prior_TSDR_call_time = TestUM.INITIAL_PRIOR_TSDR_CALL_TIME 
         self.assertRaises(ValueError, t.getTSDRInfo, "123456Z", "r")   # non-numeric reg. no
-        plumage.TSDRReq.prior_TSDR_call_time = None 
+        plumage.TSDRReq._prior_TSDR_call_time = TestUM.INITIAL_PRIOR_TSDR_CALL_TIME 
         self.assertRaises(ValueError, t.getTSDRInfo, "123456", "X")    # incorrect type (not "s"/"r")
 
     # Group F
@@ -296,7 +302,7 @@ class TestUM(unittest.TestCase):
         t_old.setXSLT(ST961D3xslt)
         testfile = os.path.join(self.TESTFILES_DIR, "rn2178784-ST-961_D3.xml")
         t_old.getTSDRInfo(testfile)
-        plumage.TSDRReq.prior_TSDR_call_time = None  # reset already-called flag after each call to avoid delays in test
+        plumage.TSDRReq._prior_TSDR_call_time = TestUM.INITIAL_PRIOR_TSDR_CALL_TIME  # reset already-called flag after each call to avoid delays in test
         #ignore the DiagnosticInfo... keys; they are expected to differ
         t_old_keys = set([x for x in t_old.TSDRData.TSDRSingle.keys() if not x.startswith("DiagnosticInfo")])
 
@@ -304,7 +310,7 @@ class TestUM(unittest.TestCase):
         t_new = plumage.TSDRReq()
         testfile = os.path.join(self.TESTFILES_DIR, "rn2178784-ST-962.2.1.xml")
         t_new.getTSDRInfo(testfile)
-        plumage.TSDRReq.prior_TSDR_call_time = None  # reset already-called flag after each call to avoid delays in test
+        plumage.TSDRReq._prior_TSDR_call_time = TestUM.INITIAL_PRIOR_TSDR_CALL_TIME  # reset already-called flag after each call to avoid delays in test
         t_new_keys = set([x for x in t_new.TSDRData.TSDRSingle.keys() if not x.startswith("DiagnosticInfo")])
 
         # Same keys in both
@@ -377,7 +383,7 @@ PublicationDate,"<xsl:value-of select="tm:PublicationDetails/tm:Publication/tm:P
         '''
         
         t = plumage.TSDRReq()
-        plumage.TSDRReq.prior_TSDR_call_time = None  # reset already-called flag after each call to avoid delays in test
+        plumage.TSDRReq._prior_TSDR_call_time = TestUM.INITIAL_PRIOR_TSDR_CALL_TIME  # reset already-called flag after each call to avoid delays in test
         t.setXSLT(xsl_text)
         testfile = os.path.join(self.TESTFILES_DIR, "sn76044902.zip")
         t.getXMLData(testfile)
@@ -561,7 +567,7 @@ PublicationDate,"<xsl:value-of select="tm:PublicationDetails/tm:Publication/tm:P
         t66 = plumage.TSDRReq()
         testfile = os.path.join(self.TESTFILES_DIR, "sn76044902-ST66.xml")
         t66.getTSDRInfo(testfile)
-        plumage.TSDRReq.prior_TSDR_call_time = None  # reset already-called flag after each call to avoid delays in test
+        plumage.TSDRReq._prior_TSDR_call_time = TestUM.INITIAL_PRIOR_TSDR_CALL_TIME  # reset already-called flag after each call to avoid delays in test
         t96 = plumage.TSDRReq()
         testfile = os.path.join(self.TESTFILES_DIR, "sn76044902-ST96.xml")
         t96.getTSDRInfo(testfile)
@@ -582,7 +588,7 @@ PublicationDate,"<xsl:value-of select="tm:PublicationDetails/tm:Publication/tm:P
         t66 = plumage.TSDRReq()
         testfile = os.path.join(self.TESTFILES_DIR, "sn76044902-ST66.xml")
         t66.getTSDRInfo(testfile)
-        plumage.TSDRReq.prior_TSDR_call_time = None  # reset already-called flag after each call to avoid delays in test
+        plumage.TSDRReq._prior_TSDR_call_time = TestUM.INITIAL_PRIOR_TSDR_CALL_TIME  # reset already-called flag after each call to avoid delays in test
         tsdrmulti = t66.TSDRData.TSDRMulti
         ICD_list = tsdrmulti["InternationalClassDescriptionList"]
         ST66_IC_nos = [entry["InternationalClassNumber"] for entry in ICD_list]
@@ -618,20 +624,19 @@ PublicationDate,"<xsl:value-of select="tm:PublicationDetails/tm:Publication/tm:P
         '''
         Fake delay is the amount of time, in seconds, to delay before calling
         '''
+        starting_time = datetime.now()
         t = plumage.TSDRReq()
         testfile = os.path.join(self.TESTFILES_DIR, "sn76044902.zip")
-
-        # try a call and make sure it works:
-        starting_time = datetime.now()
-        if fake_delay is not None:
+        if fake_delay is not None: # optionally fake time delay in workload
             time.sleep(fake_delay)
+
         t.getTSDRInfo(testfile)
         ending_time = datetime.now()
         self.assertTrue(t.TSDRData.TSDRMapIsValid)
         total_time_in_ms = (ending_time-starting_time)/timedelta(milliseconds=1)
         return total_time_in_ms
 
-    def test_I0001_default_delay(self):
+    def test_I001_default_delay(self):
         '''
         Test to make sure data calls are delayed to keep from looking like a denial-of-service attack against PTO
 
@@ -639,20 +644,114 @@ PublicationDate,"<xsl:value-of select="tm:PublicationDetails/tm:Publication/tm:P
         this shouldn't be too bad, at least within the 100-milisecond range used here
         '''
 
-        tolerance = 100   # 100 ms
-        default_delay = 1 # default 1-second delay
+        TOLERANCE = 100   # 100 ms
+        #default_delay = 1 # default 1-second delay
 
-        # see how we did:
-        #total_time_in_ms = self.execute_one_timed_call(fake_delay=3)
-        
         # First run should be almost instantaneous:
         total_time_in_ms = self.execute_one_timed_call()
-        self.assertAlmostEqual(total_time_in_ms, 0, delta=tolerance)
+        self.assertAlmostEqual(total_time_in_ms, 0, delta=TOLERANCE)
 
         # But second run should be delayed about a second (1000 ms)
         total_time_in_ms = self.execute_one_timed_call()
-        self.assertGreater(total_time_in_ms, 1000) # more than one second
-        self.assertLess(total_time_in_ms, 1100)    # but not that much longer (i.e < 1.1 sec)
+        self.assertGreater(total_time_in_ms, 1000)                         # more than one second
+        self.assertAlmostEqual(total_time_in_ms, 1000, delta=TOLERANCE)    # but not that much more! (i.e < 1.1 sec)
+
+    def test_I002_default_delay_with_faked_workload(self):
+        '''
+        This test ensures that there are no pointless delays, if processing itself is already taking time.
+        For example, if we want at least a one-second between calls to TSDR, and processing the info itself 
+        takes more than one second, there should be no added delay at all.
+        '''
+        TOLERANCE = 100   # 100 ms
+
+        # First run should be almost instantaneous:
+        total_time_in_ms = self.execute_one_timed_call()
+        self.assertAlmostEqual(total_time_in_ms, 0, delta=TOLERANCE)
+
+        # Second run, pretend it takes 1.2 seconds of work between calls 
+        total_time_in_ms = self.execute_one_timed_call(fake_delay=1.2)
+        self.assertGreater(total_time_in_ms, 1000)                         # is required to be more than one second
+        self.assertAlmostEqual(total_time_in_ms, 1200, delta=TOLERANCE)    # but not much more than the 1.2 seconds we already should get "credit" for
+
+    def test_I003_zero_delay(self):
+        '''
+        This test ensures we can override the delay if we want
+        '''
+        TOLERANCE = 100   # 100 ms
+
+        plumage.SetIntervalTime(0)
+        # First run should be almost instantaneous, as usual:
+        total_time_in_ms = self.execute_one_timed_call()
+        self.assertAlmostEqual(total_time_in_ms, 0, delta=TOLERANCE)
+
+        # Subsequent runs should also now be almost instantaneous with the override 
+        total_time_in_ms = self.execute_one_timed_call()
+        self.assertAlmostEqual(total_time_in_ms, 0, delta=TOLERANCE)
+        total_time_in_ms = self.execute_one_timed_call()
+        self.assertAlmostEqual(total_time_in_ms, 0, delta=TOLERANCE)
+        total_time_in_ms = self.execute_one_timed_call()
+        self.assertAlmostEqual(total_time_in_ms, 0, delta=TOLERANCE)
+
+        # go back to default, and we should get one-second delays again
+        plumage.UnSetIntervalTime()
+        total_time_in_ms = self.execute_one_timed_call()
+        self.assertGreater(total_time_in_ms, 1000)                
+        self.assertAlmostEqual(total_time_in_ms, 1000, delta=TOLERANCE)
+        total_time_in_ms = self.execute_one_timed_call()
+        self.assertGreater(total_time_in_ms, 1000)                
+        self.assertAlmostEqual(total_time_in_ms, 1000, delta=TOLERANCE)
+
+    def test_I004_fractional_delay(self):
+        '''
+        Verify a non-integer number of seconds works as expected
+        '''
+
+        TOLERANCE = 100   # 100 ms
+        #default_delay = 1 # default 1-second delay
+
+        plumage.SetIntervalTime(1.5)  # 1.5-second interval
+        # First run should be almost instantaneous, as usual:
+        total_time_in_ms = self.execute_one_timed_call()
+        self.assertAlmostEqual(total_time_in_ms, 0, delta=TOLERANCE)
+
+        # But second run should be delayed about 1.5 seconds (1500 ms)
+        total_time_in_ms = self.execute_one_timed_call()
+        self.assertGreater(total_time_in_ms, 1500)                         
+        self.assertAlmostEqual(total_time_in_ms, 1500, delta=TOLERANCE)  
+
+    def test_I005_negative_delay(self):
+        '''
+        a negative delay will not let you time travel, but guaranteeing an interval of at 
+        least a negative number of seconds is just like saying zero
+        '''
+
+        TOLERANCE = 100   # 100 ms
+        #default_delay = 1 # default 1-second delay
+
+        plumage.SetIntervalTime(-10)  # negative ten-second interval
+        # First run should be almost instantaneous, as usual:
+        total_time_in_ms = self.execute_one_timed_call()
+        self.assertAlmostEqual(total_time_in_ms, 0, delta=TOLERANCE)
+
+        # and so should subsequent runs  
+        total_time_in_ms = self.execute_one_timed_call()
+        self.assertAlmostEqual(total_time_in_ms, 0, delta=TOLERANCE)
+        total_time_in_ms = self.execute_one_timed_call()
+        self.assertAlmostEqual(total_time_in_ms, 0, delta=TOLERANCE)
+        total_time_in_ms = self.execute_one_timed_call()
+        self.assertAlmostEqual(total_time_in_ms, 0, delta=TOLERANCE)
+
+    def test_I006_nonnumeric_delay(self):
+        '''
+        Non-numerics should raise TypeError
+        '''
+
+        self.assertRaises(TypeError, plumage.SetIntervalTime, "1")
+        self.assertRaises(TypeError, plumage.SetIntervalTime, None)
+
+        # so should a missing operand
+        self.assertRaises(TypeError, plumage.SetIntervalTime)
+
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)
