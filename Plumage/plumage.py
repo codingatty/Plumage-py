@@ -53,6 +53,7 @@ from datetime  import datetime
 from datetime  import timedelta
 import unittest
 from lxml import etree
+import json
 
 ### PEP 476 begin
 try:
@@ -76,6 +77,9 @@ LINE_SEPARATOR = "\n"
 WHITESPACE = string.whitespace
 
 _TSDR_dirname = os.path.dirname(__file__)
+
+def GetMetainfo():
+    return metainfo
 
 def SetIntervalTime(value):
     try:
@@ -795,7 +799,7 @@ def _waitFromTime(fromtime, duration):
     if DEBUG: print(datetime.now(), "EXITING _waitFromTime")
 
 
-Plumage_library_metainfo = {
+lib_metainfo = {                                                          # metainfo specific to this library (i.e., not copied XSLT)
     "LibraryName": "Plumage-py",
     "LibraryVersion": __version__,
     "LibraryDate": __last_updated__,
@@ -827,6 +831,15 @@ _xslt_table = {
     "ST66" : _XSLTDescriptor("ST66"),
     "ST96" : _XSLTDescriptor("ST96")
     }
+
+metainfo = {}         # will hold metainfo (plumage library metainfo and plumage XSLT metainfo from JSON file)
+
+XSLT_metainfo_filename = "Plumage-XSLT-metadata.json"
+XSLT_metainfo_path = os.path.join(_TSDR_dirname, XSLT_metainfo_filename)
+with open(XSLT_metainfo_path, 'r') as JSON_file:
+        XSLT_metainfo = json.load(JSON_file)
+metainfo.update(lib_metainfo)
+metainfo.update(XSLT_metainfo)
 
 if __name__ == "__main__":
     # if run as command, print short documentation and exit

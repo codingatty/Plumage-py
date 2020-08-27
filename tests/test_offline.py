@@ -138,18 +138,20 @@ class TestUM(unittest.TestCase):
                          "Apache-2.0")
 
     # Test release-independent metainfo data (does not change release-to-release)
-    def test_A004_check_releaseindependent_metadata(self):
-        self.assertEqual(plumage.Plumage_library_metainfo["LibraryAuthor"], "Terry Carroll")
-        self.assertEqual(plumage.Plumage_library_metainfo["LibraryURL"], "https://github.com/codingatty/Plumage-py")
-        self.assertEqual(plumage.Plumage_library_metainfo["LibraryLicense"], "Apache License, version 2.0 (January 2004)")
-        self.assertEqual(plumage.Plumage_library_metainfo["LibrarySPDXLicenseIdentifier"], "Apache-2.0")
-        self.assertEqual(plumage.Plumage_library_metainfo["LibraryLicenseURL"], "http://www.apache.org/licenses/LICENSE-2.0")
+    def test_A004_check_releaseindependent_metainfo(self):
+        metainfo = plumage.GetMetainfo()
+        self.assertEqual(metainfo["LibraryAuthor"], "Terry Carroll")
+        self.assertEqual(metainfo["LibraryURL"], "https://github.com/codingatty/Plumage-py")
+        self.assertEqual(metainfo["LibraryLicense"], "Apache License, version 2.0 (January 2004)")
+        self.assertEqual(metainfo["LibrarySPDXLicenseIdentifier"], "Apache-2.0")
+        self.assertEqual(metainfo["LibraryLicenseURL"], "http://www.apache.org/licenses/LICENSE-2.0")
 
     # Test release-dependent metainfo data (changes, or may change, from release-to-release)
-    def test_A005_check_releasedependent_metadata(self):
-        self.assertEqual(plumage.Plumage_library_metainfo["LibraryVersion"], "1.3.0")
-        self.assertEqual(plumage.Plumage_library_metainfo["LibraryDate"], "2018-03-22")
-        self.assertEqual(plumage.Plumage_library_metainfo["LibraryCopyright"], "Copyright 2014-2018 Terry Carroll")
+    def test_A005_check_releasedependent_metainfo(self):
+        metainfo = plumage.GetMetainfo()
+        self.assertEqual(metainfo["LibraryVersion"], "1.3.0")
+        self.assertEqual(metainfo["LibraryDate"], "2018-03-22")
+        self.assertEqual(metainfo["LibraryCopyright"], "Copyright 2014-2018 Terry Carroll")
 
     # Group B
     # Test XML fetch only, unzipped XML
