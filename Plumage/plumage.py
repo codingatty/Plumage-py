@@ -75,6 +75,8 @@ COMMA = ","
 LINE_SEPARATOR = "\n"
 WHITESPACE = string.whitespace
 
+_TSDR_dirname = os.path.dirname(__file__)
+
 def SetIntervalTime(value):
     try:
         TSDRReq._TSDR_minimum_interval = 0 + value # force an error if non-numeric
@@ -820,8 +822,6 @@ _TSDR_substitutions = {
     "$EXECUTIONDATETIME$":"Not Set",            # Execution time (set at runtime)
     "$XMLSOURCE$":"Not Set"                     # URL or pathname of XML source (set at runtime)
     }
-
-_TSDR_dirname = os.path.dirname(__file__)
 
 _xslt_table = {
     "ST66" : _XSLTDescriptor("ST66"),
