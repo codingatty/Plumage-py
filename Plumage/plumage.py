@@ -816,15 +816,15 @@ def _waitFromTime(fromtime, duration):
     '''
     DEBUG = False
     now = datetime.now()
-    if DEBUG: print(datetime.now(), "ENTERING _waitFromTime at: ", now)
+    if DEBUG: print(datetime.now(), "ENTERING _waitFromTime")
     td = timedelta(seconds=duration)
     end_time = fromtime+td
     pause_time = (end_time - now).total_seconds()
-    if DEBUG:  print("required pause time:", pause_time)
+    if DEBUG:  print("required pause time (seconds):", pause_time)
     if pause_time > 0:
-        if DEBUG: print("Still need to pause at ", datetime.now())
+        if DEBUG: print(datetime.now(), "Still need to pause")
         time.sleep(pause_time)
-    if DEBUG: print(datetime.now(), "EXITING _waitFromTime at: ", now)
+    if DEBUG: print(datetime.now(), "EXITING _waitFromTime")
 
 if __name__ == "__main__":
     # if run as command, print short documentation and exit

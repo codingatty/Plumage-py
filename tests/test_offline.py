@@ -581,9 +581,12 @@ PublicationDate,"<xsl:value-of select="tm:PublicationDetails/tm:Publication/tm:P
     def test_H002_verify_intl_class_consistency(self):
         '''
         Make sure that all international classes are reported consistently and correctly
-          InternationalClassDescriptionList / InternationalClassNumber
-          DomesticClassDescriptionList / PrimaryClassNumber
+          InternationalClassDescriptionList / InternationalClassNumber (both formats)
+          DomesticClassDescriptionList / PrimaryClassNumber (both formats)
           DomesticClassDescriptionList / NiceClassNumber (ST.96 only)
+          FirstUseDatesList / PrimaryClassNumber (both formats)
+
+        For the test cases, each of these should have the same set of class IDs: ["009", "042"], although maybe more than once
         '''
         t66 = plumage.TSDRReq()
         testfile = os.path.join(self.TESTFILES_DIR, "sn76044902-ST66.xml")
