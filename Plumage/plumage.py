@@ -71,18 +71,6 @@ __license__ = "Apache License, version 2.0 (January 2004)"
 __SPDX_LID__ = "Apache-2.0"
 __licenseURL__ = "http://www.apache.org/licenses/LICENSE-2.0"
 
-metainfo = {
-    "LibraryName": "Plumage-py",
-    "Version": __version__,
-    "LastUpdated": __last_updated__,
-    "Author": __author__,
-    "URL": __URL__,
-    "Copyright": __copyright__,
-    "License": __license__,
-    "SPDX_LID": __SPDX_LID__,
-    "LicenseURL": __licenseURL__
-}
-
 COMMA = ","
 LINE_SEPARATOR = "\n"
 WHITESPACE = string.whitespace
@@ -142,28 +130,6 @@ class TSDRMap(object):
         self.TSDRMulti = None
         self.TSDRMapIsValid = False
 
-_TSDR_substitutions = {
-    "$XSLTFILENAME$":"Not Set",                 # XSLT stylesheet file name
-    "$XSLTLOCATION$":"Not Set",                 # XSLT stylesheet location (e.g., directory pathname)
-    "$IMPLEMENTATIONNAME$":"Plumage-py",        # implementation identifier
-    "$IMPLEMENTATIONVERSION$":__version__,      # implementation version no.
-    "$IMPLEMENTATIONDATE$":__last_updated__,    # implementation date
-    "$IMPLEMENTATIONAUTHOR$":__author__,        # implementation author
-    "$IMPLEMENTATIONURL$":__URL__,              # implementation URL
-    "$IMPLEMENTATIONCOPYRIGHT$": __copyright__, # implementation copyright notice
-    "$IMPLEMENTATIONLICENSE$":__license__,      # implementation license
-    "$IMPLEMENTATIONSPDXLID$":__SPDX_LID__,     # implementation license SPDX ID
-    "$IMPLEMENTATIONLICENSEURL$":__licenseURL__, #Implementation license URL
-    "$EXECUTIONDATETIME$":"Not Set",            # Execution time (set at runtime)
-    "$XMLSOURCE$":"Not Set"                     # URL or pathname of XML source (set at runtime)
-    }
-
-_TSDR_dirname = os.path.dirname(__file__)
-
-_xslt_table = {
-    "ST66" : _XSLTDescriptor("ST66"),
-    "ST96" : _XSLTDescriptor("ST96")
-    }
 
 class TSDRReq(object):
     '''
@@ -825,6 +791,42 @@ def _waitFromTime(fromtime, duration):
         if DEBUG: print(datetime.now(), "Still need to pause")
         time.sleep(pause_time)
     if DEBUG: print(datetime.now(), "EXITING _waitFromTime")
+
+
+Plumage_library_metainfo = {
+    "LibraryName": "Plumage-py",
+    "LibraryVersion": __version__,
+    "LibraryDate": __last_updated__,
+    "LibraryAuthor": __author__,
+    "LibraryURL": __URL__,
+    "LibraryCopyright": __copyright__,
+    "LibraryLicense": __license__,
+    "LibrarySPDXLicenseIdentifier": __SPDX_LID__,
+    "LibraryLicenseURL": __licenseURL__
+}
+
+_TSDR_substitutions = {
+    "$XSLTFILENAME$":"Not Set",                 # XSLT stylesheet file name
+    "$XSLTLOCATION$":"Not Set",                 # XSLT stylesheet location (e.g., directory pathname)
+    "$IMPLEMENTATIONNAME$":"Plumage-py",        # implementation identifier
+    "$IMPLEMENTATIONVERSION$":__version__,      # implementation version no.
+    "$IMPLEMENTATIONDATE$":__last_updated__,    # implementation date
+    "$IMPLEMENTATIONAUTHOR$":__author__,        # implementation author
+    "$IMPLEMENTATIONURL$":__URL__,              # implementation URL
+    "$IMPLEMENTATIONCOPYRIGHT$": __copyright__, # implementation copyright notice
+    "$IMPLEMENTATIONLICENSE$":__license__,      # implementation license
+    "$IMPLEMENTATIONSPDXLID$":__SPDX_LID__,     # implementation license SPDX ID
+    "$IMPLEMENTATIONLICENSEURL$":__licenseURL__, #Implementation license URL
+    "$EXECUTIONDATETIME$":"Not Set",            # Execution time (set at runtime)
+    "$XMLSOURCE$":"Not Set"                     # URL or pathname of XML source (set at runtime)
+    }
+
+_TSDR_dirname = os.path.dirname(__file__)
+
+_xslt_table = {
+    "ST66" : _XSLTDescriptor("ST66"),
+    "ST96" : _XSLTDescriptor("ST96")
+    }
 
 if __name__ == "__main__":
     # if run as command, print short documentation and exit
