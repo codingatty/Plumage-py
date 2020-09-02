@@ -153,6 +153,34 @@ class TestUM(unittest.TestCase):
         self.assertEqual(metainfo["LibraryDate"], "2018-03-22")
         self.assertEqual(metainfo["LibraryCopyright"], "Copyright 2014-2018 Terry Carroll")
 
+    # Test metainfo consistency
+    def test_A005_check_metainfo_consistency(self):
+        '''
+         1. All keys from GetMetainfo() are also in run-time TSDR data (both ST.66 and ST.96)
+         2. All values from GetMetainfo() match those from run-time TSDR data (both ST.66 and ST.96)
+        '''
+        metainfo = plumage.GetMetainfo()
+
+        t66 = plumage.TSDRReq()
+        testfile = os.path.join(self.TESTFILES_DIR, "sn76044902-ST66.xml")
+        t66.getTSDRInfo(testfile)
+
+        t96 = plumage.TSDRReq()
+        testfile = os.path.join(self.TESTFILES_DIR, "sn76044902-ST96.xml")
+        t96.getTSDRInfo(testfile)
+
+        # all keys line up with st.66 and st.96 keys
+        self.assertTrue(set(metainfo).issubset(set(t66.TSDRData.TSDRSingle)))
+        self.assertTrue(set(metainfo).issubset(set(t96.TSDRData.TSDRSingle)))
+
+        # all values line up with st.66 
+        for K in metainfo:
+            self.assertEqual(metainfo[K], t66.TSDRData.TSDRSingle[K])
+
+        # all values line up with st.96 
+        for K in metainfo:
+            self.assertEqual(metainfo[K], t96.TSDRData.TSDRSingle[K])
+
     # Group B
     # Test XML fetch only, unzipped XML
     def test_B001_step_by_step_thru_xml_unzipped(self):

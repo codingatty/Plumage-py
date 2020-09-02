@@ -4,6 +4,9 @@ _X_ StringIO import
 _X_ urllib2 / urllib import
 _X_ print as function
 _X_ except..as  syntax
-___ default pause between TSDR calls
-_X_ Provide metainfo without TSDR call
+
+Other features
+_X_ default pause between TSDR calls
+_X_ Provide metainfo via GetMetainfo
+___ Make metainfo consistent (keys & values) between GetMetainfo() and runtime TSDRData
 
