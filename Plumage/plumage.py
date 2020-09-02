@@ -10,8 +10,8 @@ To use:
 For details, see https://github.com/codingatty/Plumage/wiki
 '''
 
-# Version 1.3.0, 2018-03-22
-# Copyright 2014-2018 Terry Carroll
+# Version 1.4.0, 2018-03-22
+# Copyright 2014-2020 Terry Carroll
 # carroll@tjc.com
 #
 # License information:
@@ -63,11 +63,11 @@ except ImportError:
     SSL_INSTALLED = False
 ### PEP 476 end
 
-__version__ = "1.3.0"
-__last_updated__ = "2018-03-22"
+__version__ = "1.4.0-pre"
+__last_updated__ = "2020-09-02"
 __author__ = "Terry Carroll"
 __URL__ = "https://github.com/codingatty/Plumage-py"
-__copyright__ = "Copyright 2014-2018 Terry Carroll"
+__copyright__ = "Copyright 2014-2020 Terry Carroll"
 __license__ = "Apache License, version 2.0 (January 2004)"
 __SPDX_LID__ = "Apache-2.0"
 __licenseURL__ = "http://www.apache.org/licenses/LICENSE-2.0"
@@ -800,15 +800,15 @@ def _waitFromTime(fromtime, duration):
 
 
 lib_metainfo = {                                                          # metainfo specific to this library (i.e., not copied XSLT)
-    "LibraryName": "Plumage-py",
-    "LibraryVersion": __version__,
-    "LibraryDate": __last_updated__,
-    "LibraryAuthor": __author__,
-    "LibraryURL": __URL__,
-    "LibraryCopyright": __copyright__,
-    "LibraryLicense": __license__,
-    "LibrarySPDXLicenseIdentifier": __SPDX_LID__,
-    "LibraryLicenseURL": __licenseURL__
+    "MetaInfoLibraryName": "Plumage-py",
+    "MetaInfoLibraryVersion": __version__,
+    "MetaInfoLibraryDate": __last_updated__,
+    "MetaInfoLibraryAuthor": __author__,
+    "MetaInfoLibraryURL": __URL__,
+    "MetaInfoLibraryCopyright": __copyright__,
+    "MetaInfoLibraryLicense": __license__,
+    "MetaInfoLibrarySPDXLicenseIdentifier": __SPDX_LID__,
+    "MetaInfoLibraryLicenseURL": __licenseURL__
 }
 
 _TSDR_substitutions = {

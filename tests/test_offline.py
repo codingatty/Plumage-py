@@ -109,52 +109,53 @@ class TestUM(unittest.TestCase):
         self.assertEqual(assignment_0["AssignmentDocumentURL"],
                          "http://assignments.uspto.gov/assignments/assignment-tm-2849-0875.pdf")
         ## Diagnostic info
-        self.assertEqual(tsdrdata.TSDRSingle["DiagnosticInfoXSLTFormat"], "ST.66")
-        self.assertEqual(tsdrdata.TSDRSingle["DiagnosticInfoXSLTURL"],
+        self.assertEqual(tsdrdata.TSDRSingle["MetaInfoXSLTName"], "Plumage")
+        self.assertEqual(tsdrdata.TSDRSingle["MetaInfoExecXSLTFormat"], "ST.66")
+        self.assertEqual(tsdrdata.TSDRSingle["MetaInfoXSLTURL"],
                          "https://github.com/codingatty/Plumage")
-        self.assertEqual(tsdrdata.TSDRSingle["DiagnosticInfoXSLTLicense"],
+        self.assertEqual(tsdrdata.TSDRSingle["MetaInfoXSLTLicense"],
                          "Apache License, version 2.0 (January 2004)")
-        self.assertEqual(tsdrdata.TSDRSingle["DiagnosticInfoXSLTSPDXLicenseIdentifier"],
+        self.assertEqual(tsdrdata.TSDRSingle["MetaInfoXSLTSPDXLicenseIdentifier"],
                          "Apache-2.0")
-        self.assertEqual(tsdrdata.TSDRSingle["DiagnosticInfoXSLTLicenseURL"],
+        self.assertEqual(tsdrdata.TSDRSingle["MetaInfoLibraryLicenseURL"],
                          "http://www.apache.org/licenses/LICENSE-2.0")
-        self.assertEqual(tsdrdata.TSDRSingle["DiagnosticInfoImplementationURL"],
+        self.assertEqual(tsdrdata.TSDRSingle["MetaInfoLibraryURL"],
                          "https://github.com/codingatty/Plumage-py")
         if PYTHON2: # method renamed from assertRegexpMatches to assertRegex between Py2 and Py3
-            self.assertRegexpMatches(tsdrdata.TSDRSingle["DiagnosticInfoImplementationVersion"],
+            self.assertRegexpMatches(tsdrdata.TSDRSingle["MetaInfoLibraryVersion"],
                          r"^\d+\.\d+\.\d+(-(\w+))*$")
         if PYTHON3:
-            self.assertRegex(tsdrdata.TSDRSingle["DiagnosticInfoImplementationVersion"],
+            self.assertRegex(tsdrdata.TSDRSingle["MetaInfoLibraryVersion"],
                          r"^\d+\.\d+\.\d+(-(\w+))*$")
         # r"^\d+\.\d+\.\d+(-(\w+))*$"  :
         #   matches release number in the form "1.2.3", with an optional dashed suffix like "-prelease"
-        self.assertEqual(tsdrdata.TSDRSingle["DiagnosticInfoImplementationLicenseURL"],
+        self.assertEqual(tsdrdata.TSDRSingle["MetaInfoLibraryLicenseURL"],
                          "http://www.apache.org/licenses/LICENSE-2.0")
-        self.assertEqual(tsdrdata.TSDRSingle["DiagnosticInfoImplementationLicense"],
+        self.assertEqual(tsdrdata.TSDRSingle["MetaInfoLibraryLicense"],
                          "Apache License, version 2.0 (January 2004)")
-        self.assertEqual(tsdrdata.TSDRSingle["DiagnosticInfoImplementationName"],
+        self.assertEqual(tsdrdata.TSDRSingle["MetaInfoLibraryName"],
                          "Plumage-py")
-        self.assertEqual(tsdrdata.TSDRSingle["DiagnosticInfoImplementationSPDXLicenseIdentifier"],
+        self.assertEqual(tsdrdata.TSDRSingle["MetaInfoXSLTSPDXLicenseIdentifier"],
                          "Apache-2.0")
 
     # Test release-independent metainfo data (does not change release-to-release)
     def test_A004_check_releaseindependent_metainfo(self):
         metainfo = plumage.GetMetainfo()
-        self.assertEqual(metainfo["LibraryAuthor"], "Terry Carroll")
-        self.assertEqual(metainfo["LibraryURL"], "https://github.com/codingatty/Plumage-py")
-        self.assertEqual(metainfo["LibraryLicense"], "Apache License, version 2.0 (January 2004)")
-        self.assertEqual(metainfo["LibrarySPDXLicenseIdentifier"], "Apache-2.0")
-        self.assertEqual(metainfo["LibraryLicenseURL"], "http://www.apache.org/licenses/LICENSE-2.0")
+        self.assertEqual(metainfo["MetaInfoLibraryAuthor"], "Terry Carroll")
+        self.assertEqual(metainfo["MetaInfoLibraryURL"], "https://github.com/codingatty/Plumage-py")
+        self.assertEqual(metainfo["MetaInfoLibraryLicense"], "Apache License, version 2.0 (January 2004)")
+        self.assertEqual(metainfo["MetaInfoLibrarySPDXLicenseIdentifier"], "Apache-2.0")
+        self.assertEqual(metainfo["MetaInfoLibraryLicenseURL"], "http://www.apache.org/licenses/LICENSE-2.0")
 
     # Test release-dependent metainfo data (changes, or may change, from release-to-release)
     def test_A005_check_releasedependent_metainfo(self):
         metainfo = plumage.GetMetainfo()
-        self.assertEqual(metainfo["LibraryVersion"], "1.3.0")
-        self.assertEqual(metainfo["LibraryDate"], "2018-03-22")
-        self.assertEqual(metainfo["LibraryCopyright"], "Copyright 2014-2018 Terry Carroll")
+        self.assertEqual(metainfo["MetaInfoLibraryVersion"], "1.4.0-pre")
+        self.assertEqual(metainfo["MetaInfoLibraryDate"], "2020-09-02")
+        self.assertEqual(metainfo["MetaInfoLibraryCopyright"], "Copyright 2014-2020 Terry Carroll")
 
     # Test metainfo consistency
-    def test_A005_check_metainfo_consistency(self):
+    def test_A006_check_metainfo_consistency(self):
         '''
          1. All keys from GetMetainfo() are also in run-time TSDR data (both ST.66 and ST.96)
          2. All values from GetMetainfo() match those from run-time TSDR data (both ST.66 and ST.96)
@@ -340,7 +341,9 @@ class TestUM(unittest.TestCase):
         testfile = os.path.join(self.TESTFILES_DIR, "rn2178784-ST-962.2.1.xml")
         t_new.getTSDRInfo(testfile)
         plumage.TSDRReq._prior_TSDR_call_time = TestUM.INITIAL_PRIOR_TSDR_CALL_TIME  # reset already-called flag after each call to avoid delays in test
-        t_new_keys = set([x for x in t_new.TSDRData.TSDRSingle.keys() if not x.startswith("DiagnosticInfo")])
+        t_new_keys = set([x for x in t_new.TSDRData.TSDRSingle.keys() if 
+            not x.startswith("DiagnosticInfo") and 
+            not x.startswith("MetaInfo")])
 
         # Same keys in both
         self.assertEqual(t_new_keys, t_old_keys)
