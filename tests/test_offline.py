@@ -110,6 +110,14 @@ class TestUM(unittest.TestCase):
                          "http://assignments.uspto.gov/assignments/assignment-tm-2849-0875.pdf")
         ## Diagnostic info
         self.assertEqual(tsdrdata.TSDRSingle["MetaInfoXSLTName"], "Plumage")
+        if PYTHON2: # method renamed from assertRegexpMatches to assertRegex between Py2 and Py3
+            self.assertRegexpMatches(tsdrdata.TSDRSingle["MetaInfoXSLTVersion"],
+                         r"^\d+\.\d+\.\d+(-(\w+))*$")
+        if PYTHON3:
+            self.assertRegex(tsdrdata.TSDRSingle["MetaInfoXSLTVersion"],
+                         r"^\d+\.\d+\.\d+(-(\w+))*$")
+        # r"^\d+\.\d+\.\d+(-(\w+))*$"  :
+        #   matches release number in the form "1.2.3", with an optional dashed suffix like "-prelease"
         self.assertEqual(tsdrdata.TSDRSingle["MetaInfoExecXSLTFormat"], "ST.66")
         self.assertEqual(tsdrdata.TSDRSingle["MetaInfoXSLTURL"],
                          "https://github.com/codingatty/Plumage")
