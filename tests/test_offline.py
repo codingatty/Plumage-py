@@ -117,7 +117,7 @@ class TestUM(unittest.TestCase):
                          "Apache License, version 2.0 (January 2004)")
         self.assertEqual(tsdrdata.TSDRSingle["MetaInfoXSLTSPDXLicenseIdentifier"],
                          "Apache-2.0")
-        self.assertEqual(tsdrdata.TSDRSingle["MetaInfoLibraryLicenseURL"],
+        self.assertEqual(tsdrdata.TSDRSingle["MetaInfoXSLTLicenseURL"],
                          "http://www.apache.org/licenses/LICENSE-2.0")
         self.assertEqual(tsdrdata.TSDRSingle["MetaInfoLibraryURL"],
                          "https://github.com/codingatty/Plumage-py")
