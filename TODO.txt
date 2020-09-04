@@ -8,5 +8,5 @@ _X_ except..as  syntax
 Other features
 _X_ default pause between TSDR calls
 _X_ Provide metainfo via GetMetainfo
-___ Make metainfo consistent (keys & values) between GetMetainfo() and runtime TSDRData
+_X_ Make metainfo consistent (keys & values) between GetMetainfo() and runtime TSDRData
 

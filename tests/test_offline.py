@@ -149,6 +149,16 @@ class TestUM(unittest.TestCase):
     # Test release-independent metainfo data (does not change release-to-release)
     def test_A004_check_releaseindependent_metainfo(self):
         metainfo = plumage.GetMetainfo()
+        # XSLT (Plumage)
+        self.assertEqual(metainfo["MetaInfoXSLTName"], "Plumage")
+        self.assertEqual(metainfo["MetaInfoXSLTAuthor"], "Terry Carroll")
+        self.assertEqual(metainfo["MetaInfoXSLTURL"], "https://github.com/codingatty/Plumage")
+        self.assertEqual(metainfo["MetaInfoXSLTLicense"], "Apache License, version 2.0 (January 2004)")
+        self.assertEqual(metainfo["MetaInfoXSLTSPDXLicenseIdentifier"], "Apache-2.0")
+        self.assertEqual(metainfo["MetaInfoXSLTLicenseURL"], "http://www.apache.org/licenses/LICENSE-2.0")
+
+        # Library (Python-py)
+        self.assertEqual(metainfo["MetaInfoLibraryName"], "Plumage-py")
         self.assertEqual(metainfo["MetaInfoLibraryAuthor"], "Terry Carroll")
         self.assertEqual(metainfo["MetaInfoLibraryURL"], "https://github.com/codingatty/Plumage-py")
         self.assertEqual(metainfo["MetaInfoLibraryLicense"], "Apache License, version 2.0 (January 2004)")
@@ -158,6 +168,13 @@ class TestUM(unittest.TestCase):
     # Test release-dependent metainfo data (changes, or may change, from release-to-release)
     def test_A005_check_releasedependent_metainfo(self):
         metainfo = plumage.GetMetainfo()
+
+        # XSLT (Plumage)
+        self.assertEqual(metainfo["MetaInfoXSLTVersion"], "1.4.0-pre")
+        self.assertEqual(metainfo["MetaInfoXSLTDate"], "2020-09-02")
+        self.assertEqual(metainfo["MetaInfoXSLTCopyright"], "Copyright 2014-2020 Terry Carroll")
+
+        # Library (Python-py)
         self.assertEqual(metainfo["MetaInfoLibraryVersion"], "1.4.0-pre")
         self.assertEqual(metainfo["MetaInfoLibraryDate"], "2020-09-02")
         self.assertEqual(metainfo["MetaInfoLibraryCopyright"], "Copyright 2014-2020 Terry Carroll")
