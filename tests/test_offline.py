@@ -29,6 +29,10 @@ class TestUM(unittest.TestCase):
     # Save initial timing info for reset later 
     INITIAL_PRIOR_TSDR_CALL_TIME  = plumage.TSDRReq._prior_TSDR_call_time 
  
+    def shortDescription(self):
+        # suppress unit test displaying docstrings
+        return None
+
     def setUp(self):
         # start each test with fresh prior-call time; tests with multiple TSDRReqs will need to reset themselves to avoid delay
         plumage.TSDRReq._prior_TSDR_call_time =  TestUM.INITIAL_PRIOR_TSDR_CALL_TIME 
