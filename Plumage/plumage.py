@@ -10,7 +10,7 @@ To use:
 For details, see https://github.com/codingatty/Plumage/wiki
 '''
 
-# Version 1.4.0, 2018-03-22
+# Version 1.4.0, 2020-10-03
 # Copyright 2014-2020 Terry Carroll
 # carroll@tjc.com
 #
@@ -64,7 +64,7 @@ except ImportError:
 ### PEP 476 end
 
 __version__ = "1.4.0-pre"
-__last_updated__ = "2020-09-02"
+__last_updated__ = "2020-10-03"
 __author__ = "Terry Carroll"
 __URL__ = "https://github.com/codingatty/Plumage-py"
 __copyright__ = "Copyright 2014-2020 Terry Carroll"
@@ -317,13 +317,20 @@ class TSDRReq(object):
             self.ImageThumb (if file is zip file)
             self.ImageFull (if file is zip file)
         '''
+        _TSDR_substitutions["$XMLSOURCE$"] = filename
+
+        # save date/time (both pseudo-TSDR call as ISO-8601 and simple YYY-MM-DD HH:MM:SS)
+        now = datetime.now()
+        _TSDR_substitutions["$TSDRSTARTDATETIME$"] = now.isoformat(timespec='microseconds')
+        _TSDR_substitutions["$EXECUTIONDATETIME$"] = now.strftime("%Y-%m-%d %H:%M:%S")
 
         with open(filename, "rb") as f:
             filedata = f.read()
 
-        _TSDR_substitutions["$XMLSOURCE$"] = filename
-        now = time.strftime("%Y-%m-%d %H:%M:%S")
-        _TSDR_substitutions["$EXECUTIONDATETIME$"] = now
+        # save pseudo-TSDR completion date/time ISO-8601 
+        now = datetime.now()
+        #now = time.strftime("%Y-%m-%d %H:%M:%S")
+        _TSDR_substitutions["$TSDRCOMPLETEDATETIME$"] = now.isoformat(timespec='microseconds')
 
         self._processFileContents(filedata)
         return
@@ -364,6 +371,13 @@ class TSDRReq(object):
         fetchtype = self.PTOFormat
         pto_url_template = pto_url_templates[fetchtype]
         pto_url = pto_url_template % (tmtype, number)
+
+        _TSDR_substitutions["$XMLSOURCE$"] = pto_url
+        # save date/time (both TSDR call as ISO-8601 and simple YYY-MM-DD HH:MM:SS)
+        now = datetime.now()
+        _TSDR_substitutions["$TSDRSTARTDATETIME$"] = now.isoformat(timespec='microseconds')
+        _TSDR_substitutions["$EXECUTIONDATETIME$"] = now.strftime("%Y-%m-%d %H:%M:%S")
+
         ##  with urllib2.urlopen(pto_url) as f:  ## This doesn't work; in Python 2.x,
         ##      filedata = f.read()              ## urlopen() does not support the "with" statement
         ## I'm only leaving this comment here because twice I've forgotten that this won't work
@@ -387,9 +401,10 @@ class TSDRReq(object):
         filedata = f.read()
         f.close()
 
-        _TSDR_substitutions["$XMLSOURCE$"] = pto_url
-        now = time.strftime("%Y-%m-%d %H:%M:%S")
-        _TSDR_substitutions["$EXECUTIONDATETIME$"] = now
+        # save TSDR completion date/time ISO-8601 
+        now = datetime.now()
+        #now = time.strftime("%Y-%m-%d %H:%M:%S")
+        _TSDR_substitutions["$TSDRCOMPLETEDATETIME$"] = now.isoformat(timespec='microseconds')
 
         self._processFileContents(filedata)
         return
@@ -823,7 +838,9 @@ _TSDR_substitutions = {
     "$IMPLEMENTATIONLICENSE$":__license__,      # implementation license
     "$IMPLEMENTATIONSPDXLID$":__SPDX_LID__,     # implementation license SPDX ID
     "$IMPLEMENTATIONLICENSEURL$":__licenseURL__, #Implementation license URL
-    "$EXECUTIONDATETIME$":"Not Set",            # Execution time (set at runtime)
+    "$EXECUTIONDATETIME$":"Not Set",            # Execution timestamp, YYYY-MM-DD HH:MM:SS format (set at runtime)
+    "$TSDRSTARTDATETIME$":"Not Set",            # TSDR call start timestamp, ISO-8601 format (set at runtime)
+    "$TSDRCOMPLETEDATETIME$":"Not Set",         # TSDR call start timestamp, ISO-8601 format (set at runtime)
     "$XMLSOURCE$":"Not Set"                     # URL or pathname of XML source (set at runtime)
     }
 

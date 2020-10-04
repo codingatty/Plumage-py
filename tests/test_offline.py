@@ -1,5 +1,6 @@
 import os
 import sys
+#import datetime as base_dt
 from datetime  import datetime
 from datetime  import timedelta
 import time
@@ -146,6 +147,24 @@ class TestUM(unittest.TestCase):
         self.assertEqual(tsdrdata.TSDRSingle["MetaInfoLibraryLicenseURL"],
                          "http://www.apache.org/licenses/LICENSE-2.0")
 
+        # Execution-time fields
+
+        simple_timestamp = tsdrdata.TSDRSingle["MetaInfoExecExecutionDateTime"]
+        ts_as_datetime = datetime.strptime(simple_timestamp, "%Y-%m-%d %H:%M:%S") # we convert time w/o (no ValuError)
+        ts_as_text = datetime.strftime(ts_as_datetime, "%Y-%m-%d %H:%M:%S")  # confirm round-trip conversion okay
+        self.assertEqual(simple_timestamp, ts_as_text)
+
+        start_datetime_text = tsdrdata.TSDRSingle["MetaInfoExecTSDRStartTimestamp"]
+        complete_datetime_text = tsdrdata.TSDRSingle["MetaInfoExecTSDRCompleteTimestamp"]
+        for text_timestamp in (start_datetime_text, complete_datetime_text):
+            ts_as_datetime = datetime.fromisoformat(text_timestamp) # we convert time w/o (no ValuError)
+            ts_as_text = ts_as_datetime.isoformat(timespec='microseconds') # confirm round-trip conversion okay
+            self.assertEqual(text_timestamp, ts_as_text)
+
+
+        
+
+
     # Test release-independent metainfo data (does not change release-to-release)
     def test_A004_check_releaseindependent_metainfo(self):
         metainfo = plumage.GetMetainfo()
@@ -171,12 +190,12 @@ class TestUM(unittest.TestCase):
 
         # XSLT (Plumage)
         self.assertEqual(metainfo["MetaInfoXSLTVersion"], "1.4.0-pre")
-        self.assertEqual(metainfo["MetaInfoXSLTDate"], "2020-09-02")
+        self.assertEqual(metainfo["MetaInfoXSLTDate"], "2020-10-03")
         self.assertEqual(metainfo["MetaInfoXSLTCopyright"], "Copyright 2014-2020 Terry Carroll")
 
         # Library (Python-py)
         self.assertEqual(metainfo["MetaInfoLibraryVersion"], "1.4.0-pre")
-        self.assertEqual(metainfo["MetaInfoLibraryDate"], "2020-09-02")
+        self.assertEqual(metainfo["MetaInfoLibraryDate"], "2020-10-03")
         self.assertEqual(metainfo["MetaInfoLibraryCopyright"], "Copyright 2014-2020 Terry Carroll")
 
     # Test metainfo consistency

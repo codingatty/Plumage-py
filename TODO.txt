@@ -9,4 +9,5 @@ Other features
 _X_ default pause between TSDR calls
 _X_ Provide metainfo via GetMetainfo
 _X_ Make metainfo consistent (keys & values) between GetMetainfo() and runtime TSDRData
+_X_ Support for MetaInfoExecTSDRStartTimestamp and MetaInfoExecTSDRCompleteTimestamp
 
