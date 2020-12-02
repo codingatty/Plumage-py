@@ -29,6 +29,7 @@ PYTHON3 = sys.version_info.major == 3
 PYTHON2 = sys.version_info.major == 2
 
 if PYTHON2:
+    ### TODO: remove Python 2-specific material
     import StringIO
     stringio = StringIO.StringIO
     bytesio = StringIO.StringIO # In Python2, stringIO takes strings of binary data
@@ -87,7 +88,7 @@ def SetIntervalTime(value):
     except TypeError:
         raise TypeError("interval value must be an int or float")
 
-def UnSetIntervalTime():
+def ResetIntervalTime():
     TSDRReq._TSDR_minimum_interval = TSDRReq._default_TSDR_minimum_interval
 
 class _XSLTDescriptor(object):
@@ -166,9 +167,9 @@ class TSDRReq(object):
         '''
         Resets all values (but not control fields) in TDSRReq object
         '''
-        # Reset control fields (XSLT transform, PTO format)
-        self.unsetXSLT()
-        self.unsetPTOFormat()
+        # reset control fields (XSLT transform, PTO format)
+        self.resetXSLT()
+        self.resetPTOFormat()
         # reset data fields
         self.resetXMLData() # Resetting TSDR data will cascade to CSV and TSDR map, too
         return
@@ -182,7 +183,7 @@ class TSDRReq(object):
         self.XSLT = template
         return
 
-    def unsetXSLT(self):
+    def resetXSLT(self):
         '''
         Resets self.XSLT to None, causing the package-supplied templates to be used.
         '''
@@ -196,7 +197,7 @@ class TSDRReq(object):
             "ST96": ST96-format XML
              "zip": zip file.  The zip file obtained from
                     the PTO is currently ST66-format XML.
-        If this is unset, "zip" will be assumed.
+        If this is reset, "zip" will be assumed.
         '''
         valid_formats = ["ST66", "ST96", "zip"]
         if PTOFormat not in valid_formats:
@@ -204,7 +205,7 @@ class TSDRReq(object):
         self.PTOFormat = PTOFormat
         return
 
-    def unsetPTOFormat(self):
+    def resetPTOFormat(self):
         '''
         Resets PTO format to "zip" (default)
         '''

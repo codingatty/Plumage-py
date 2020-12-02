@@ -36,7 +36,7 @@ class TestUM(unittest.TestCase):
     def setUp(self):
         # start each test with fresh prior-call time; tests with multiple TSDRReqs will need to reset themselves to avoid delay
         plumage.TSDRReq._prior_TSDR_call_time =  TestUM.INITIAL_PRIOR_TSDR_CALL_TIME 
-        plumage.UnSetIntervalTime()
+        plumage.ResetIntervalTime()
         pass
 
     # Group A
@@ -703,6 +703,8 @@ PublicationDate,"<xsl:value-of select="tm:PublicationDetails/tm:Publication/tm:P
 # Group I
     # tests for new features
 
+    # TODO: This is testing how long one call takes, which is not necessarily time since last call
+    #       As a result, tests sometimes falsely fail
     def execute_one_timed_call(self, fake_delay=None):
         '''
         Fake delay is the amount of time, in seconds, to delay before calling
@@ -776,7 +778,7 @@ PublicationDate,"<xsl:value-of select="tm:PublicationDetails/tm:Publication/tm:P
         self.assertAlmostEqual(total_time_in_ms, 0, delta=TOLERANCE)
 
         # go back to default, and we should get one-second delays again
-        plumage.UnSetIntervalTime()
+        plumage.ResetIntervalTime()
         total_time_in_ms = self.execute_one_timed_call()
         self.assertGreater(total_time_in_ms, 1000)                
         self.assertAlmostEqual(total_time_in_ms, 1000, delta=TOLERANCE)

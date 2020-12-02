@@ -10,4 +10,8 @@ _X_ default pause between TSDR calls
 _X_ Provide metainfo via GetMetainfo
 _X_ Make metainfo consistent (keys & values) between GetMetainfo() and runtime TSDRData
 _X_ Support for MetaInfoExecTSDRStartTimestamp and MetaInfoExecTSDRCompleteTimestamp
-
+_X_ Switch from ugly "unset..." to uniform "reset..." 
+___ Fix timing tests
+___ Make XML default, not ZIP (60 queries/min, rather than 4)
+___ Add API key suppport
+___ Remove Python 2 specific material
