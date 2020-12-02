@@ -55,6 +55,9 @@ docs/_build/
 # sandbox for my experiments
 sandbox/
 
+# don't track config file with confidential USPTO API key; don't want to push to public repository on Github
+test-config.json
+
 # =========================
 # Operating System Files
 # =========================
