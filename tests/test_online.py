@@ -1,7 +1,4 @@
-import sys
 import unittest
-PYTHON2 = sys.version_info.major == 2
-PYTHON3 = sys.version_info.major == 3
 
 from testing_context import plumage
 
@@ -55,12 +52,7 @@ class TestUM(unittest.TestCase):
                          "http://www.apache.org/licenses/LICENSE-2.0")
         self.assertEqual(tsdrdata.TSDRSingle["MetaInfoLibraryURL"],
                          "https://github.com/codingatty/Plumage-py")
-        if PYTHON2: # method renamed from assertRegexpMatches to assertRegex between Py2 and Py3
-            self.assertRegexpMatches(tsdrdata.TSDRSingle["MetaInfoLibraryVersion"],
-                         r"^\d+\.\d+\.\d+(-(\w+))*$")
-        if PYTHON3:
-            self.assertRegex(tsdrdata.TSDRSingle["MetaInfoLibraryVersion"],
-                         r"^\d+\.\d+\.\d+(-(\w+))*$")
+        self.assertRegex(tsdrdata.TSDRSingle["MetaInfoLibraryVersion"], r"^\d+\.\d+\.\d+(-(\w+))*$")
         self.assertEqual(tsdrdata.TSDRSingle["MetaInfoLibraryLicenseURL"],
                          "http://www.apache.org/licenses/LICENSE-2.0")
         self.assertEqual(tsdrdata.TSDRSingle["MetaInfoLibraryLicense"],

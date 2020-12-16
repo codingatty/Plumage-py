@@ -1,13 +1,8 @@
 import os
-import sys
-#import datetime as base_dt
 from datetime  import datetime
 from datetime  import timedelta
 import time
 import unittest
-
-PYTHON2 = sys.version_info.major == 2
-PYTHON3 = sys.version_info.major == 3
 
 from testing_context import plumage
 
@@ -81,12 +76,8 @@ class TestUM(unittest.TestCase):
         self.assertTrue(t.XMLDataIsValid)
         self.assertEqual(len(t.XMLData), 30354)
         self.assertEqual(t.XMLData[0:55], r'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>')
-        if PYTHON2:
-            self.assertEqual(t.ImageThumb[6:10], "JFIF")
-            self.assertEqual(t.ImageFull[0:4], "\x89PNG")
-        if PYTHON3:
-            self.assertEqual(t.ImageThumb[6:10], b"JFIF")
-            self.assertEqual(t.ImageFull[0:4], b"\x89PNG")
+        self.assertEqual(t.ImageThumb[6:10], b"JFIF")
+        self.assertEqual(t.ImageFull[0:4], b"\x89PNG")
         self.assertTrue(t.CSVDataIsValid)
         tsdrdata=t.TSDRData
         self.assertTrue(tsdrdata.TSDRMapIsValid)
@@ -115,12 +106,7 @@ class TestUM(unittest.TestCase):
                          "http://assignments.uspto.gov/assignments/assignment-tm-2849-0875.pdf")
         ## Diagnostic info
         self.assertEqual(tsdrdata.TSDRSingle["MetaInfoXSLTName"], "Plumage")
-        if PYTHON2: # method renamed from assertRegexpMatches to assertRegex between Py2 and Py3
-            self.assertRegexpMatches(tsdrdata.TSDRSingle["MetaInfoXSLTVersion"],
-                         r"^\d+\.\d+\.\d+(-(\w+))*$")
-        if PYTHON3:
-            self.assertRegex(tsdrdata.TSDRSingle["MetaInfoXSLTVersion"],
-                         r"^\d+\.\d+\.\d+(-(\w+))*$")
+        self.assertRegex(tsdrdata.TSDRSingle["MetaInfoXSLTVersion"], r"^\d+\.\d+\.\d+(-(\w+))*$")
         # r"^\d+\.\d+\.\d+(-(\w+))*$"  :
         #   matches release number in the form "1.2.3", with an optional dashed suffix like "-prelease"
         self.assertEqual(tsdrdata.TSDRSingle["MetaInfoExecXSLTFormat"], "ST.66")
@@ -134,12 +120,7 @@ class TestUM(unittest.TestCase):
                          "http://www.apache.org/licenses/LICENSE-2.0")
 
         self.assertEqual(tsdrdata.TSDRSingle["MetaInfoLibraryName"], "Plumage-py")
-        if PYTHON2: # method renamed from assertRegexpMatches to assertRegex between Py2 and Py3
-            self.assertRegexpMatches(tsdrdata.TSDRSingle["MetaInfoLibraryVersion"],
-                         r"^\d+\.\d+\.\d+(-(\w+))*$")
-        if PYTHON3:
-            self.assertRegex(tsdrdata.TSDRSingle["MetaInfoLibraryVersion"],
-                         r"^\d+\.\d+\.\d+(-(\w+))*$")
+        self.assertRegex(tsdrdata.TSDRSingle["MetaInfoLibraryVersion"], r"^\d+\.\d+\.\d+(-(\w+))*$")
         # r"^\d+\.\d+\.\d+(-(\w+))*$"  :
         #   matches release number in the form "1.2.3", with an optional dashed suffix like "-prelease"
         self.assertEqual(tsdrdata.TSDRSingle["MetaInfoLibraryURL"],
@@ -701,7 +682,7 @@ PublicationDate,"<xsl:value-of select="tm:PublicationDetails/tm:Publication/tm:P
         self.assertEqual(control_set, set(ST96_FUD_PrimaryClass_nos))
   
 # Group I
-    # tests for new features
+    # Timing tests
 
     # TODO: This is testing how long one call takes, which is not necessarily time since last call
     #       As a result, tests sometimes falsely fail
