@@ -29,6 +29,7 @@ import io
 import json
 import os.path
 import string
+import sys
 import time
 import urllib.request
 import urllib.error
@@ -45,13 +46,14 @@ except ImportError:
 ### PEP 476 end
 
 __version__ = "1.4.0-pre"
-__last_updated__ = "2020-10-03"
+__last_updated__ = "2020-12-15"
 __author__ = "Terry Carroll"
 __URL__ = "https://github.com/codingatty/Plumage-py"
 __copyright__ = "Copyright 2014-2020 Terry Carroll"
 __license__ = "Apache License, version 2.0 (January 2004)"
 __SPDX_LID__ = "Apache-2.0"
 __licenseURL__ = "http://www.apache.org/licenses/LICENSE-2.0"
+__pyversion__ = sys.version
 
 COMMA = ","
 LINE_SEPARATOR = "\n"
@@ -788,7 +790,8 @@ lib_metainfo = {                               # metainfo specific to this libra
     "MetaInfoLibraryCopyright": __copyright__,
     "MetaInfoLibraryLicense": __license__,
     "MetaInfoLibrarySPDXLicenseIdentifier": __SPDX_LID__,
-    "MetaInfoLibraryLicenseURL": __licenseURL__
+    "MetaInfoLibraryLicenseURL": __licenseURL__,
+    "MetaInfoExecEnvironment": __pyversion__
 }
 
 _TSDR_substitutions = {
@@ -806,7 +809,8 @@ _TSDR_substitutions = {
     "$EXECUTIONDATETIME$":"Not Set",            # Execution timestamp, YYYY-MM-DD HH:MM:SS format (set at runtime)
     "$TSDRSTARTDATETIME$":"Not Set",            # TSDR call start timestamp, ISO-8601 format (set at runtime)
     "$TSDRCOMPLETEDATETIME$":"Not Set",         # TSDR call start timestamp, ISO-8601 format (set at runtime)
-    "$XMLSOURCE$":"Not Set"                     # URL or pathname of XML source (set at runtime)
+    "$XMLSOURCE$":"Not Set",                     # URL or pathname of XML source (set at runtime)
+    "$MetaInfoExecEnvironment$":__pyversion__   # Environment (Python) version info
     }
 
 _xslt_table = {

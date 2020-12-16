@@ -146,10 +146,6 @@ class TestUM(unittest.TestCase):
             ts_as_text = ts_as_datetime.isoformat(timespec='microseconds') # confirm round-trip conversion okay
             self.assertEqual(text_timestamp, ts_as_text)
 
-
-        
-
-
     # Test release-independent metainfo data (does not change release-to-release)
     def test_A004_check_releaseindependent_metainfo(self):
         metainfo = plumage.GetMetainfo()
@@ -168,6 +164,7 @@ class TestUM(unittest.TestCase):
         self.assertEqual(metainfo["MetaInfoLibraryLicense"], "Apache License, version 2.0 (January 2004)")
         self.assertEqual(metainfo["MetaInfoLibrarySPDXLicenseIdentifier"], "Apache-2.0")
         self.assertEqual(metainfo["MetaInfoLibraryLicenseURL"], "http://www.apache.org/licenses/LICENSE-2.0")
+        self.assertIsInstance(metainfo["MetaInfoExecEnvironment"], str)
 
     # Test release-dependent metainfo data (changes, or may change, from release-to-release)
     def test_A005_check_releasedependent_metainfo(self):
@@ -175,12 +172,12 @@ class TestUM(unittest.TestCase):
 
         # XSLT (Plumage)
         self.assertEqual(metainfo["MetaInfoXSLTVersion"], "1.4.0-pre")
-        self.assertEqual(metainfo["MetaInfoXSLTDate"], "2020-10-03")
+        self.assertEqual(metainfo["MetaInfoXSLTDate"], "2020-12-15")
         self.assertEqual(metainfo["MetaInfoXSLTCopyright"], "Copyright 2014-2020 Terry Carroll")
 
         # Library (Python-py)
         self.assertEqual(metainfo["MetaInfoLibraryVersion"], "1.4.0-pre")
-        self.assertEqual(metainfo["MetaInfoLibraryDate"], "2020-10-03")
+        self.assertEqual(metainfo["MetaInfoLibraryDate"], "2020-12-15")
         self.assertEqual(metainfo["MetaInfoLibraryCopyright"], "Copyright 2014-2020 Terry Carroll")
 
     # Test metainfo consistency
