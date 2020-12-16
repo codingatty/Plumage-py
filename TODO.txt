@@ -10,8 +10,11 @@ _X_ default pause between TSDR calls
 _X_ Provide metainfo via GetMetainfo
 _X_ Make metainfo consistent (keys & values) between GetMetainfo() and runtime TSDRData
 _X_ Support for MetaInfoExecTSDRStartTimestamp and MetaInfoExecTSDRCompleteTimestamp
-_X_ Switch from ugly "unset..." to uniform "reset..." 
+_X_ Switch from ugly "unset..." in some cases to uniform "reset..." 
 ___ Fix timing tests
 ___ Make XML default, not ZIP (60 queries/min, rather than 4)
 ___ Add API key suppport
-___ Remove Python 2 specific material
+_X_ Remove Python 2 specific material (eventually)
+___ Note Python 3.6 required (timespec argument in isoformat() calls)
+___ PEP 476: remove complicating code to support pre-PEP versions of Python
+    (PEP 476 was implemented in Python 3.4.3, and Plumage-py reqs at least Python 3.6)

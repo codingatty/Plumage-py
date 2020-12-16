@@ -23,28 +23,11 @@ For details, see https://github.com/codingatty/Plumage/wiki
 # Anyone who makes use of, or who modifies, this code is encouraged
 # (but not required) to notify the author.
 
-from __future__ import print_function
-import sys
-PYTHON3 = sys.version_info.major == 3
-PYTHON2 = sys.version_info.major == 2
+import io
+import urllib.request
+import urllib.error
 
-if PYTHON2:
-    ### TODO: remove Python 2-specific material
-    import StringIO
-    stringio = StringIO.StringIO
-    bytesio = StringIO.StringIO # In Python2, stringIO takes strings of binary data
-    import urllib2
-    URL_open = urllib2.urlopen
-    HTTPError = urllib2.HTTPError
-    
-if PYTHON3:
-    import io
-    stringio = io.StringIO
-    bytesio  = io.BytesIO # In Python3, use BytesIO for binary data
-    import urllib.request
-    URL_open = urllib.request.urlopen
-    import urllib.error
-    HTTPError = urllib.error.HTTPError
+import sys
 
 import zipfile
 import os.path
@@ -91,6 +74,9 @@ def SetIntervalTime(value):
 def ResetIntervalTime():
     TSDRReq._TSDR_minimum_interval = TSDRReq._default_TSDR_minimum_interval
 
+def GetIntervalTime():
+    return TSDRReq._TSDR_minimum_interval
+
 class _XSLTDescriptor(object):
     '''
     Object used to organize information relating to pre-defined XSLT transforms
@@ -108,11 +94,6 @@ class _XSLTDescriptor(object):
         xslt_filename = XMLformat+".xsl"
         xslt_pathname = os.path.join(xslt_dirname, xslt_filename)
         with open(xslt_pathname, "rb") as _f:
-            # Note: reading this in as binary for Py2/Py3 compatibility, even though it's a text file
-            #  Python2 will read it in as a string anyway;
-            #  Python 3 will read it in as bytes, which etree.XML() requires;
-            #  using bin mode will avoid having to treat Py2 and Py3 differently,
-            #  i.e., having to use:  _stylesheet.encode(encoding="utf-8") for Py3 
             _stylesheet = _f.read()
             _xslt_root = etree.XML(_stylesheet)
             transform = etree.XSLT(_xslt_root)
@@ -387,10 +368,10 @@ class TSDRReq(object):
             ### PEP 476:
             ### use context parameter if it is supported (TypeError if not)
             try:
-                f = URL_open(pto_url, context=self.UNVERIFIED_CONTEXT)
+                f = urllib.request.urlopen(pto_url, context=self.UNVERIFIED_CONTEXT)
             except TypeError as e:
-                f = URL_open(pto_url)
-        except HTTPError as e:
+                f = urllib.request.urlopen(pto_url)
+        except urllib.error.HTTPError as e:
             if e.code == 404:
                 self.ErrorCode = "Fetch-404"
                 self.ErrorMessage = "getXMLDataFromPTO: Error fetching from PTO. "\
@@ -438,18 +419,13 @@ class TSDRReq(object):
             return
 
         # Prep the XML
-        if PYTHON2:
-            f = stringio(self.XMLData)
-        if PYTHON3:
-            f = bytesio(self.XMLData.encode(encoding="utf-8"))
+        f = io.BytesIO(self.XMLData.encode(encoding="utf-8"))
         parsed_xml = etree.parse(f)
         # if a transform template is provided, use it,
         # otherwise figure out which to use...
         if self.XSLT is not None:
-            if PYTHON2:
-                override_XSLT = self.XSLT
-            if PYTHON3:  # Py3 req's byte-string or string w/o Unicode declaration
-                override_XSLT = self.XSLT.encode(encoding="utf-8")
+            # Py3 req's byte-string or string w/o Unicode declaration
+            override_XSLT = self.XSLT.encode(encoding="utf-8")
             xslt_root = etree.XML(override_XSLT)
             transform = etree.XSLT(xslt_root)
             _TSDR_substitutions["$XSLTFILENAME$"] = "CALLER-PROVIDED XSLT"
@@ -554,17 +530,15 @@ class TSDRReq(object):
 
     def _processFileContents(self, filedata):
         # At this point, we've read data (as binary), but don't know whether its XML or zip
-        in_memory_file = bytesio(filedata)
+        in_memory_file = io.BytesIO(filedata)
         if zipfile.is_zipfile(in_memory_file):
             # it's a zip file, process it as a zip file, pulling XML data, and other stuff, from the zip
             self._processZip(in_memory_file, filedata)
         else:
             # it's not a zip, it's assumed XML-only;
             # store to XMLData (other fields will remain None)
-            if PYTHON2: #Python2, filedata is already a string
-                self.XMLData = filedata
-            if PYTHON3: #Python3, filedata is bytes; must encode to a (Unicode) string
-                self.XMLData = filedata.decode(encoding="utf-8")
+            #Python 3, filedata is bytes; must encode to a (Unicode) string
+            self.XMLData = filedata.decode(encoding="utf-8")
 
         error_reason = self._xml_sanity_check(self.XMLData)
         if error_reason != "":
@@ -587,10 +561,7 @@ class TSDRReq(object):
         else:
             try:
                 # see if this triggers an exception
-                if PYTHON2:
-                    f = stringio(text)
-                if PYTHON3:
-                    f = bytesio(text.encode(encoding="utf-8"))
+                f = io.BytesIO(text.encode(encoding="utf-8"))
                 etree.parse(f)
                 # no exception; passes sanity check
             except etree.XMLSyntaxError as e:
@@ -637,12 +608,8 @@ class TSDRReq(object):
         assert len(xmlfiles) == 1
         xmlfilename = xmlfiles[0]
         xml_data_from_zipfile = zipf.read(xmlfilename)
-        if PYTHON2:
-            # In Python2, ZipFile.read() returns a string; just use it
-            self.XMLData = xml_data_from_zipfile
-        if PYTHON3:
-            # In Python3, ZipFile.read() returns bytes; must encode into a string
-            self.XMLData = xml_data_from_zipfile.decode(encoding="utf-8")
+        # In Python 3, ZipFile.read() returns bytes; must encode into a string
+        self.XMLData = xml_data_from_zipfile.decode(encoding="utf-8")
         
         # bells & whistles:
         self.ImageFull  = None
@@ -815,7 +782,7 @@ def _waitFromTime(fromtime, duration):
     if DEBUG: print(datetime.now(), "EXITING _waitFromTime")
 
 
-lib_metainfo = {                                                          # metainfo specific to this library (i.e., not copied XSLT)
+lib_metainfo = {                               # metainfo specific to this library (i.e., not copied XSLT)
     "MetaInfoLibraryName": "Plumage-py",
     "MetaInfoLibraryVersion": __version__,
     "MetaInfoLibraryDate": __last_updated__,
