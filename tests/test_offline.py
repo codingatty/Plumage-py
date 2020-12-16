@@ -1,6 +1,6 @@
+from   datetime  import datetime
+from   datetime  import timedelta
 import os
-from datetime  import datetime
-from datetime  import timedelta
 import time
 import unittest
 

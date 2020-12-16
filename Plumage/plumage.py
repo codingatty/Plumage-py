@@ -23,21 +23,18 @@ For details, see https://github.com/codingatty/Plumage/wiki
 # Anyone who makes use of, or who modifies, this code is encouraged
 # (but not required) to notify the author.
 
+from   datetime  import datetime
+from   datetime  import timedelta
 import io
-import urllib.request
-import urllib.error
-
-import sys
-
-import zipfile
+import json
 import os.path
 import string
 import time
-from datetime  import datetime
-from datetime  import timedelta
-import unittest
+import urllib.request
+import urllib.error
+import zipfile
+
 from lxml import etree
-import json
 
 ### PEP 476 begin
 try:
