@@ -1,5 +1,6 @@
 import json
 import unittest
+import urllib
 
 from testing_context import plumage
 
@@ -10,6 +11,10 @@ with open(CONFIGFILE, 'r') as infile:
 APIKEY = config_info["TSDRAPIKey"]
 
 class TestUM(unittest.TestCase):
+
+    def shortDescription(self):
+        # suppress unit test displaying docstrings
+        return None
  
     def setUp(self):
         pass
@@ -46,7 +51,7 @@ class TestUM(unittest.TestCase):
             self.assertEqual(assignment_0["AssignorEntityName"],
                      "CORPORATION FOR NATIONAL RESEARCH INITIATIVES, INC.")
             self.assertEqual(assignment_0["AssignmentDocumentURL"],
-                     "http://assignments.uspto.gov/assignments/assignment-tm-2849-0875.pdf")
+                     "https://assignments.uspto.gov/assignments/assignment-tm-2849-0875.pdf")
         ## Metainfo
         self.assertEqual(tsdrdata.TSDRSingle["MetaInfoXSLTName"], "Plumage")
         self.assertEqual(tsdrdata.TSDRSingle["MetaInfoXSLTURL"],
@@ -71,16 +76,19 @@ class TestUM(unittest.TestCase):
 
     def test_O001_zipfile_by_serialno(self):
         t = plumage.TSDRReq()
+        t.setAPIKey(APIKEY)
         t.getTSDRInfo("76044902", "s")
         self._validate_sample(t)
 
     def test_O002_zipfile_by_regno(self):
         t = plumage.TSDRReq()
+        t.setAPIKey(APIKEY)
         t.getTSDRInfo("2824281", "r")
         self._validate_sample(t)
 
     def test_O003_ST66xmlfile_by_serialno(self):
         t = plumage.TSDRReq()
+        t.setAPIKey(APIKEY)
         t.setPTOFormat("ST66")
         t.getTSDRInfo("76044902", "s")
         self._validate_sample(t)
@@ -88,6 +96,7 @@ class TestUM(unittest.TestCase):
     def test_O004_ST96xmlfile_by_serialno(self):
         t = plumage.TSDRReq()
         t.setPTOFormat("ST96")
+        t.setAPIKey(APIKEY)
         t.getTSDRInfo("76044902", "s")
         self._validate_sample(t)
 
@@ -96,6 +105,7 @@ class TestUM(unittest.TestCase):
         self.assertFalse(t.XMLDataIsValid)
         self.assertFalse(t.CSVDataIsValid)
         self.assertFalse(t.TSDRData.TSDRMapIsValid)
+        t.setAPIKey(APIKEY)
         t.getXMLData("76044902", "s")
         self.assertTrue(t.XMLDataIsValid)
         self.assertFalse(t.CSVDataIsValid)
@@ -114,11 +124,52 @@ class TestUM(unittest.TestCase):
         self.assertFalse(t.CSVDataIsValid)
         self.assertFalse(t.TSDRData.TSDRMapIsValid)
 
+    def test_O006_api_key(self):
+        t = plumage.TSDRReq()
+        # try without specifying API key; should get 401-unauthorized
+        t.getTSDRInfo("76044902", "s")
+        self.assertFalse(t.XMLDataIsValid)
+        self.assertFalse(t.CSVDataIsValid)
+        self.assertFalse(t.TSDRData.TSDRMapIsValid)
+        self.assertEqual(t.ErrorCode, "Fetch-401") 
+
+        # try with API key; this should work
+        t.setAPIKey(APIKEY)
+        t.getTSDRInfo("76044902", "s")
+        self.assertTrue(t.XMLDataIsValid)
+        self.assertTrue(t.CSVDataIsValid)
+        self.assertTrue(t.TSDRData.TSDRMapIsValid)
+
+        # try with invalid API key
+        # Surprisingly, PTO rejects with 404 ("not found") rather than 401 ("not authorized")
+        t.setAPIKey("aeiouy01234567890AEIOUY01234567890")
+        t.getTSDRInfo("76044902", "s")
+        self.assertFalse(t.XMLDataIsValid)
+        self.assertFalse(t.CSVDataIsValid)
+        self.assertFalse(t.TSDRData.TSDRMapIsValid)
+        self.assertEqual(t.ErrorCode, "Fetch-404")
+
+        # try with API key again; this should work again
+        t.setAPIKey(APIKEY)
+        t.getTSDRInfo("76044902", "s")
+        self.assertTrue(t.XMLDataIsValid)
+        self.assertTrue(t.CSVDataIsValid)
+        self.assertTrue(t.TSDRData.TSDRMapIsValid)
+
+        # reset and try with no API key; should 401
+        t.resetAPIKey()
+        t.getTSDRInfo("76044902", "s")
+        self.assertFalse(t.XMLDataIsValid)
+        self.assertFalse(t.CSVDataIsValid)
+        self.assertFalse(t.TSDRData.TSDRMapIsValid)
+        self.assertEqual(t.ErrorCode, "Fetch-401")
+
     def test_O099_no_such_app(self):
         '''
         Test no-such-application returns no data, and a Fetch-404 error code
         '''
         t = plumage.TSDRReq()
+        t.setAPIKey(APIKEY)
         t.getTSDRInfo("99999999", "s")
         self.assertFalse(t.XMLDataIsValid)
         self.assertFalse(t.CSVDataIsValid)

@@ -28,6 +28,7 @@ from   datetime  import timedelta
 import io
 import json
 import os.path
+import ssl
 import string
 import sys
 import time
@@ -36,14 +37,6 @@ import urllib.error
 import zipfile
 
 from lxml import etree
-
-### PEP 476 begin
-try:
-    import ssl
-    SSL_INSTALLED = True
-except ImportError:
-    SSL_INSTALLED = False
-### PEP 476 end
 
 __version__ = "1.4.0-pre"
 __last_updated__ = "2020-12-15"
@@ -125,6 +118,9 @@ class TSDRReq(object):
 
     _prior_TSDR_call_time = None   # time of previous TSDR call (real or simulated), if any
     _default_TSDR_minimum_interval = 1.0 # at least one second between calls to TSDR (real or simulated)
+    
+    _default_TSDR_minimum_interval = 20.0 # Temp until switching default from zip (4/minute) to XML (60/minute)
+    
     _TSDR_minimum_interval = _default_TSDR_minimum_interval     
 
     def __init__(self):
@@ -134,12 +130,9 @@ class TSDRReq(object):
         self.reset()
 
         ### PEP 476
-        if SSL_INSTALLED:
-            try:
-                self.UNVERIFIED_CONTEXT = ssl._create_unverified_context()
-            except AttributeError:
-                self.UNVERIFIED_CONTEXT = None
-        else:
+        try:
+            self.UNVERIFIED_CONTEXT = ssl._create_unverified_context()
+        except AttributeError:
             self.UNVERIFIED_CONTEXT = None
         ### PEP 476
 
@@ -380,14 +373,24 @@ class TSDRReq(object):
         ##      filedata = f.read()              ## urlopen() does not support the "with" statement
         ## I'm only leaving this comment here because twice I've forgotten that this won't work
         ## in Python 2.7, and attempt the "with" statement before it bites me and I remember.
+
+        req = urllib.request.Request(pto_url)
+        if self.APIKey is not None:
+            req.add_header("USPTO-API-KEY", self.APIKey)
+
         try:
             ### PEP 476:
             ### use context parameter if it is supported (TypeError if not)
             try:
-                f = urllib.request.urlopen(pto_url, context=self.UNVERIFIED_CONTEXT)
+                f = urllib.request.urlopen(req, context=self.UNVERIFIED_CONTEXT)
             except TypeError as e:
-                f = urllib.request.urlopen(pto_url)
+                f = urllib.request.urlopen(req)
         except urllib.error.HTTPError as e:
+            if e.code == 401:
+                self.ErrorCode = "Fetch-401"
+                self.ErrorMessage = "getXMLDataFromPTO: Error fetching from PTO. "\
+                             "Errorcode: 401 (Unauthorized); URL: <%s>" % (pto_url)
+                return
             if e.code == 404:
                 self.ErrorCode = "Fetch-404"
                 self.ErrorMessage = "getXMLDataFromPTO: Error fetching from PTO. "\
