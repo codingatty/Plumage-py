@@ -1,10 +1,15 @@
+from   datetime  import date
 from   datetime  import datetime
 from   datetime  import timedelta
+import json
 import os
 import time
 import unittest
+import warnings
 
 from testing_context import plumage
+
+CONFIGFILE = "test-config.json"
 
 class TestUM(unittest.TestCase):
 
@@ -207,6 +212,29 @@ class TestUM(unittest.TestCase):
         # all values line up with st.96 
         for K in metainfo:
             self.assertEqual(metainfo[K], t96.TSDRData.TSDRSingle[K])
+
+    # Test API key okay
+    def test_A007_check_API_key(self):
+        '''
+        Read in the API key file, verify it looks good and has a valid expiration date; warn if within 30 days of expiration
+        '''
+        with open(CONFIGFILE, 'r') as infile:
+            config_info = json.load(infile)
+        comment = config_info["Comment"]
+        apikey = config_info["TSDRAPIKey"]
+        exp_date_string = config_info["TSDRAPIKeyExpirationDate"]
+        self.assertEqual(len(apikey), 32)
+        self.assertTrue(apikey.isalnum())
+        self.assertEqual(len(exp_date_string), 10)
+        exp_date = date.fromisoformat(exp_date_string)
+        self.assertEqual(exp_date.isoformat(), exp_date_string)
+        today = date.today()
+        self.assertGreater(exp_date, today)
+        days_remaining = (exp_date-today).days
+        self.assertGreater(days_remaining, 0)
+        if days_remaining < 30:
+            warnings.warn(f"\n\n*** Only {days_remaining} days left on API key; expires {exp_date_string}. ***\n")
+        
 
     # Group B
     # Test XML fetch only, unzipped XML
