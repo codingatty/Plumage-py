@@ -3,6 +3,8 @@ from   datetime  import datetime
 from   datetime  import timedelta
 import json
 import os
+import random
+import string
 import time
 import unittest
 import warnings
@@ -213,7 +215,7 @@ class TestUM(unittest.TestCase):
         for K in metainfo:
             self.assertEqual(metainfo[K], t96.TSDRData.TSDRSingle[K])
 
-    # Test API key okay
+    # Test API key format
     def test_A007_check_API_key(self):
         '''
         Read in the API key file, verify it looks good and has a valid expiration date; warn if within 30 days of expiration
@@ -234,7 +236,22 @@ class TestUM(unittest.TestCase):
         self.assertGreater(days_remaining, 0)
         if days_remaining < 30:
             warnings.warn(f"\n\n*** Only {days_remaining} days left on API key; expires {exp_date_string}. ***\n")
-        
+    
+    # Test API key set/reset
+    def test_A008_check_API_key_setting(self):
+        '''
+        Test that API key gets set/reset (using dummy key)
+        '''
+        t = plumage.TSDRReq()
+        self.assertIsNone(t.APIKey)
+        valid_key_chars = string.ascii_letters+string.digits
+        key_length = 32
+        dummy_key = ''.join(random.choice(valid_key_chars) for i in range(key_length))
+        print(dummy_key)
+        t.setAPIKey(dummy_key)
+        self.assertEqual(t.APIKey, dummy_key)
+        t.resetAPIKey()
+        self.assertIsNone(t.APIKey)
 
     # Group B
     # Test XML fetch only, unzipped XML

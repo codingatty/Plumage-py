@@ -1,6 +1,13 @@
+import json
 import unittest
 
 from testing_context import plumage
+
+CONFIGFILE = "test-config.json"
+
+with open(CONFIGFILE, 'r') as infile:
+    config_info = json.load(infile)
+APIKEY = config_info["TSDRAPIKey"]
 
 class TestUM(unittest.TestCase):
  

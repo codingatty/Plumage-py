@@ -147,11 +147,28 @@ class TSDRReq(object):
         '''
         Resets all values (but not control fields) in TDSRReq object
         '''
-        # reset control fields (XSLT transform, PTO format)
+        # reset control fields (API key, XSLT transform, PTO format)
+        self.resetAPIKey()
         self.resetXSLT()
         self.resetPTOFormat()
         # reset data fields
         self.resetXMLData() # Resetting TSDR data will cascade to CSV and TSDR map, too
+        return
+
+    def setAPIKey(self, key):
+        '''
+        Set the USPTO-provided API Key to be used iin HTTP calls to TSDR
+        See https://developer.uspto.gov/api-catalog/tsdr-data-api
+        '''
+        self.APIKey = key
+        return
+
+    def resetAPIKey(self):
+        '''
+        Resets self.APIKey to None, causing no API key to be passedto TSDR 
+        (without a key set, expect urllib.error.HTTPError: "HTTP Error 401: Unauthorized")
+        '''
+        self.APIKey = None
         return
 
     def setXSLT(self, template):
