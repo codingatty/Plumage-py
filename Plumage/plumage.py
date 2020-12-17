@@ -119,8 +119,6 @@ class TSDRReq(object):
     _prior_TSDR_call_time = None   # time of previous TSDR call (real or simulated), if any
     _default_TSDR_minimum_interval = 1.0 # at least one second between calls to TSDR (real or simulated)
     
-    _default_TSDR_minimum_interval = 20.0 # Temp until switching default from zip (4/minute) to XML (60/minute)
-    
     _TSDR_minimum_interval = _default_TSDR_minimum_interval     
 
     def __init__(self):
@@ -187,7 +185,7 @@ class TSDRReq(object):
             "ST96": ST96-format XML
              "zip": zip file.  The zip file obtained from
                     the PTO is currently ST66-format XML.
-        If this is reset, "zip" will be assumed.
+        If this is reset, "ST96" will be assumed.
         '''
         valid_formats = ["ST66", "ST96", "zip"]
         if PTOFormat not in valid_formats:
@@ -197,9 +195,9 @@ class TSDRReq(object):
 
     def resetPTOFormat(self):
         '''
-        Resets PTO format to "zip" (default)
+        Resets PTO format to "ST96" (default)
         '''
-        self.setPTOFormat("zip")
+        self.setPTOFormat("ST96")
         return
 
     def resetXMLData(self):

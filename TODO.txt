@@ -12,7 +12,7 @@ _X_ Make metainfo consistent (keys & values) between GetMetainfo() and runtime T
 _X_ Support for MetaInfoExecTSDRStartTimestamp and MetaInfoExecTSDRCompleteTimestamp
 _X_ Switch from ugly "unset..." in some cases to uniform "reset..." 
 ___ Fix timing tests
-___ Make XML default, not ZIP (60 queries/min, rather than 4)
+_X_ Make ST.96 XML default, not ZIP (60 queries/min, rather than 4)
 _X_ Add API key suppport
 _X_ Remove Python 2 specific material (eventually)
 ___ Note Python 3.6 required (timespec argument in isoformat() calls)
