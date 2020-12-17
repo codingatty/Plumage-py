@@ -11,3 +11,19 @@ _X_ Remove Python 2 specific material (eventually)
 ___ Note Python 3.6 required (timespec argument in isoformat() calls)
 _X_ PEP 476: remove complicating code to support pre-PEP versions of Python
     (PEP 476 was implemented in Python 3.4.3, and Plumage-py reqs at least Python 3.6)
+_X_ Add new field MetaInfoExecEnvironment
+___ Move root-level methods to class (for consistency with .net version)
+
+
+Likely future stuff (wish-list):
+___ support for disclaimers (see reg. 5561934 for example with multiple disclaimers)
+___ allow options on TSDRReq() instantiation (e.g., t = plumage.TSDRReq(APIKey="xxxxx"))
+___ allow option-setting via dictionary (e.g., t = plumage.TSDRReq(options=optionsdict))
+___ add unit test for 429 (separate to keep from hammering TSDR server and logging ecxessive requests)
+___ add unit-test checking for zip-specific stuff (image, for example)
+___ coordinate time-delay setting with setPTOFormat() (15-20 for zip; 1-1.5 for XML)
+___ time-sensitive default time settings 
+     regular limits: Zip: 4/minute; XML: 60/minute
+     off-peak limits: zip: 12/minute; XML: 120/minute
+	 off-peak hours: 10:00 PM (22:00) EST to 5:00 AM EST
+	 
