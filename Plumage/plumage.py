@@ -392,7 +392,16 @@ class TSDRReq(object):
             if e.code == 404:
                 self.ErrorCode = "Fetch-404"
                 self.ErrorMessage = "getXMLDataFromPTO: Error fetching from PTO. "\
-                             "Errorcode: 404 (not found); URL: <%s>" % (pto_url)
+                             "Errorcode: 404 (Not Found); URL: <%s>" % (pto_url)
+                return
+            if e.code == 429:
+                self.ErrorCode = "Fetch-429"
+                if "Retry-After" in e.headers:
+                    RA_value = e.headers["Retry-After"]
+                else:
+                    RA_value = "not provided"
+                self.ErrorMessage = "getXMLDataFromPTO: Error fetching from PTO. "\
+                             "Errorcode: 429 (Too Many Requests); URL: <%s>; Retry-After: %s." % (pto_url, RA_value)
                 return
             else:
                 raise
