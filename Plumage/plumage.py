@@ -457,17 +457,13 @@ class TSDRReq(object):
             _TSDR_substitutions["$XSLTFILENAME$"] = "CALLER-PROVIDED XSLT"
             _TSDR_substitutions["$XSLTPATHNAME$"] = "CALLER-PROVIDED XSLT"
         else:
-            # If XML format was specified in PTOFormat, use that; otherwise try to determine by looking
             supported_xml_formats = ["ST66", "ST96"]
-            if self.PTOFormat in supported_xml_formats:
-                xml_format = self.PTOFormat
-            else:
-                xml_format = self._determine_xml_format(parsed_xml)
-                if xml_format not in supported_xml_formats:
-                    self.CSVDataIsValid = False
-                    self.ErrorCode = "CSV-UnsupportedXML"
-                    self.ErrorMessage = "Unsupported XML format found: %s" % xml_format
-                    return
+            xml_format = self._determine_xml_format(parsed_xml)
+            if xml_format not in supported_xml_formats:
+                self.CSVDataIsValid = False
+                self.ErrorCode = "CSV-UnsupportedXML"
+                self.ErrorMessage = "Unsupported XML format found: %s" % xml_format
+                return
             xslt_transform_info = _xslt_table[xml_format]
             transform = xslt_transform_info.transform
             _TSDR_substitutions["$XSLTFILENAME$"] = xslt_transform_info.filename
