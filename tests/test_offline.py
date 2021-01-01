@@ -38,7 +38,7 @@ class TestUM(unittest.TestCase):
     def setUp(self):
         # start each test with fresh prior-call time; tests with multiple TSDRReqs will need to reset themselves to avoid delay
         plumage.TSDRReq._prior_TSDR_call_time =  TestUM.INITIAL_PRIOR_TSDR_CALL_TIME 
-        plumage.ResetIntervalTime()
+        plumage.TSDRReq.ResetIntervalTime()
         pass
 
     # Group A
@@ -155,7 +155,7 @@ class TestUM(unittest.TestCase):
 
     # Test release-independent metainfo data (does not change release-to-release)
     def test_A004_check_releaseindependent_metainfo(self):
-        metainfo = plumage.GetMetainfo()
+        metainfo = plumage.TSDRReq.GetMetainfo()
         # XSLT (Plumage)
         self.assertEqual(metainfo["MetaInfoXSLTName"], "Plumage")
         self.assertEqual(metainfo["MetaInfoXSLTAuthor"], "Terry Carroll")
@@ -175,7 +175,7 @@ class TestUM(unittest.TestCase):
 
     # Test release-dependent metainfo data (changes, or may change, from release-to-release)
     def test_A005_check_releasedependent_metainfo(self):
-        metainfo = plumage.GetMetainfo()
+        metainfo = plumage.TSDRReq.GetMetainfo()
 
         # XSLT (Plumage)
         self.assertEqual(metainfo["MetaInfoXSLTVersion"], "1.4.0-pre")
@@ -193,7 +193,7 @@ class TestUM(unittest.TestCase):
          1. All keys from GetMetainfo() are also in run-time TSDR data (both ST.66 and ST.96)
          2. All values from GetMetainfo() match those from run-time TSDR data (both ST.66 and ST.96)
         '''
-        metainfo = plumage.GetMetainfo()
+        metainfo = plumage.TSDRReq.GetMetainfo()
 
         t66 = plumage.TSDRReq()
         testfile = os.path.join(self.TESTFILES_DIR, "sn76044902-ST66.xml")
@@ -247,7 +247,6 @@ class TestUM(unittest.TestCase):
         valid_key_chars = string.ascii_letters+string.digits
         key_length = 32
         dummy_key = ''.join(random.choice(valid_key_chars) for i in range(key_length))
-        print(dummy_key)
         t.setAPIKey(dummy_key)
         self.assertEqual(t.APIKey, dummy_key)
         t.resetAPIKey()
@@ -732,7 +731,10 @@ PublicationDate,"<xsl:value-of select="tm:PublicationDetails/tm:Publication/tm:P
         '''
         Fake delay is the amount of time, in seconds, to delay before calling
         '''
-        starting_time = datetime.now()
+        #starting_time = datetime.now()
+        prior_call_time = plumage.TSDRReq._GetPriorTSDRCallTime()
+        if prior_call_time is None: # on first call, use current time instead
+            prior_call_time = datetime.now()
         t = plumage.TSDRReq()
         testfile = os.path.join(self.TESTFILES_DIR, "sn76044902.zip")
         if fake_delay is not None: # optionally fake time delay in workload
@@ -741,8 +743,9 @@ PublicationDate,"<xsl:value-of select="tm:PublicationDetails/tm:Publication/tm:P
         t.getTSDRInfo(testfile)
         ending_time = datetime.now()
         self.assertTrue(t.TSDRData.TSDRMapIsValid)
-        total_time_in_ms = (ending_time-starting_time)/timedelta(milliseconds=1)
-        return total_time_in_ms
+        #total_time_in_ms = (ending_time-starting_time)/timedelta(milliseconds=1)
+        time_between_TSDR_calls_in_ms = (ending_time-prior_call_time)/timedelta(milliseconds=1)
+        return time_between_TSDR_calls_in_ms
 
     def test_I001_default_delay(self):
         '''
@@ -787,7 +790,7 @@ PublicationDate,"<xsl:value-of select="tm:PublicationDetails/tm:Publication/tm:P
         '''
         TOLERANCE = 100   # 100 ms
 
-        plumage.SetIntervalTime(0)
+        plumage.TSDRReq.SetIntervalTime(0)
         # First run should be almost instantaneous, as usual:
         total_time_in_ms = self.execute_one_timed_call()
         self.assertAlmostEqual(total_time_in_ms, 0, delta=TOLERANCE)
@@ -801,7 +804,7 @@ PublicationDate,"<xsl:value-of select="tm:PublicationDetails/tm:Publication/tm:P
         self.assertAlmostEqual(total_time_in_ms, 0, delta=TOLERANCE)
 
         # go back to default, and we should get one-second delays again
-        plumage.ResetIntervalTime()
+        plumage.TSDRReq.ResetIntervalTime()
         total_time_in_ms = self.execute_one_timed_call()
         self.assertGreater(total_time_in_ms, 1000)                
         self.assertAlmostEqual(total_time_in_ms, 1000, delta=TOLERANCE)
@@ -817,7 +820,7 @@ PublicationDate,"<xsl:value-of select="tm:PublicationDetails/tm:Publication/tm:P
         TOLERANCE = 100   # 100 ms
         #default_delay = 1 # default 1-second delay
 
-        plumage.SetIntervalTime(1.5)  # 1.5-second interval
+        plumage.TSDRReq.SetIntervalTime(1.5)  # 1.5-second interval
         # First run should be almost instantaneous, as usual:
         total_time_in_ms = self.execute_one_timed_call()
         self.assertAlmostEqual(total_time_in_ms, 0, delta=TOLERANCE)
@@ -836,7 +839,7 @@ PublicationDate,"<xsl:value-of select="tm:PublicationDetails/tm:Publication/tm:P
         TOLERANCE = 100   # 100 ms
         #default_delay = 1 # default 1-second delay
 
-        plumage.SetIntervalTime(-10)  # negative ten-second interval
+        plumage.TSDRReq.SetIntervalTime(-10)  # negative ten-second interval
         # First run should be almost instantaneous, as usual:
         total_time_in_ms = self.execute_one_timed_call()
         self.assertAlmostEqual(total_time_in_ms, 0, delta=TOLERANCE)
@@ -854,11 +857,11 @@ PublicationDate,"<xsl:value-of select="tm:PublicationDetails/tm:Publication/tm:P
         Non-numerics should raise TypeError
         '''
 
-        self.assertRaises(TypeError, plumage.SetIntervalTime, "1")
-        self.assertRaises(TypeError, plumage.SetIntervalTime, None)
+        self.assertRaises(TypeError, plumage.TSDRReq.SetIntervalTime, "1")
+        self.assertRaises(TypeError, plumage.TSDRReq.SetIntervalTime, None)
 
         # so should a missing operand
-        self.assertRaises(TypeError, plumage.SetIntervalTime)
+        self.assertRaises(TypeError, plumage.TSDRReq.SetIntervalTime)
 
 
 if __name__ == '__main__':

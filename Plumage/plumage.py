@@ -54,21 +54,6 @@ WHITESPACE = string.whitespace
 
 _TSDR_dirname = os.path.dirname(__file__)
 
-def GetMetainfo():
-    return metainfo
-
-def SetIntervalTime(value):
-    try:
-        TSDRReq._TSDR_minimum_interval = 0 + value # force an error if non-numeric
-    except TypeError:
-        raise TypeError("interval value must be an int or float")
-
-def ResetIntervalTime():
-    TSDRReq._TSDR_minimum_interval = TSDRReq._default_TSDR_minimum_interval
-
-def GetIntervalTime():
-    return TSDRReq._TSDR_minimum_interval
-
 class _XSLTDescriptor(object):
     '''
     Object used to organize information relating to pre-defined XSLT transforms
@@ -698,6 +683,33 @@ class TSDRReq(object):
         # if anything is left after stripping away leading and trailing whitespace, keep it
         lines = [line for line in lines if len(line.strip(WHITESPACE))>0]
         return lines
+
+    @classmethod
+    def GetMetainfo(cls):
+        return metainfo
+
+    @classmethod
+    def SetIntervalTime(cls, value):
+        try:
+            cls._TSDR_minimum_interval = 0 + value # force an error if non-numeric
+        except TypeError:
+            raise TypeError("interval value must be an int or float")
+
+    @classmethod
+    def ResetIntervalTime(cls):
+        cls._TSDR_minimum_interval = cls._default_TSDR_minimum_interval
+
+    @classmethod
+    def GetIntervalTime(cls):
+        return cls._TSDR_minimum_interval
+
+    @classmethod
+    def _GetPriorTSDRCallTime(cls):
+        '''
+        Returns the time of prior (actual or simulated) call to TSDR
+        Not part of API; included solely to facilitate unit testing
+        '''
+        return cls._prior_TSDR_call_time
 
     class _validateCSVResponse(object):
         '''
